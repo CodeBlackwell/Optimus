@@ -11,10 +11,11 @@ import datetime
 import logging
 import json
 import requests
+import subprocess
 import boto3
 import time
 
-from datetime import datetime
+from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 
@@ -168,22 +169,17 @@ def push_ecs_image(uri, job_name):
 
 def build_file_list():
     '''
-    TODO: Add docstring
-    TODO: Simplify using os.walk
+    Builds a list of files by walking the file path
+    Uses a relative path to where Le's code out puts the files
+    At some point, might want to be able to choose which files to include or not
     '''
     file_list = []
-    paths = []
     output_dir = 'DataValidation/validation_outputs/xlsx/'
-    date_directories = os.listdir(output_dir)
-    for date_directory in date_directories:
-        path = output_dir
-        path += date_directory + '/EDW3_Production/'
-        tests = os.listdir(path)
-        for test in tests:
-            test_path = path + test
-            files = os.listdir(test_path)
-            for fid in files:
-                file_list.append(test_path + '/' + fid)
+
+    # Walk the data directory and grab all output files (not dirs)
+    for root, dirs, files in os.walk(output_dir):
+        for name in files:
+            file_list.append(os.path.join(root, name))
     return file_list
 
 if __name__ == "__main__":
@@ -193,6 +189,21 @@ if __name__ == "__main__":
 
     # Specify the uri of the image here
     uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/" + args.job + ""
+
+    # Let's trigger Le's code here for now
+    # TODO: Comment this guy out once containerized- container will do this once run
+    # Grab dates (30 days back ending yesterday)
+    now = datetime.utcnow()
+    end = now - timedelta(days = 1)
+    start = end - timedelta(days=30)
+    end = end.strftime('%m/%d/%Y')
+    start = start.strftime('%m/%d/%Y')
+
+    # Trigger script
+    os.chdir('DataValidation')
+    cmd = f'python -m sources.comparison -m -sd {start} -ed {end}'
+    subprocess.run(cmd, shell=True, timeout=60)
+    os.chdir('..')
 
     # Slack configurations
     # Note the file tree here:
