@@ -23,6 +23,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is test", default="test")
 parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
 parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
+parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
 args = parser.parse_args()
 
 def post_to_slack(channel, msg, fid):
@@ -165,6 +166,26 @@ def push_ecs_image(uri, job_name):
     else:
         comment("Successfully pushed the image for " + job_name)
 
+def build_file_list():
+    '''
+    TODO: Add docstring
+    TODO: Simplify using os.walk
+    '''
+    file_list = []
+    paths = []
+    output_dir = 'DataValidation/validation_outputs/xlsx/'
+    date_directories = os.listdir(output_dir)
+    for date_directory in date_directories:
+        path = output_dir
+        path += date_directory + '/EDW3_Production/'
+        tests = os.listdir(path)
+        for test in tests:
+            test_path = path + test
+            files = os.listdir(test_path)
+            for fid in files:
+                file_list.append(test_path + '/' + fid)
+    return file_list
+
 if __name__ == "__main__":
     # Init
     now = time.strftime("%c")
@@ -173,10 +194,20 @@ if __name__ == "__main__":
     # Specify the uri of the image here
     uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/" + args.job + ""
 
-    # Test
-    channel = 'C04HP5S5YNB'
+    # Slack configurations
+    # Note the file tree here:
+    '''
+    xlsx
+        date folder (TODO: Add format)
+            regression test folder
+                EDW3_Production
+                    xlsx file
+    '''
+    channel = args.channel
     msg = 'This is just a test'
-    #post_to_slack(channel, msg, 'test.txt')
+    file_list = build_file_list()
+    for fid in file_list:
+        post_to_slack(channel, msg, fid)
 
     # Grab list of images provided by args
     containers = args.containers.split(',')
