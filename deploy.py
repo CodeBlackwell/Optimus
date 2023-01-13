@@ -21,13 +21,14 @@ from slack_sdk.errors import SlackApiError
 
 # Argument collector
 parser = argparse.ArgumentParser()
-parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is test", default="test")
+parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is ds_validation", default="ds_validation")
 parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
 parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
 parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
 parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday.", default="")
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday.", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
+parser.add_argument("--skip-slack", type=bool, help="Indicates if we should skip posting to Slack for this run. Default is False", default=False)
 args = parser.parse_args()
 
 def post_to_slack(channel, msg, fid):
@@ -37,6 +38,7 @@ def post_to_slack(channel, msg, fid):
     Parameters:
         channel: str, the slack channel to post the alert to
         msg: str, contents to post to the Slack channel
+        fid: str, gives the name of the file to post to Slack as an attachment
 
     Returns:
         None
@@ -86,9 +88,8 @@ def register_image(image_name, job_name, cpus=2, memory=2000):
         cpus: int (optional), specifies the number of CPU cores required to process the job
         memory: int (optional), gives the memory (in mb) to use on container
     '''
-    #comment("Registering job for  " + job_name)
+    comment("Registering job for  " + job_name)
     client = boto3.client('batch')
-    #image_name = "701912468211.dkr.ecr.us-east-1.amazonaws.com/avantlink/" + job_name
     try:
         response = client.register_job_definition(
             jobDefinitionName=job_name,
@@ -110,14 +111,14 @@ def create_ecs_image(job_name):
     Maybe can be done manually for purposes of this repo
     '''
     try :
-        #comment("Creating ECS for  " + job_name)
+        comment("Creating ECS for  " + job_name)
         #job_location = repo_directory + job_name
         #comment("Working on directory " + job_location)
         #os.chdir(job_location)
 
         client = boto3.client('ecs')
 
-        #Login to Docker --no-include-email
+        # Login to Docker using --no-include-email
         docker_login = subprocess.check_output("aws ecr --no-include-email get-login --region us-east-1",
                                                    shell=True).decode(sys.stdout.encoding).strip()
         return_code = subprocess.run(docker_login, shell=True, stdout=os.devnull)
@@ -196,9 +197,9 @@ if __name__ == "__main__":
     # Let's trigger Le's code here for now
     # TODO: Comment this guy out once containerized- container will do this once run
     # Grab dates (30 days back ending yesterday is default)
+    now = datetime.utcnow()
     if args.start == '' and args.end == '':
-        now = datetime.utcnow()
-        end = now - timedelta(days = 1)
+        end = now - timedelta(days=1)
         start = end - timedelta(days=30)
     else:
         start = args.start
@@ -228,11 +229,13 @@ if __name__ == "__main__":
                 EDW3_Production
                     xlsx file
     '''
-    channel = args.channel
-    msg = 'This is just a test'
-    file_list = build_file_list()
-    for fid in file_list:
-        post_to_slack(channel, msg, fid)
+    # Give the option to bypass Slack posting
+    if args.skip_slack is False:
+        channel = args.channel
+        msg = f'''Regression test results ({now} run)'''
+        file_list = build_file_list()
+        for fid in file_list:
+            post_to_slack(channel, msg, fid)
 
     # Grab list of images provided by args
     containers = args.containers.split(',')
