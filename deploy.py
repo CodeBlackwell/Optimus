@@ -29,6 +29,7 @@ parser.add_argument("--start", type=str, help="Specifies a start date for valida
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday.", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
 parser.add_argument("--skip-slack", type=bool, help="Indicates if we should skip posting to Slack for this run. Default is False", default=False)
+parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
 args = parser.parse_args()
 
 def post_to_slack(channel, msg, fid):
@@ -104,6 +105,34 @@ def register_image(image_name, job_name, cpus=2, memory=2000):
     except Exception as e:
         print(e) # Logs errors registering job
 
+def approve_mfa():
+    '''
+    We have MFA enabled on our AWS account
+    Therefore, it's necessary to initialize a session with an approved connection
+    These sessions are good for 24
+    '''
+    pass # TODO: Fill this in once design is tested elsewhere
+
+def ecs_login():
+    '''
+    This sets up the log in for the session
+    Needed to do any ecs operations
+    '''
+    # Login to Docker using --no-include-email
+    try:
+        docker_login = subprocess.check_output("aws ecr --no-include-email get-login --region us-east-1",
+            shell=True).decode(sys.stdout.encoding).strip()
+    except Exception as e:
+        print(e)
+        raise
+    print(docker_login)
+    return_code = subprocess.run(docker_login, shell=True, stdout=os.devnull)
+    if return_code.returncode != 0:
+        comment("ERROR: Error login to ECS")
+        print(return_code.returncode)
+    else:
+        comment("Successfully logged to ECS")
+
 def create_ecs_image(job_name):
     '''
     Creates the actual docker image to be used by ECS
@@ -116,18 +145,7 @@ def create_ecs_image(job_name):
         #comment("Working on directory " + job_location)
         #os.chdir(job_location)
 
-        client = boto3.client('ecs')
-
-        # Login to Docker using --no-include-email
-        docker_login = subprocess.check_output("aws ecr --no-include-email get-login --region us-east-1",
-                                                   shell=True).decode(sys.stdout.encoding).strip()
-        return_code = subprocess.run(docker_login, shell=True, stdout=os.devnull)
-        if return_code.returncode != 0:
-            comment("ERROR: Error login to ECS")
-        else:
-            comment("Successfully logged to ECS")
-
-        #Build docker image
+        # Build docker image
         return_code = subprocess.run("docker build -t avantlink/" + job_name + " .",shell=True, stdout=os.devnull)
         if return_code.returncode != 0:
             comment("ERROR: Error building ECS image")
@@ -157,7 +175,7 @@ def create_ecs_image(job_name):
 
 def push_ecs_image(uri, job_name):
     '''
-    Pushes the image to the AWS repository
+    Tags and pushes the image to the AWS repository
 
     Parameters:
        uri: str, gives the reporitory uri in AWS for accessing the image
@@ -165,7 +183,13 @@ def push_ecs_image(uri, job_name):
     Returns:
         None
     '''
-    return_code = subprocess.run("docker push " + uri, shell=True, stdout=os.devnull)
+    # Tag image
+    tag_string = uri + f':{tag}'
+    cmd = f'docker tag {tag_string}'
+    subprocess.run(cmd, shell=True)
+
+    # Push
+    return_code = subprocess.run("docker push " + uri, shell=True)
     if return_code.returncode != 0:
         comment("ERROR: Error pushing ECS image")
     else:
@@ -191,8 +215,16 @@ if __name__ == "__main__":
     now = time.strftime("%c")
     comment("Starting the release process on " + now)
 
+    # Global parameters
+    global client, tag
+    client = boto3.client('ecs')
+    tag = args.tag
+
     # Specify the uri of the image here
-    uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/" + args.job + ""
+    uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/avantlink/" + args.job
+
+    # Log in to ecs
+    # ecs_login() FIXME: Need to uncomment to push images
 
     # Let's trigger Le's code here for now
     # TODO: Comment this guy out once containerized- container will do this once run
@@ -224,7 +256,7 @@ if __name__ == "__main__":
     # Note the file tree here:
     '''
     xlsx
-        date folder (TODO: Add format)
+        date folder
             regression test folder
                 EDW3_Production
                     xlsx file
