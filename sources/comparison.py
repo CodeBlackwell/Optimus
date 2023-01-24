@@ -14,9 +14,10 @@ import gspread
 import http3
 import pandas as pd
 import requests
+from oauth2client.service_account import ServiceAccountCredentials
+
 import sources
 from compare_reports import Comparison
-from oauth2client.service_account import ServiceAccountCredentials
 
 configs = json.load(open('./sources/json_sources/config.json'))
 
@@ -780,10 +781,34 @@ def drop_columns(drop_list, ro):
             del col
 
 
+def search_merchant(merchant_name):
+    merchant_map = json.load(open('./../json_sources/merchant_map.json.json'))
+    for merchant_id in merchant_map:
+        if merchant_map[merchant_id].lower() == merchant_name.lower():
+            return merchant_id
+
+
+def replace_merchant(ro, merchant_id):
+    if len(merchant_id) != 36:
+        merchant_id = search_merchant(merchant_id)
+    for report_id in ro:
+        for filter in ro[report_id]["filters"]:
+            if filter["field"] == "dim_merchant-merchant_uuid":
+                new_filter = {
+                    "field": "dim_merchant-merchant_uuid",
+                    "op": "eq",
+                    "values": [
+                        f"{merchant_id}"
+                    ],
+                    "alias": "merchant_filter1"
+                }
+                del filter
+                ro[report_id]["filters"].append(new_filter)
+
+
 def main():
     # Define comparison column name and join_on vars here
     # Do this via argparse
-    # @TODO: Currently does not provide an output message to user when no request objects are selected in assisted mode.
     parser = argparse.ArgumentParser("Run regression over Avantlink Dashboard Reports by report category")
     parser.add_argument('-p', '--period', type=str, help="'last year', 'last quarter', or 'last month'", required=False)
     parser.add_argument('-m', '--manual', action='store_true',
@@ -799,6 +824,7 @@ def main():
                         help="The name of the column to be compared (must be an int or float)")
     parser.add_argument('-sd', '--start-date', type=str, help="The Start Date - Format == mm_dd_yyyy")
     parser.add_argument('-ed', '--end-date', type=str, help="The End Date - Format === mm_dd_yyyy")
+    parser.add_argument('-mer', '--merchant', type=str, help="The merchant uuid or merchant name")
     args = parser.parse_args()
     # Instantiate the class
     cascade = Cascade()
@@ -828,6 +854,9 @@ def main():
         if args.start_date and args.end_date:
             relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
             relative_to_exact_date(edw3_ro, args.start_date, args.end_date)
+        if args.merchant:
+            replace_merchant(edw2_ro, args.merchant)
+            replace_merchant(edw3_ro, args.merchant)
         # if args.remove: #TODO: Implement
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
@@ -919,8 +948,9 @@ def main():
                               " -- The input must be either ('True', 'T', 't', or 'y' - For True) " +
                               "or ('False', 'F', 'f', or 'n' - For False)")
         if not minimum_flag:
-            raise IndexError("USER INPUT ERROR: No Request Objects were added to the list of Reports to run in the regression test assisted options."
-                             "Must reply to atleast one category with True ('True', 'T', 't', or 'y')")
+            raise IndexError(
+                "USER INPUT ERROR: No Request Objects were added to the list of Reports to run in the regression test assisted options."
+                "Must reply to atleast one category with True ('True', 'T', 't', or 'y')")
 
         sim = input("Would you like to specify a build (kiran_dev, adam_dev etc.)? if so - specify the name of it.")
         if sim == "":
