@@ -1,6 +1,14 @@
 # This is an executable deployment script with several functions for posting to Slack
 # Largely based off of the existing set up in the Talend jobs
 # This version is primarily for the regression library
+'''
+Note the following default run settings:
+Merchants: REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors
+(Reference available in json _sources/merchant_map.json)
+By default, we run for all metrics for these merchants for the following intervals:
+    - Last 30 days
+    - Last Year
+'''
 
 import sys
 import os
@@ -12,6 +20,7 @@ import logging
 import json
 import requests
 import subprocess
+import glob
 import boto3
 import time
 
@@ -198,16 +207,18 @@ def push_ecs_image(uri, job_name):
 def build_file_list():
     '''
     Builds a list of files by walking the file path
-    Uses a relative path to where Le's code out puts the files
+    Uses a relative path to where Le's code outputs the files
     At some point, might want to be able to choose which files to include or not
     '''
-    file_list = []
     output_dir = 'DataValidation/validation_outputs/xlsx/'
+    file_list = []
 
     # Walk the data directory and grab all output files (not dirs)
     for root, dirs, files in os.walk(output_dir):
         for name in files:
-            file_list.append(os.path.join(root, name))
+            fid = os.path.join(root, name)
+            if name.endswith('.xlsx'):
+                file_list.append(fid)
     return file_list
 
 if __name__ == "__main__":
@@ -226,10 +237,18 @@ if __name__ == "__main__":
     # Log in to ecs
     # ecs_login() FIXME: Need to uncomment to push images
 
+    # Accept list of merchants
+    # For all merchants, use our default merchant list
+    if args.merchants == 'all':
+        merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors'.split(',')
+    # Supports multiple merchants
+    else:
+        merchants = args.merchants.split(',')
+
     # Let's trigger Le's code here for now
     # TODO: Comment this guy out once containerized- container will do this once run
     # Grab dates (30 days back ending yesterday is default)
-    now = datetime.utcnow()
+    now = datetime.utcnow().replace(microsecond=0)
     if args.start == '' and args.end == '':
         end = now - timedelta(days=1)
         start = end - timedelta(days=30)
@@ -248,8 +267,11 @@ if __name__ == "__main__":
 
     # Trigger script
     os.chdir('DataValidation')
-    cmd = f'python -m sources.comparison -m -sd {start} -ed {end}'
-    subprocess.run(cmd, shell=True, timeout=60)
+    for merchant in merchants:
+        # Cannot use spaces in cli, replace with _
+        merchant = merchant.replace(' ', '_')
+        cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
+        subprocess.run(cmd, shell=True, timeout=60)
     os.chdir('..')
 
     # Slack configurations
@@ -281,14 +303,19 @@ if __name__ == "__main__":
     # Then, register and deploy it
     for container in containers:
         if args.create_required is True:
-            print('Will create')
-            create_ecs_image(container)
+            print('Will create in a future release')
+            #create_ecs_image(container)
         else:
-            print('Will not create')
+            print('Skipping image creation')
 
-        # Register and deploy
-        register_image(uri, container)
-        push_ecs_image(uri, container)
+        # Register and deploy- eventually, maybe
+        #register_image(uri, container)
+        #push_ecs_image(uri, container)
+
+    # Cleanup
+    files = glob.glob('DataValidation/validation_outputs/xlsx/*')
+    for fid in files:
+        os.remove(fid)
 
     # Mark completion of deployment
     now = time.strftime("%c")
