@@ -25,6 +25,7 @@ configs = json.load(open('./sources/json_sources/config.json'))
 class Cascade:
     edw2_request_object = None
     edw3_request_object = None
+    merchant = None
     output_xlsx = True
     simple_difference = False
     force_picker_address = True
@@ -68,13 +69,14 @@ class Cascade:
     prepared_col_map = None
 
     def __init__(self, start_date=None, end_date=None, edw2_request_object=None,
-                 edw3_request_object=None, report_name=None, cascade=False):
+                 edw3_request_object=None, report_name=None, cascade=False, merchant=None):
         self.timestamp = None
         self.cascade_start_date = start_date
         self.report_name = report_name
         self.cascade_end_date = end_date
         self.edw2_request_object = edw2_request_object
         self.edw3_request_object = edw3_request_object
+        self.merchant = merchant
         self.cascade = cascade
         self.true = True
         self.false = False
@@ -305,7 +307,7 @@ class Cascade:
 
     async def run_simple_difference(self, simple_difference_options, report_name=None, edw2_ro=None, edw3_ro=None,
                                     interval=None, dashboard_regression=None,
-                                    sim=None, force_picker=None, manual_path=None):
+                                    sim=None, force_picker=None, manual_path=None, merchant=None):
 
         async with self.sem:
             if report_name is None:
@@ -327,6 +329,7 @@ class Cascade:
                 edw3_request_object = edw3_ro
             else:
                 edw3_request_object = self.edw3_request_object
+            merchant = self.merchant
             # if interval:
             #     self.replace_relative_dates(interval, request_object=edw2_ro)
             #     self.replace_relative_dates(interval, request_object=edw3_ro)
@@ -336,13 +339,14 @@ class Cascade:
                 simple_difference_options["manual_path"] = manual_path
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
-                                                         request_object=edw3_request_object),
+                                                         request_object=edw3_request_object,
+                                                         merchant=merchant),
                                     sources.PickerReport(picker_url=picker_url_2,
                                                          report_name=report_name,
-                                                         request_object=edw2_request_object)
+                                                         request_object=edw2_request_object,
+                                                         merchant=merchant)
                                     )
-
-            comparison.set_outputs(simple_report_name=self.report_name,
+            comparison.set_outputs(merchant, simple_report_name=self.report_name,
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
             await comparison.run_and_barf()
@@ -591,12 +595,13 @@ class Cascade:
                                                             "sim_name": sim_name
                                                             }
                                     file_name = args.merchant + comparison_col_name
+                                    merchant = args.merchant
                                     futures.append(self.run_simple_difference(
                                         {"join_on": [date_interval],
                                          "comparison_col_name": comparison_col_name},
                                         edw2_ro=edw2_request_object, edw3_ro=edw3_request_object,
                                         interval=interval, sim=sim_name, report_name=file_name,
-                                        dashboard_regression=dashboard_regression)
+                                        dashboard_regression=dashboard_regression, merchant=merchant)
                                     )
 
             result = await asyncio.gather(*futures)
@@ -768,8 +773,8 @@ def relative_to_exact_date(ro, start_date, end_date):
     for report_id in ro:
         for filter in ro[report_id]["filters"]:
             if filter["field"] == "dim_date-mm_dd_yyyy" and filter["op"] == "relative_date":
-                del filter
-                ro[report_id]["filters"].append(new_date_filter)
+                ro[report_id]["filters"].remove(filter)
+        ro[report_id]["filters"].append(new_date_filter)
     return ro
 
 
@@ -794,10 +799,7 @@ def replace_merchant(ro, merchant_id):
     if len(merchant_id) != 36:
         merchant_id = search_merchant(merchant_id)
     for report_id in ro:
-        print('New report')
-        print(report_id)
         for filter in ro[report_id]["filters"]:
-            print(filter)
             if filter["field"] == "dim_merchant-merchant_uuid" and filter['values'] != f"{merchant_id}":
                 new_filter = {
                     "field": "dim_merchant-merchant_uuid",
@@ -808,10 +810,64 @@ def replace_merchant(ro, merchant_id):
                     "alias": "merchant_filter1"
                 }
                 new_filters.append(new_filter)
-                del filter
+                ro[report_id]["filters"].remove(filter)
         for new_filter in new_filters:
             ro[report_id]["filters"].append(new_filter)
-        print(ro[report_id]["filters"])
+
+
+def match_names(edw2_ro, edw3_ro):
+    '''
+    If the name of the columns is different, let's rename them to match
+    This also raises an exception if the lengths don't match
+    '''
+    edw3_names = []
+    edw2_names = []
+    skipped_indices = []
+
+    # Grab edw2 column names
+    for report_id in edw2_ro:
+        for index, column in enumerate(edw2_ro[report_id]["cols"]):
+            try:
+                edw2_names.append(column["name"])
+            # If there's an error, then it's a dim
+            # For edw2, log any skipped columns to remove from edw3
+            except KeyError:
+                skipped_indices.append(index)
+
+    # Grab edw3 column names
+    for report_id in edw3_ro:
+        for column in edw3_ro[report_id]["cols"]:
+            try:
+                edw3_names.append(column["name"])
+            # If there's an error, then it's a dim
+            except KeyError:
+                continue
+
+    # Drop any skipped indices
+    for index in skipped_indices:
+        edw3_names.pop(index)
+
+    # There exists a possibility that we had prepared_ids in edw3 with no name
+    # If that is the case, add that in now
+    if len(edw2_names) > len(edw3_names):
+        for index, name in enumerate(edw2_names):
+            try:
+                test = edw3_names[index]
+            except IndexError:
+                edw3_names.append(name)
+
+    # Make sure the length of the columns is the same
+    # If it is, update the edw3 request obj to have the same names as edw2
+    if len(edw2_names) == len(edw3_names):
+        for index, name in enumerate(edw3_names):
+            if edw3_names[index] != edw2_names[index]:
+                for report_id in edw3_ro:
+                    edw3_ro[report_id]["cols"][index]["name"] = edw2_names[index]
+    else:
+        print(edw2_names)
+        print(edw3_names)
+        print(edw3_ro)
+        raise Exception('The length of the edw2 column names does not match edw3')
 
 
 def main():
@@ -842,68 +898,86 @@ def main():
     cascade.get_display_groups()
 
     if args.manual:
-        try:
-            request_objects = json.load(open('./sources/json_sources/manual_comparison_objects.json'))
-        except FileNotFoundError as e:
-            print(f"A json File containing an edw2 and edw3 request object "
-                  f"must be created @@ {e}")
-            raise e
-
-        # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
-        # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
-        edw2_ro = request_objects["edw2_request_object"]
-        edw3_ro = request_objects["edw3_request_object"]
-
-        sim = args.sim or None
-        if args.join:
-            join_on = args.join.split(',')
-            join_on = [col_name.strip() for col_name in join_on]
-        else:
-            join_on = ['Day']
-        if args.start_date and args.end_date:
-            relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
-            relative_to_exact_date(edw3_ro, args.start_date, args.end_date)
-        if args.merchant:
-            # Replace _ with space
-            # This was jsuyt for naming and to be able to pass as an arg
-            merchant = args.merchant.replace('_', '')
-            replace_merchant(edw2_ro, merchant)
-            replace_merchant(edw3_ro, merchant)
-        # if args.remove: #TODO: Implement
-        #     drop_columns(args.drop, edw2_ro)
-        #     drop_columns(args.drop, edw3_ro)
-        timestamp = datetime.now().strftime("%x %X")
-        timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
-        manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
-        os.mkdir(manual_comparison_report_dir_path)
-        for report_key in edw2_ro:
-            for col in edw2_ro[report_key]["cols"]:
-                if not args.comparison_column:
-                    try:
-                        if "dim_date" not in col["id"] and "hidden" not in col \
-                                and "website" not in col["name"].lower():
-                            comparison_col_name = col["name"]
-                    except TypeError:
-                        raise
-                else:
-                    comparison_col_name = args.comparison_column
-            loop = asyncio.new_event_loop()
-            output_file = args.merchant + '_' + comparison_col_name
+        # Get a list of all files in the output path
+        # It is assumed we'll run for every file in that path
+        js_path = './sources/json_sources/manual_comparison_objects'
+        js_files = os.listdir(js_path)
+        for js_file in js_files:
             try:
-                start = datetime.now()
-                # code ...
-                loop.run_until_complete(
-                    cascade.run_simple_difference(
-                        {"join_on": join_on,
-                         "comparison_col_name": comparison_col_name},
-                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
-                        manual_path=manual_comparison_report_dir_path)
-                )
-                print("Total runtime: ", datetime.now() - start)
-            except KeyboardInterrupt:
-                sys.exit()
-            finally:
-                loop.close()
+                request_objects = json.load(open(js_path + '/' + js_file))
+            except FileNotFoundError as e:
+                print(f"A json File containing an edw2 and edw3 request object "
+                    f"must be created @@ {e}")
+                raise e
+
+            # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
+            # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
+            edw2_ro = request_objects["edw2_request_object"]
+            edw3_ro = request_objects["edw3_request_object"]
+
+            sim = args.sim or None
+            if args.join:
+                join_on = args.join.split(',')
+                join_on = [col_name.strip() for col_name in join_on]
+            else:
+                join_on = ['Day']
+            if args.start_date and args.end_date:
+                pass
+                #relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
+                #relative_to_exact_date(edw3_ro, args.start_date, args.end_date)
+            if args.merchant:
+                # Replace _ with space
+                # This was just for naming and to be able to pass as an arg
+                merchant = args.merchant.replace('_', ' ')
+                cascade.merchant = args.merchant
+                replace_merchant(edw2_ro, merchant)
+                replace_merchant(edw3_ro, merchant)
+
+            # Match the names
+            match_names(edw2_ro, edw3_ro)
+
+            print(json.dumps(edw2_ro))
+            print(json.dumps(edw3_ro))
+
+            # if args.remove: #TODO: Implement
+            #     drop_columns(args.drop, edw2_ro)
+            #     drop_columns(args.drop, edw3_ro)
+            #timestamp = datetime.now().strftime("%x %X")
+            timestamp = datetime.now().strftime("%Y%m%d%H%M")
+            timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
+            manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
+            try:
+                os.mkdir(manual_comparison_report_dir_path)
+            except FileExistsError:
+                pass
+            for report_key in edw2_ro:
+                for col in edw2_ro[report_key]["cols"]:
+                    if not args.comparison_column:
+                        try:
+                            if "dim_date" not in col["id"] and "hidden" not in col \
+                                    and "website" not in col["name"].lower():
+                                comparison_col_name = col["name"]
+                        except TypeError:
+                            raise
+                    else:
+                        comparison_col_name = args.comparison_column
+                loop = asyncio.new_event_loop()
+                output_file = args.merchant + '_' + comparison_col_name
+                try:
+                    start = datetime.now()
+                    # code ...
+                    loop.run_until_complete(
+                        cascade.run_simple_difference(
+                            {"join_on": join_on,
+                            "comparison_col_name": comparison_col_name},
+                            edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
+                            manual_path=manual_comparison_report_dir_path, merchant=args.merchant)
+                    )
+                    print("Total runtime: ", datetime.now() - start)
+                except KeyboardInterrupt:
+                    sys.exit()
+                finally:
+                    loop.close()
 
     # Instructions for Automated Dashboard Regression
     else:
