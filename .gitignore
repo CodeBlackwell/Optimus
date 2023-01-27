@@ -139,3 +139,4 @@ Dockerfile
 # Misc
 *.conf
 config.json
+./json_sources/creds.json
