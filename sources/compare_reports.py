@@ -14,8 +14,8 @@ from sources.knowndiscrepancies import KnownDiscrepancies
 from sources.base import SourceBase
 
 curpath = os.getcwd()
-if not os.path.exists("validation_csv_outputs"):
-    os.makedirs(("validation_csv_outputs"))
+if not os.path.exists("validation_outputs"):
+    os.makedirs(("validation_outputs"))
 
 
 # os.path.abspath(os.curdir)
