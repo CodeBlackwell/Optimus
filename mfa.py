@@ -62,7 +62,7 @@ class MFAToken():
 # Temp test code
 if __name__ == '__main__':
     phone_number = 5135025652
-    mfa = MFAToken()
+    mfa = MFAToken(phone_number)
     thread = threading.Thread(target=mfa.background)
     thread.daemon = True
     thread.start()
