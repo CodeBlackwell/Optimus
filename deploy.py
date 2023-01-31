@@ -292,6 +292,10 @@ if __name__ == "__main__":
     if args.start == '' and args.end == '':
         start_times, end_times = calculate_times(now)
     else:
+        # Cover case where end wasn't given
+        if args.start != '' and args.end == '':
+            logging.warning('Start given without end., Defaulting to now')
+            end = now
         start_times = args.start.split(',')
         end_times = args.end.splt(',')
 
@@ -299,6 +303,11 @@ if __name__ == "__main__":
     for index, start_time in enumerate(start_times):
         start = start_times[index]
         end = end_times[index]
+
+        # Make sure end isn't after now
+        if end > now:
+            logging.warning(f'End time given {end} is in the future! Resetting to now')
+            end = now
 
         # Try to parse dates
         # Since we allow input args for this, print a complaint if format fails
