@@ -316,31 +316,33 @@ if __name__ == "__main__":
             merchant = merchant.replace(' ', '_')
             cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
             print(cmd)
-            subprocess.run(cmd, shell=True, timeout=60)
+            try:
+                subprocess.run(cmd, shell=True, timeout=30)
+            except:
+                continue # Go to next merchant if it times out
         os.chdir('..')
 
-        # Slack configurations
-        # Note the file tree here:
+    # Slack configurations
+    # Note the file tree here:
+    '''
+    xlsx
+        date folder
+            regression test folder
+                EDW3_Production
+                    xlsx file
         '''
-        xlsx
-            date folder
-                regression test folder
-                    EDW3_Production
-                        xlsx file
-        '''
-        # Give the option to bypass Slack posting
-        if args.skip_slack is False:
-            channel = args.channel
-            msg = f'''Regression test results ({now} run)'''
-            file_list = build_file_list()
-            for fid in file_list:
-                post_to_slack(channel, msg, fid)
+    # Give the option to bypass Slack posting
+    if args.skip_slack is False:
+        channel = args.channel
+        msg = f'''Regression test results ({now} run)'''
+        file_list = build_file_list()
+        for fid in file_list:
+            post_to_slack(channel, msg, fid)
 
     # Grab list of images provided by args
     containers = args.containers.split(',')
     if containers == ['']:
-        logging.warning('No containers specified to deploy. Exiting.')
-        #exit()
+        logging.warning('No containers specified to deploy.')
     else:
         print(containers)
 

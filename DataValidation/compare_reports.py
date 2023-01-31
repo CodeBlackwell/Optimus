@@ -171,7 +171,7 @@ class Comparison(KnownDiscrepancies):
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
 
-        # Exists in EDW# Only -Boolean
+        # Exists in EDW3 Only -Boolean
         edw3_orphans_bool = self.reports[0].orphans['is_orphan']
         edw2_orphans_bool = self.reports[1].orphans['is_orphan']
 
@@ -187,7 +187,9 @@ class Comparison(KnownDiscrepancies):
         except AssertionError:
             difference = len(edw3_df.index) - len(edw2_df.index)
             if difference < 0:
-                raise Exception('EDW2 found more results than edw2. Need to add this to discrepency in future realse')
+                print(edw2_df)
+                print(edw3_df)
+                raise Exception('EDW2 found more results than edw3. Need to add this to discrepency in future realse')
             else:
                 print('WARNING: Results did not match. Adjusting by dropping extra rows from edw3 result')
                 print('Initial results:')

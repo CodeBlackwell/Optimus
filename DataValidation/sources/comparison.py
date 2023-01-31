@@ -761,20 +761,31 @@ class Cascade:
         return ro
 
 
-def relative_to_exact_date(ro, start_date, end_date):
-    new_date_filter = {
-        "field": "dim_date-mm_dd_yyyy",
-        "op": "between",
-        "values": [
-            start_date,
-            end_date
-        ]
-    }
+def relative_to_exact_date(ro, start_date, end_date, edw3=False):
+    # Find the difference and count between given dates
+    start = datetime.strptime(start_date, "%m/%d/%Y")
+    end = datetime.strptime(end_date, "%m/%d/%Y")
+    now_date = datetime.utcnow()
+    difference = abs(now_date - end).days
+    day_count = (end - start).days + 1
+
+    # Replace values with the calculated fields
     for report_id in ro:
         for filter in ro[report_id]["filters"]:
             if filter["field"] == "dim_date-mm_dd_yyyy" and filter["op"] == "relative_date":
-                ro[report_id]["filters"].remove(filter)
-        ro[report_id]["filters"].append(new_date_filter)
+                filter["count"] = day_count
+                filter["start"] = -difference
+
+    # For edw3, we need to remove the aggregate filter (unless we are doing 30 days)
+    if edw3 is True and day_count > 30:
+        for report_id in ro:
+            for index, column in enumerate(ro[report_id]["cols"]):
+                try:
+                    if column["id"] == "dim_date-mm_dd_yyyy":
+                         column["aggregate"] = []
+                # Hidden columns are missing an ID, just skip those
+                except KeyError:
+                    continue
     return ro
 
 
@@ -815,33 +826,47 @@ def replace_merchant(ro, merchant_id):
             ro[report_id]["filters"].append(new_filter)
 
 
+def align_columns(ro):
+    '''
+    This helper function pulls in a request object and nicely aligns all the columns
+    It will set up the request objects so they are in the same order with the same name list
+
+    Paramters:
+        ro: json request object, cotains the full complete edw2/3 ro
+    Returns:
+        names: list, gives all of the output names for the ro
+        ro: json request object, returns the modified request object
+        skipped_indices: list, gives a list of indices we skipped because they don't have a name
+    '''
+    names = []
+    skipped_indices = []
+    hidden_indices = []
+    for report_id in ro:
+        for index, column in enumerate(ro[report_id]["cols"]):
+            # Only continue if hidden is not present
+            try:
+                test = column["hidden"]
+                hidden = True
+                hidden_indices.append(index)
+            except:
+                hidden = False
+            if hidden is False:
+                try:
+                    names.append(column["name"])
+                # If there's an error, then it's a dim
+                # For edw2, log any skipped columns to remove from edw3
+                except KeyError:
+                    skipped_indices.append(index)
+    return ro, names, skipped_indices, hidden_indices
+
+
 def match_names(edw2_ro, edw3_ro):
     '''
     If the name of the columns is different, let's rename them to match
     This also raises an exception if the lengths don't match
     '''
-    edw3_names = []
-    edw2_names = []
-    skipped_indices = []
-
-    # Grab edw2 column names
-    for report_id in edw2_ro:
-        for index, column in enumerate(edw2_ro[report_id]["cols"]):
-            try:
-                edw2_names.append(column["name"])
-            # If there's an error, then it's a dim
-            # For edw2, log any skipped columns to remove from edw3
-            except KeyError:
-                skipped_indices.append(index)
-
-    # Grab edw3 column names
-    for report_id in edw3_ro:
-        for column in edw3_ro[report_id]["cols"]:
-            try:
-                edw3_names.append(column["name"])
-            # If there's an error, then it's a dim
-            except KeyError:
-                continue
+    edw3_ro, edw3_names, edw3_skip, edw3_hidden_indices = align_columns(edw3_ro)
+    edw2_ro, edw2_names, skipped_indices, edw2_hidden_indices = align_columns(edw2_ro)
 
     # Drop any skipped indices
     for index in skipped_indices:
@@ -856,19 +881,25 @@ def match_names(edw2_ro, edw3_ro):
             except IndexError:
                 edw3_names.append(name)
 
+
     # Make sure the length of the columns is the same
     # If it is, update the edw3 request obj to have the same names as edw2
     if len(edw2_names) == len(edw3_names):
         for index, name in enumerate(edw3_names):
             if edw3_names[index] != edw2_names[index]:
                 for report_id in edw3_ro:
-                    edw3_ro[report_id]["cols"][index]["name"] = edw2_names[index]
+                    if index in edw3_hidden_indices:
+                        try:
+                            edw3_ro[report_id]["cols"][index + 1]["name"] = edw2_names[index]
+                        except IndexError:
+                            continue # Indicates last entry is a hidden column
+                    else:
+                        edw3_ro[report_id]["cols"][index]["name"] = edw2_names[index]
     else:
         print(edw2_names)
         print(edw3_names)
         print(edw3_ro)
         raise Exception('The length of the edw2 column names does not match edw3')
-
 
 def main():
     # Define comparison column name and join_on vars here
@@ -903,6 +934,7 @@ def main():
         js_path = './sources/json_sources/manual_comparison_objects'
         js_files = os.listdir(js_path)
         for js_file in js_files:
+            print('Running for', js_file)
             try:
                 request_objects = json.load(open(js_path + '/' + js_file))
             except FileNotFoundError as e:
@@ -922,9 +954,9 @@ def main():
             else:
                 join_on = ['Day']
             if args.start_date and args.end_date:
-                pass
-                #relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
-                #relative_to_exact_date(edw3_ro, args.start_date, args.end_date)
+                #pass
+                edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
+                edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
             if args.merchant:
                 # Replace _ with space
                 # This was just for naming and to be able to pass as an arg
