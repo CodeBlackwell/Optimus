@@ -109,6 +109,7 @@ venv/
 ENV/
 env.bak/
 venv.bak/
+lib64
 
 # Spyder project settings
 .spyderproject
@@ -139,3 +140,4 @@ Dockerfile
 # Misc
 *.conf
 config.json
+creds.json

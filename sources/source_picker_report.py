@@ -7,7 +7,7 @@ import requests
 from sources import constants
 from sources.base import SourceBase
 
-configs = json.load(open('./../config.json'))
+configs = json.load(open('./config.json'))
 
 
 class PickerReport(SourceBase):

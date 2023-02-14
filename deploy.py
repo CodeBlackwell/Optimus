@@ -351,7 +351,8 @@ if __name__ == "__main__":
     # Grab list of images provided by args
     containers = args.containers.split(',')
     if containers == ['']:
-        logging.warning('No containers specified to deploy.')
+        logging.warning('No containers specified to deploy')
+        #exit()
     else:
         print(containers)
 
