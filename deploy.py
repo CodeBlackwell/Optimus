@@ -21,7 +21,7 @@ import json
 import requests
 import subprocess
 import glob
-import boto3
+#import boto3
 import shutil
 import time
 
@@ -100,20 +100,20 @@ def register_image(image_name, job_name, cpus=2, memory=2000):
         memory: int (optional), gives the memory (in mb) to use on container
     '''
     comment("Registering job for  " + job_name)
-    client = boto3.client('batch')
-    try:
-        response = client.register_job_definition(
-            jobDefinitionName=job_name,
-            type='container',
-            containerProperties={
-                'image': image_name,
-                'vcpus': cpus,
-                'memory': memory
-            }
-        )
-        print (response['jobDefinitionArn'])
-    except Exception as e:
-        print(e) # Logs errors registering job
+    # client = boto3.client('batch')
+    # try:
+    #     response = client.register_job_definition(
+    #         jobDefinitionName=job_name,
+    #         type='container',
+    #         containerProperties={
+    #             'image': image_name,
+    #             'vcpus': cpus,
+    #             'memory': memory
+    #         }
+    #     )
+    #     print (response['jobDefinitionArn'])
+    # except Exception as e:
+    #     print(e) # Logs errors registering job
 
 def approve_mfa():
     '''
@@ -267,8 +267,8 @@ if __name__ == "__main__":
     comment("Starting the release process on " + now)
 
     # Global parameters
-    global client, tag
-    client = boto3.client('ecs')
+    #global client, tag
+    #client = boto3.client('ecs')
     tag = args.tag
 
     # Specify the uri of the image here
