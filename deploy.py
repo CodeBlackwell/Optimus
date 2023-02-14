@@ -22,6 +22,7 @@ import requests
 import subprocess
 import glob
 #import boto3
+import shutil
 import time
 
 from datetime import datetime, timedelta
@@ -221,6 +222,45 @@ def build_file_list():
                 file_list.append(fid)
     return file_list
 
+def calculate_times(now):
+    '''
+    Builds lists of start and end times
+    We'll exclude today and run for the following:
+        - month_to_date (30 days back from yesterday)
+        - last_month
+        - last_year
+
+    Parameters:
+        now: datetime, gives the current time
+
+    Returns:
+        start_times: a list of start times
+        end_times: a list of end times to use
+    '''
+    # Drop time
+    now = now.replace(hour=0, minute=0, second=0)
+
+    # Last 30 days
+    mtd_end = now - timedelta(days=1)
+    mtd_start = mtd_end - timedelta(days=30)
+
+    # Last month
+    day_of_month = int(now.strftime("%d"))
+    lm_end = now - timedelta(days=day_of_month)
+    lm_start = lm_end.replace(day=1)
+    lm_end = lm_end + timedelta(days=1)
+
+    # Last year
+    doy = int(now.strftime("%j"))
+    ly_end = now - timedelta(days=doy)
+    ly_start = ly_end - timedelta(days=364)
+    ly_end = ly_end + timedelta(days=1)
+
+    # Collect into lists
+    start_times = [mtd_start, lm_start, ly_start]
+    end_times = [mtd_end, lm_end, ly_end]
+    return start_times, end_times
+
 if __name__ == "__main__":
     # Init
     now = time.strftime("%c")
@@ -250,29 +290,46 @@ if __name__ == "__main__":
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
     if args.start == '' and args.end == '':
-        end = now - timedelta(days=1)
-        start = end - timedelta(days=30)
+        start_times, end_times = calculate_times(now)
     else:
-        start = args.start
-        end = args.end
+        # Cover case where end wasn't given
+        if args.start != '' and args.end == '':
+            logging.warning('Start given without end., Defaulting to now')
+            end = now
+        start_times = args.start.split(',')
+        end_times = args.end.splt(',')
 
-    # Try to parse dates
-    # Since we allow input args for this, print a complaint if format fails
-    try:
-        end = end.strftime('%m/%d/%Y')
-        start = start.strftime('%m/%d/%Y')
-    except Exception as e:
-        logging.error(f'Unable to process input args {start} and {end}')
-        print(e)
+    # Run for every input date
+    for index, start_time in enumerate(start_times):
+        start = start_times[index]
+        end = end_times[index]
 
-    # Trigger script
-    os.chdir('DataValidation')
-    for merchant in merchants:
-        # Cannot use spaces in cli, replace with _
-        merchant = merchant.replace(' ', '_')
-        cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
-        subprocess.run(cmd, shell=True, timeout=60)
-    os.chdir('..')
+        # Make sure end isn't after now
+        if end > now:
+            logging.warning(f'End time given {end} is in the future! Resetting to now')
+            end = now
+
+        # Try to parse dates
+        # Since we allow input args for this, print a complaint if format fails
+        try:
+            end = end.strftime('%m/%d/%Y')
+            start = start.strftime('%m/%d/%Y')
+        except Exception as e:
+            logging.error(f'Unable to process input args {start} and {end}')
+            print(e)
+
+        # Trigger script
+        os.chdir('DataValidation')
+        for merchant in merchants:
+            # Cannot use spaces in cli, replace with _
+            merchant = merchant.replace(' ', '_')
+            cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
+            print(cmd)
+            try:
+                subprocess.run(cmd, shell=True, timeout=30)
+            except:
+                continue # Go to next merchant if it times out
+        os.chdir('..')
 
     # Slack configurations
     # Note the file tree here:
@@ -282,7 +339,7 @@ if __name__ == "__main__":
             regression test folder
                 EDW3_Production
                     xlsx file
-    '''
+        '''
     # Give the option to bypass Slack posting
     if args.skip_slack is False:
         channel = args.channel
@@ -315,7 +372,7 @@ if __name__ == "__main__":
     # Cleanup
     files = glob.glob('DataValidation/validation_outputs/xlsx/*')
     for fid in files:
-        os.remove(fid)
+        shutil.rmtree(fid)
 
     # Mark completion of deployment
     now = time.strftime("%c")
