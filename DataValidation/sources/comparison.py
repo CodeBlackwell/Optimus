@@ -902,6 +902,50 @@ def match_names(edw2_ro, edw3_ro):
         print(edw3_ro)
         raise Exception('The length of the edw2 column names does not match edw3')
 
+def remove_hidden(ro):
+    ro_key = ''
+    for key in ro:
+        ro_key = key
+    for col in ro[ro_key]["cols"]:
+        if "hidden" in col:
+            col["hidden"] = False
+
+def remove_date_aggregates(ro):
+    ro_key = ''
+    for key in ro:
+        ro_key = key
+    for col in ro[ro_key]["cols"]:
+        if "dim_date" in col["id"]:
+            if "aggregate" in col:
+                del col["aggregate"]
+
+def remove_sort(ro):
+    ro_key = ''
+    for key in ro:
+        ro_key = key
+    del ro[ro_key]["sort"]
+
+def verify_relative_dates(ro_1, ro_2):
+    ro_key_1 = ''
+    ro_key_2 = ''
+    ro_1_filter = None
+    ro_2_filter = None
+    for key in ro_1:
+        ro_key_1 = key
+    for key in ro_2:
+        ro_key_2 = key
+    for filter_1 in ro_1[ro_key_1]["filters"]:
+        if filter_1["op"] == "relative_date":
+            ro_1_filter = filter_1
+    for filter_2 in ro_2[ro_key_2]["filters"]:
+        if filter_2["op"] == "relative_date":
+            ro_2_filter = filter_2
+
+    for key in ro_1_filter:
+        if ro_1_filter[key] != ro_2_filter[key]:
+            raise "mismatching relative date filters -Check the values of the relative date filters in the request objects"
+
+
 def main():
     # Instantiate the class
     cascade = Cascade()
@@ -927,7 +971,13 @@ def main():
             # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
             edw2_ro = request_objects["edw2_request_object"]
             edw3_ro = request_objects["edw3_request_object"]
-
+            remove_hidden(edw2_ro)
+            remove_hidden(edw3_ro)
+            remove_date_aggregates(edw2_ro)
+            remove_date_aggregates(edw3_ro)
+            verify_relative_dates(edw2_ro, edw3_ro)
+            remove_sort(edw2_ro)
+            remove_sort(edw3_ro)
             sim = args.sim or None
             if args.join:
                 join_on = args.join.split(',')
