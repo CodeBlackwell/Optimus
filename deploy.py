@@ -18,7 +18,7 @@ import argparse
 import datetime
 import logging
 import json
-import requests
+# import requests
 import subprocess
 import glob
 #import boto3

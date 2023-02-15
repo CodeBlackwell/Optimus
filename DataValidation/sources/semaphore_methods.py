@@ -39,7 +39,7 @@ total_edw3_orphans = 0
 g_utils = gspread.utils
 scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
          "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
+creds = ServiceAccountCredentials.from_json_keyfile_name("../creds.json", scope)
 client = gspread.authorize(creds)
 summary_sheet_names = [
     'month_summary',

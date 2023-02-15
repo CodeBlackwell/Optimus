@@ -20,7 +20,7 @@ import sources
 from compare_reports import Comparison
 from args import args
 
-configs = json.load(open('./sources/json_sources/config.json'))
+configs = json.load(open('../config.json'))
 
 
 class Cascade:

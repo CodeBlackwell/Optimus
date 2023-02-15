@@ -1,4 +1,5 @@
 import json
+import os
 
 import http3
 import numpy as np
@@ -7,7 +8,9 @@ import requests
 from sources import constants
 from sources.base import SourceBase
 
-configs = json.load(open('./sources/json_sources/config.json'))
+path = os.getcwd()
+print(path)
+configs = json.load(open('../config.json'))
 
 
 class PickerReport(SourceBase):
