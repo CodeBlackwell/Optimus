@@ -1,0 +1,58 @@
+{
+	"4T7nNKzK1kgw5tDl": {
+		"cols": [{
+			"prepared_id": "b42eab3e-cd74-4b0a-b70c-f6ca64c0ec72"
+		}, {
+			"prepared_id": "25d5dcb2-58e4-4951-9b48-2a8f63051068"
+		}, {
+			"prepared_id": "47a3fc50-4dbf-4126-a8f0-fd0d3ee73aa8"
+		}, {
+			"prepared_id": "be827df2-0c30-43b6-b4b3-6f606341b7cf"
+		}, {
+			"prepared_id": "5faa4a3c-a5af-42a6-b438-d45c827ba081"
+		}, {
+			"prepared_id": "6e032164-39f4-4ecf-9399-a9c6733d40f9"
+		}, {
+			"prepared_id": "18c78f65-feff-4224-ae78-0be3f97acb39"
+		}, {
+			"prepared_id": "5a6e51c2-4a6d-4461-a360-bb480ba89bd0"
+		}, {
+			"prepared_id": "05ba72f4-aed8-4045-97b3-9d291335d861"
+		}],
+		"report_name": "Referral Group Summary By Affiliate",
+		"filters": [{
+			"field": "dim_date-mm_dd_yyyy",
+			"op": "between",
+			"values": ["02/21/2023", "02/21/2023"]
+		}, {
+			"field": "dim_attribution_type-attribution_type_uuid",
+			"op": "ne",
+			"values": ["99999999-9999-4999-9999-999999999999"]
+		}, {
+			"field": "dim_event_type-event_type_name",
+			"op": "eq",
+			"values": ["ORDER"]
+		}, {
+			"field": "dim_source_type-source_type_code",
+			"op": "eq",
+			"values": ["AVANTMETRICS", "BOTH"]
+		}, {
+			"field": "dim_merchant-merchant_uuid",
+			"op": "eq",
+			"values": ["e295c418-295a-447c-b265-734e25f82503"]
+		}],
+		"sort": [{
+			"field": "affiliate_default_website0",
+			"direction": "asc",
+			"alias": "affiliate_default_website0"
+		}],
+		"totals": true,
+		"offset": 0,
+		"currency": "USD",
+		"limit": 30,
+		"widths": true,
+		"counts": true,
+		"partitionLimit": 24,
+		"partitionOffset": 0
+	}
+}
