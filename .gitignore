@@ -142,3 +142,4 @@ Dockerfile
 *.conf
 config.json
 creds.json
+bin
