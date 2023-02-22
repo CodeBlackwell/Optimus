@@ -40,6 +40,7 @@ parser.add_argument("--end", type=str, help="Specifies an end date for validatio
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
 parser.add_argument("--skip-slack", type=bool, help="Indicates if we should skip posting to Slack for this run. Default is False", default=False)
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
+parser.add_argument("-ne", "--no-error", type=bool, default=False)
 args = parser.parse_args()
 
 def post_to_slack(channel, msg, fid):
@@ -323,8 +324,11 @@ if __name__ == "__main__":
         for merchant in merchants:
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
-            cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
-            print(cmd)
+            print(args.ne)
+            if args.ne:
+                cmd = f'python -m sources.comparison -ne'
+            else:
+                cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
             try:
                 subprocess.run(cmd, shell=True, timeout=30)
             except:

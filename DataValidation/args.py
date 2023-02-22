@@ -17,5 +17,6 @@ parser.add_argument('-c', '--comparison-column', type=str,
                     help="The name of the column to be compared (must be an int or float)")
 parser.add_argument('-sd', '--start-date', type=str, help="The Start Date - Format == mm_dd_yyyy")
 parser.add_argument('-ed', '--end-date', type=str, help="The End Date - Format === mm_dd_yyyy")
-parser.add_argument('-mer', '--merchant', type=str, help="The merchant uuid or merchant name")
+parser.add_argument('-mer', '--merchant', type=str, default="REI.com", help="The merchant uuid or merchant name")
+parser.add_argument('-ne', '--no-error', action='store_true')
 args = parser.parse_args()
