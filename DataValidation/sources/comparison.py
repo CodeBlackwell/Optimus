@@ -800,7 +800,7 @@ def drop_columns(drop_list, ro):
 
 
 def search_merchant(merchant_name):
-    merchant_map = json.load(open('./../json_sources/merchant_map.json'))
+    merchant_map = json.load(open('./sources/json_sources/merchant_map.json'))
     for merchant_id in merchant_map:
         if merchant_map[merchant_id].lower() == merchant_name.lower():
             return merchant_id
