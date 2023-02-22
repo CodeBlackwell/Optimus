@@ -971,13 +971,13 @@ def main():
             # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
             edw2_ro = request_objects["edw2_request_object"]
             edw3_ro = request_objects["edw3_request_object"]
-            remove_hidden(edw2_ro)
-            remove_hidden(edw3_ro)
-            remove_date_aggregates(edw2_ro)
-            remove_date_aggregates(edw3_ro)
-            verify_relative_dates(edw2_ro, edw3_ro)
-            remove_sort(edw2_ro)
-            remove_sort(edw3_ro)
+            # remove_hidden(edw2_ro)
+            # remove_hidden(edw3_ro)
+            # remove_date_aggregates(edw2_ro)
+            # remove_date_aggregates(edw3_ro)
+            # verify_relative_dates(edw2_ro, edw3_ro)
+            # remove_sort(edw2_ro)
+            # remove_sort(edw3_ro)
             sim = args.sim or None
             if args.join:
                 join_on = args.join.split(',')
