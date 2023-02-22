@@ -38,9 +38,9 @@ parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to o
 parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday.", default="")
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday.", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
-parser.add_argument("--skip-slack", type=bool, help="Indicates if we should skip posting to Slack for this run. Default is False", default=False)
+parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
-parser.add_argument("--no-error", type=bool, default=False)
+parser.add_argument("-ne", "--no-error", action="store_true")
 args = parser.parse_args()
 
 def post_to_slack(channel, msg, fid):
