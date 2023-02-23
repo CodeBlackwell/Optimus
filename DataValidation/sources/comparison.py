@@ -309,7 +309,7 @@ class Cascade:
     async def run_simple_difference(self, simple_difference_options, report_name=None, edw2_ro=None, edw3_ro=None,
                                     interval=None, dashboard_regression=None,
                                     sim=None, force_picker=None, manual_path=None, merchant=None):
-
+        print(merchant, '_________________________312')
         async with self.sem:
             if report_name is None:
                 report_name = self.report_name
@@ -330,7 +330,7 @@ class Cascade:
                 edw3_request_object = edw3_ro
             else:
                 edw3_request_object = self.edw3_request_object
-            merchant = self.merchant
+            self.merchant = merchant
             # if interval:
             #     self.replace_relative_dates(interval, request_object=edw2_ro)
             #     self.replace_relative_dates(interval, request_object=edw3_ro)
@@ -340,16 +340,15 @@ class Cascade:
                 simple_difference_options["manual_path"] = manual_path
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
-                                                         request_object=edw3_request_object,
-                                                         merchant=merchant),
+                                                         request_object=edw3_request_object),
                                     sources.PickerReport(picker_url=picker_url_2,
                                                          report_name=report_name,
-                                                         request_object=edw2_request_object,
-                                                         merchant=merchant)
+                                                         request_object=edw2_request_object)
                                     )
-            comparison.set_outputs(merchant, simple_report_name=self.report_name,
+            comparison.set_outputs(merchant=merchant, simple_report_name=self.report_name,
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
+            print(comparison.merchant, '_______________________________________353')
             await comparison.run_and_barf()
             self.comparisons["simple"].append(comparison.simple_difference_comparison)
 
@@ -799,17 +798,20 @@ def drop_columns(drop_list, ro):
             del col
 
 
-def search_merchant(merchant_name):
+def search_merchant(merchant_name=None, id=None):
     merchant_map = json.load(open('./sources/json_sources/merchant_map.json'))
-    for merchant_id in merchant_map:
-        if merchant_map[merchant_id].lower() == merchant_name.lower():
-            return merchant_id
+    if merchant_name:
+        for merchant_id in merchant_map:
+            if merchant_map[merchant_id].lower() == merchant_name.lower():
+                return merchant_id
+    if id:
+        return merchant_map[id]
 
 
 def replace_merchant(ro, merchant_id):
     new_filters = []
     if len(merchant_id) != 36:
-        merchant_id = search_merchant(merchant_id)
+        merchant_id = search_merchant(merchant_name=merchant_id)
     for report_id in ro:
         for filter in ro[report_id]["filters"]:
             if filter["field"] == "dim_merchant-merchant_uuid" and filter['values'] != f"{merchant_id}":
@@ -946,6 +948,16 @@ def verify_relative_dates(ro_1, ro_2):
             raise "mismatching relative date filters -Check the values of the relative date filters in the request objects"
 
 
+def get_merchant_id(ro):
+    key = ''
+    for ro_key in ro:
+        key = ro_key
+    for ro_filter in ro[ro_key]["filters"]:
+        if ro_filter["field"] == "dim_merchant-merchant_uuid":
+            return ro_filter["values"][0]
+
+
+
 def main():
     # Instantiate the class
     cascade = Cascade()
@@ -956,91 +968,95 @@ def main():
     if args.manual:
         # Get a list of all files in the output path
         # It is assumed we'll run for every file in that path
-        js_path = './sources/json_sources/manual_comparison_objects'
-        js_files = os.listdir(js_path)
-        for js_file in js_files:
-            print('Running for', js_file)
-            try:
-                request_objects = json.load(open(js_path + '/' + js_file))
-            except FileNotFoundError as e:
-                print(f"A json File containing an edw2 and edw3 request object "
-                    f"must be created @@ {e}")
-                raise e
+        js_path = './sources/json_sources/manual_comparison_objects.json'
+        request_objects = json.load(open(js_path))
+        # js_files = os.listdir(js_path)
+        # for js_file in js_files:
+        #     print('Running for', js_file)
+        #     try:
+        #         request_objects = json.load(open(js_path + '/' + js_file))
+        #     except FileNotFoundError as e:
+        #         print(f"A json File containing an edw2 and edw3 request object "
+        #             f"must be created @@ {e}")
+        #         raise e
 
             # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
             # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
-            edw2_ro = request_objects["edw2_request_object"]
-            edw3_ro = request_objects["edw3_request_object"]
-            # remove_hidden(edw2_ro)
-            # remove_hidden(edw3_ro)
-            # remove_date_aggregates(edw2_ro)
-            # remove_date_aggregates(edw3_ro)
-            # verify_relative_dates(edw2_ro, edw3_ro)
-            # remove_sort(edw2_ro)
-            # remove_sort(edw3_ro)
-            sim = args.sim or None
-            if args.join:
-                join_on = args.join.split(',')
-                join_on = [col_name.strip() for col_name in join_on]
-            else:
-                join_on = ['Day']
-            if args.start_date and args.end_date:
-                #pass
-                edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
-                edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
-            if args.merchant:
-                # Replace _ with space
-                # This was just for naming and to be able to pass as an arg
-                merchant = args.merchant.replace('_', ' ')
-                cascade.merchant = args.merchant
-                replace_merchant(edw2_ro, merchant)
-                replace_merchant(edw3_ro, merchant)
+        edw2_ro = request_objects["edw2_request_object"]
+        edw3_ro = request_objects["edw3_request_object"]
+        # remove_hidden(edw2_ro)
+        # remove_hidden(edw3_ro)
+        # remove_date_aggregates(edw2_ro)
+        # remove_date_aggregates(edw3_ro)
+        # verify_relative_dates(edw2_ro, edw3_ro)
+        # remove_sort(edw2_ro)
+        # remove_sort(edw3_ro)
+        sim = args.sim or None
+        if args.join:
+            join_on = args.join.split(',')
+            join_on = [col_name.strip() for col_name in join_on]
+        else:
+            join_on = ['Day']
+        if args.start_date and args.end_date:
+            #pass
+            edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
+            edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
+        if args.merchant:
+            # Replace _ with space
+            # This was just for naming and to be able to pass as an arg
+            merchant = args.merchant.replace('_', ' ')
+            cascade.merchant = args.merchant
+            replace_merchant(edw2_ro, merchant)
+            replace_merchant(edw3_ro, merchant)
 
-            # Match the names
-            match_names(edw2_ro, edw3_ro)
+        # Match the names
+        match_names(edw2_ro, edw3_ro)
 
-            print(json.dumps(edw2_ro))
-            print(json.dumps(edw3_ro))
+        print(json.dumps(edw2_ro))
+        print(json.dumps(edw3_ro))
 
-            # if args.remove: #TODO: Implement
-            #     drop_columns(args.drop, edw2_ro)
-            #     drop_columns(args.drop, edw3_ro)
-            #timestamp = datetime.now().strftime("%x %X")
-            timestamp = datetime.now().strftime("%Y%m%d%H%M")
-            timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
-            manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
+        # if args.remove: #TODO: Implement
+        #     drop_columns(args.drop, edw2_ro)
+        #     drop_columns(args.drop, edw3_ro)
+        #timestamp = datetime.now().strftime("%x %X")
+        timestamp = datetime.now().strftime("%Y%m%d%H%M")
+        timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
+        manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
+        try:
+            os.mkdir(manual_comparison_report_dir_path)
+        except FileExistsError:
+            pass
+        for report_key in edw2_ro:
+            for col in edw2_ro[report_key]["cols"]:
+                if not args.comparison_column:
+                    try:
+                        if "dim_date" not in col["id"] and "hidden" not in col \
+                                and "website" not in col["name"].lower():
+                            comparison_col_name = col["name"]
+                    except TypeError:
+                        raise
+                else:
+                    comparison_col_name = args.comparison_column
+
+            lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
+            output_file = args.merchant or lookup_name + '_' + comparison_col_name
+            print(output_file)
+            loop = asyncio.new_event_loop()
             try:
-                os.mkdir(manual_comparison_report_dir_path)
-            except FileExistsError:
-                pass
-            for report_key in edw2_ro:
-                for col in edw2_ro[report_key]["cols"]:
-                    if not args.comparison_column:
-                        try:
-                            if "dim_date" not in col["id"] and "hidden" not in col \
-                                    and "website" not in col["name"].lower():
-                                comparison_col_name = col["name"]
-                        except TypeError:
-                            raise
-                    else:
-                        comparison_col_name = args.comparison_column
-                loop = asyncio.new_event_loop()
-                output_file = args.merchant + '_' + comparison_col_name
-                try:
-                    start = datetime.now()
-                    # code ...
-                    loop.run_until_complete(
-                        cascade.run_simple_difference(
-                            {"join_on": join_on,
-                            "comparison_col_name": comparison_col_name},
-                            edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
-                            manual_path=manual_comparison_report_dir_path, merchant=args.merchant)
-                    )
-                    print("Total runtime: ", datetime.now() - start)
-                except KeyboardInterrupt:
-                    sys.exit()
-                finally:
-                    loop.close()
+                start = datetime.now()
+                # code ...
+                loop.run_until_complete(
+                    cascade.run_simple_difference(
+                        {"join_on": join_on,
+                        "comparison_col_name": comparison_col_name},
+                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
+                        manual_path=manual_comparison_report_dir_path, merchant=args.merchant or lookup_name)
+                )
+                print("Total runtime: ", datetime.now() - start)
+            except KeyboardInterrupt:
+                sys.exit()
+            finally:
+                loop.close()
 
     # Instructions for Automated Dashboard Regression
     else:

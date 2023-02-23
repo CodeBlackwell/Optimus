@@ -94,7 +94,7 @@ class Comparison(KnownDiscrepancies):
             pass
 
     def set_outputs(self,
-                    merchant,
+                    merchant=None,
                     output_xlsx=False, output_csv=False,
                     output_slack=False, interval=None,
                     comparison_start_date=None, comparison_end_date=None,

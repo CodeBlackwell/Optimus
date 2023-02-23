@@ -92,7 +92,7 @@ class Comparison(KnownDiscrepancies):
             pass
 
     def set_outputs(self,
-                    merchant,
+                    merchant=None,
                     output_xlsx=False, output_csv=False,
                     output_slack=False, interval=None,
                     comparison_start_date=None, comparison_end_date=None,
@@ -295,6 +295,8 @@ class Comparison(KnownDiscrepancies):
                 filepath = self.dashboard_regression["path"] + "/" + self.dashboard_regression[
                     "category"] + "/" + self.merchant + '_' + xlsx_name + ".xlsx"
             else:
+
+                print(self.merchant, '\n', self.simple_difference, '\n')
                 if self.simple_difference["manual_path"]:
                     filepath = f"{self.simple_difference['manual_path']}/" \
                                + self.merchant + '_' + f"{self.simple_difference['comparison_col_name']}.xlsx"
