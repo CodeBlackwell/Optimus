@@ -93,7 +93,7 @@
                         "dim": "dim_date-last_thirty_days"
                     }
                 ],
-                "name": "Mm Dd Yyyy"
+                "name": "Date Range"
             },
             {
                 "prepared_id": "29c95852-5c17-4899-b4c9-3465fc943ec2",

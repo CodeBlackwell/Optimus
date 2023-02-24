@@ -54,15 +54,13 @@
 		"report_name": "Custom Report",
 		"format": "json",
 		"filters": [{
-			"field": "dim_date-mm_dd_yyyy",
 			"op": "relative_date",
-			"values": [],
-			"alias": "date_filter1",
-			"allow_empty": true,
-			"to_date": false,
-			"count": 30,
+			"field": "dim_date-mm_dd_yyyy",
+			"period": "day",
 			"start": -1,
-			"period": "day"
+			"count": 30,
+			"allow_empty": true,
+			"to_date": false
 		}, {
 			"field": "dim_merchant-merchant_uuid",
 			"op": "eq",

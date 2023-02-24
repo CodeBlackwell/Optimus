@@ -19,4 +19,7 @@ parser.add_argument('-sd', '--start-date', type=str, help="The Start Date - Form
 parser.add_argument('-ed', '--end-date', type=str, help="The End Date - Format === mm_dd_yyyy")
 parser.add_argument('-mer', '--merchant', type=str, help="The merchant uuid or merchant name")
 parser.add_argument('-ne', '--no-error', action='store_true')
+parser.add_argument('-rh', '--remove_hidden', action="store_true")
+parser.add_argument('-rda', '--remove-date-aggs', action="store_true")
+parser.add_argument('-rs', '--remove-sort', action="store_true")
 args = parser.parse_args()
