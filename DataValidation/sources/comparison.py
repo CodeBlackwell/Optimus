@@ -1,6 +1,5 @@
 # !#/bin/python3 -> this is just to indicate to the user this script is executable
 
-import argparse
 import asyncio
 import copy
 import json
@@ -14,11 +13,11 @@ import gspread
 import http3
 import pandas as pd
 import requests
+import sources
+from args import args
 from oauth2client.service_account import ServiceAccountCredentials
 
-import sources
 from compare_reports import Comparison
-from args import args
 
 configs = json.load(open('../config.json'))
 
@@ -782,7 +781,7 @@ def relative_to_exact_date(ro, start_date, end_date, edw3=False):
             for index, column in enumerate(ro[report_id]["cols"]):
                 try:
                     if column["id"] == "dim_date-mm_dd_yyyy":
-                         column["aggregate"] = []
+                        column["aggregate"] = []
                 # Hidden columns are missing an ID, just skip those
                 except KeyError:
                     continue
@@ -884,7 +883,6 @@ def match_names(edw2_ro, edw3_ro):
             except IndexError:
                 edw3_names.append(name)
 
-
     # Make sure the length of the columns is the same
     # If it is, update the edw3 request obj to have the same names as edw2
     if len(edw2_names) == len(edw3_names):
@@ -895,7 +893,7 @@ def match_names(edw2_ro, edw3_ro):
                         try:
                             edw3_ro[report_id]["cols"][index + 1]["name"] = edw2_names[index]
                         except IndexError:
-                            continue # Indicates last entry is a hidden column
+                            continue  # Indicates last entry is a hidden column
                     else:
                         edw3_ro[report_id]["cols"][index]["name"] = edw2_names[index]
     else:
@@ -904,28 +902,38 @@ def match_names(edw2_ro, edw3_ro):
         print(edw3_ro)
         raise Exception('The length of the edw2 column names does not match edw3')
 
+
 def remove_hidden(ro):
+    hidden_count = 0
     ro_key = ''
     for key in ro:
         ro_key = key
     for col in ro[ro_key]["cols"]:
         if "hidden" in col:
             col["hidden"] = False
+            col["name"] = f"hidden_col_{hidden_count}"
+            hidden_count += 1
+
 
 def remove_date_aggregates(ro):
     ro_key = ''
     for key in ro:
         ro_key = key
     for col in ro[ro_key]["cols"]:
-        if "dim_date" in col["id"]:
-            if "aggregate" in col:
-                del col["aggregate"]
+        try:
+            if "dim_date" in col["id"]:
+                if "aggregate" in col:
+                    del col["aggregate"]
+        except KeyError:
+            pass
+
 
 def remove_sort(ro):
     ro_key = ''
     for key in ro:
         ro_key = key
     del ro[ro_key]["sort"]
+
 
 def verify_relative_dates(ro_1, ro_2):
     ro_key_1 = ''
@@ -944,8 +952,13 @@ def verify_relative_dates(ro_1, ro_2):
             ro_2_filter = filter_2
 
     for key in ro_1_filter:
-        if ro_1_filter[key] != ro_2_filter[key]:
-            raise "mismatching relative date filters -Check the values of the relative date filters in the request objects"
+        try:
+            if ro_1_filter[key] != ro_2_filter[key]:
+                print(f"Edw2 filter  === \n {ro_1_filter} \n Edw3 filter === \n {ro_2_filter}")
+                raise Exception("mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
+        except KeyError:
+            print(f"Edw2 filter  === \n {ro_1_filter} \n Edw3 filter === \n {ro_2_filter}")
+            raise Exception("mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
 
 
 def get_merchant_id(ro):
@@ -955,7 +968,6 @@ def get_merchant_id(ro):
     for ro_filter in ro[ro_key]["filters"]:
         if ro_filter["field"] == "dim_merchant-merchant_uuid":
             return ro_filter["values"][0]
-
 
 
 def main():
@@ -970,6 +982,8 @@ def main():
         # It is assumed we'll run for every file in that path
         js_path = './sources/json_sources/manual_comparison_objects.json'
         request_objects = json.load(open(js_path))
+
+
         # js_files = os.listdir(js_path)
         # for js_file in js_files:
         #     print('Running for', js_file)
@@ -980,16 +994,17 @@ def main():
         #             f"must be created @@ {e}")
         #         raise e
 
-            # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
-            # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
+        # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
+        # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
         edw2_ro = request_objects["edw2_request_object"]
         edw3_ro = request_objects["edw3_request_object"]
-        # remove_hidden(edw2_ro)
+        # remove_hidden(edw2_ro) #@TODO: Add Remove_hidden option
         # remove_hidden(edw3_ro)
-        # remove_date_aggregates(edw2_ro)
-        # remove_date_aggregates(edw3_ro)
-        # verify_relative_dates(edw2_ro, edw3_ro)
-        # remove_sort(edw2_ro)
+
+        remove_date_aggregates(edw2_ro) #@TODO: Add remove_date_aggregates option
+        remove_date_aggregates(edw3_ro)
+        verify_relative_dates(edw2_ro, edw3_ro)
+        # remove_sort(edw2_ro) #@TODO Add remove_sort option
         # remove_sort(edw3_ro)
         sim = args.sim or None
         if args.join:
@@ -998,7 +1013,7 @@ def main():
         else:
             join_on = ['Day']
         if args.start_date and args.end_date:
-            #pass
+            # pass
             edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
             edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
         if args.merchant:
@@ -1011,16 +1026,16 @@ def main():
 
         # Match the names
         match_names(edw2_ro, edw3_ro)
-
+        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
         print(json.dumps(edw2_ro))
         print(json.dumps(edw3_ro))
 
         # if args.remove: #TODO: Implement
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
-        #timestamp = datetime.now().strftime("%x %X")
+        # timestamp = datetime.now().strftime("%x %X")
         timestamp = datetime.now().strftime("%Y%m%d%H%M")
-        timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
+        timestamped_label = f'/validation_outputs/xlsx/{lookup_name}_manual_comparison--{timestamp.replace("/", "_")}'
         manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
         try:
             os.mkdir(manual_comparison_report_dir_path)
@@ -1038,9 +1053,7 @@ def main():
                 else:
                     comparison_col_name = args.comparison_column
 
-            lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
             output_file = args.merchant or lookup_name + '_' + comparison_col_name
-            print(output_file)
             loop = asyncio.new_event_loop()
             try:
                 start = datetime.now()
@@ -1048,7 +1061,7 @@ def main():
                 loop.run_until_complete(
                     cascade.run_simple_difference(
                         {"join_on": join_on,
-                        "comparison_col_name": comparison_col_name},
+                         "comparison_col_name": comparison_col_name},
                         edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
                         manual_path=manual_comparison_report_dir_path, merchant=args.merchant or lookup_name)
                 )
@@ -1121,7 +1134,8 @@ def main():
         sim = input("Would you like to specify a build (kiran_dev, adam_dev etc.)? if so - specify the name of it.")
         if sim == "":
             sim = None
-
+        #@TODO: Add option for running against multiple merchants
+        #@TODO: add option for running multiple date ranges
         # Start event loop for the given function
         loop = asyncio.new_event_loop()
         try:
