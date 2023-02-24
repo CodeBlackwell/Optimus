@@ -1000,7 +1000,8 @@ def main():
         edw3_ro = request_objects["edw3_request_object"]
         # remove_hidden(edw2_ro) #@TODO: Add Remove_hidden option
         # remove_hidden(edw3_ro)
-
+        #@TODO: make a function that detects when to join on multiple cols - hidden cols, uuids, etc + date
+        #@TODO: convert --manual 'run' functionality to accomidate Zach's script / Discuss if necessary.
         remove_date_aggregates(edw2_ro) #@TODO: Add remove_date_aggregates option
         remove_date_aggregates(edw3_ro)
         verify_relative_dates(edw2_ro, edw3_ro)
