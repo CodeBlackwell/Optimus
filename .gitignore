@@ -140,6 +140,8 @@ Dockerfile
 # Misc
 .idea
 *.conf
+*.xml
+*.iml
 
 config.json
 creds.json
