@@ -1,195 +1,135 @@
 {
   "edw2_request_object": {
     "top_five_widget": {
-        "cols": [
+      "cols": [
+        {
+          "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+          "name": "Affiliate Default Website",
+          "alias": "affiliate_default_website0"
+        },
+        {
+          "id": "dim_affiliate_default_website-affiliate_website_id",
+          "alias": "affiliate_default_website1",
+          "hidden": true
+        },
+        {
+          "id": "dim_date-mm_dd_yyyy",
+          "alias": "date_range",
+          "name": "Date Range",
+          "aggregate": [
             {
-                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                "name": "Affiliate Default Website",
-                "alias": "affiliate_default_website0"
-            },
-            {
-                "id": "dim_date-mm_dd_yyyy",
-                "alias": "date_range",
-                "name": "Date Range",
-                "aggregate": [
-                    {
-                        "func": "band",
-                        "dim": "dim_date-last_thirty_days"
-                    }
-                ]
-            },
-            {
-                "id": "fact_order_avantlink-order_amount",
-                "fact": true,
-                "name": "Gross Sales",
-                "alias": "gross_sales",
-                "format": "money",
-                "aggregate": [
-                    {
-                        "func": "sum",
-                        "distinct": true
-                    }
-                ]
-            },
-            {
-                "id": "dim_affiliate_default_website-affiliate_website_id",
-                "alias": "affiliate_default_website1",
-                "hidden": true
+              "func": "band",
+              "dim": "dim_date-last_thirty_days"
             }
-        ],
-        "report_name": "Custom Report",
-        "format": "json",
-        "filters": [
+          ]
+        },
+        {
+          "id": "fact_order_adjustment-adjustment_hash_key",
+          "fact": true,
+          "name": "Adjustments",
+          "alias": "adjustments_count",
+          "format": "int",
+          "aggregate": [
             {
-                "field": "dim_merchant-merchant_uuid",
-                "op": "eq",
-                "values": [
-                    "e295c418-295a-447c-b265-734e25f82503"
-                ],
-                "alias": "merchant_filter1"
-            },
-            {
-                "field": "dim_date-mm_dd_yyyy",
-                "op": "relative_date",
-                "values": [],
-                "allow_empty": true,
-                "to_date": false,
-                "count": 30,
-                "start": -1,
-                "period": "day"
+              "func": "count",
+              "distinct": true
             }
-        ],
-        "partitions": [],
-        "sort": [
-            {
-                "field": "gross_sales",
-                "direction": "desc"
-            }
-        ],
-        "totals": true,
-        "widths": true,
-        "counts": true,
-        "partitionLimit": 1,
-        "offset": 0,
-        "partitionOffset": 0
+          ]
+        }
+      ],
+      "report_name": "Custom Report",
+      "format": "json",
+      "filters": [
+        {
+          "op": "relative_date",
+          "field": "dim_date-mm_dd_yyyy",
+          "period": "day",
+          "start": -1,
+          "count": 30,
+          "allow_empty": true,
+          "to_date": false
+        },
+        {
+          "field": "dim_merchant-merchant_uuid",
+          "op": "eq",
+          "values": [
+            "e295c418-295a-447c-b265-734e25f82503"
+          ],
+          "alias": "merchant_filter1"
+        }
+      ],
+      "partitions": [],
+      "sort": [
+        {
+          "field": "adjustments_count",
+          "direction": "desc"
+        }
+      ],
+      "totals": true,
+      "widths": true,
+      "counts": true,
+      "partitionLimit": 1,
+      "offset": 0,
+      "limit": 10,
+      "partitionOffset": 0
     }
   },
   "edw3_request_object": {
-    "ksL0Hh61fElvvwHK6": {
-        "cols": [
-            {
-                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                "alias": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                "aggregate": [],
-                "name": "Affiliate Website Url Stripped"
-            },
-            {
-                "id": "dim_date-mm_dd_yyyy",
-                "alias": "dim_date-mm_dd_yyyy",
-                "aggregate": [
-                    {
-                        "func": "band",
-                        "bands": null,
-                        "dim": "dim_date-last_thirty_days"
-                    }
-                ],
-                "name": "Date Range"
-            },
-            {
-                "prepared_id": "29c95852-5c17-4899-b4c9-3465fc943ec2",
-                "id": "fact_event_active_conversion-event_action_amount",
-                "name": "Gross Sales",
-                "alias": "gross_sales",
-                "format": "money",
-                "aggregate": [
-                    {
-                        "op": "eq",
-                        "func": "filter",
-                        "field": "dim_event_type-event_type_name",
-                        "values": [
-                            "ORDER"
-                        ]
-                    },
-                    {
-                        "op": "eq",
-                        "func": "filter",
-                        "field": "dim_transaction_type-transaction_type_code",
-                        "values": [
-                            "0",
-                            "3"
-                        ]
-                    },
-                    {
-                        "op": "ne",
-                        "func": "filter",
-                        "field": "fact_event_active_conversion-attribution_share",
-                        "values": [
-                            "0"
-                        ]
-                    },
-                    {
-                        "op": "eq",
-                        "func": "filter",
-                        "field": "fact_event_active_conversion-is_primary_affiliate",
-                        "values": [
-                            "yes"
-                        ]
-                    },
-                    {
-                        "op": "eq",
-                        "func": "filter",
-                        "field": "dim_source_type-source_type_code",
-                        "values": [
-                            "AVANTLINK",
-                            "BOTH"
-                        ]
-                    },
-                    {
-                        "func": "sum",
-                        "distinct": false
-                    }
-                ],
-                "fact": true
-            },
-            {
-                "id": "dim_affiliate-affiliate_uuid",
-                "alias": "dim_affiliate-affiliate_uuid",
-                "aggregate": [],
-                "name": "Affiliate Uuid",
-                "hidden": true
-            }
-        ],
-        "filters": [
-            {
-                "field": "dim_date-mm_dd_yyyy",
-                "op": "relative_date",
-                "values": [],
-                "allow_empty": true,
-                "to_date": false,
-                "count": 30,
-                "start": -1,
-                "period": "day"
-            },
-            {
-                "field": "dim_merchant-merchant_uuid",
-                "op": "eq",
-                "values": [
-                    "e295c418-295a-447c-b265-734e25f82503"
-                ]
-            }
-        ],
-        "sort": [
-            {
-                "field": "gross_sales",
-                "direction": "desc",
-                "alias": "gross_sales"
-            }
-        ],
-        "offset": 0,
-        "currency": "USD",
-        "format": "json",
-        "report_name": "Custom Report",
-        "partitions": []
+    "kuvzbHWknUazkr770": {
+      "cols": [
+        {
+          "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+          "alias": "dim_affiliate_default_website-affiliate_website_url_stripped",
+          "aggregate": [],
+          "name": "Affiliate Default Website"
+        },
+        {
+          "id": "dim_affiliate-affiliate_uuid",
+          "alias": "dim_affiliate-affiliate_uuid",
+          "aggregate": [],
+          "name": "Affiliate Uuid",
+          "hidden": true
+        },
+        {
+          "id": "dim_date-mm_dd_yyyy",
+          "alias": "dim_date-mm_dd_yyyy",
+          "aggregate": [],
+          "name": "Date Range"
+        },
+        {
+          "prepared_id": "098b750a-d718-4e44-8773-0f5e2e0d08fa"
+        }
+      ],
+      "filters": [
+        {
+          "op": "relative_date",
+          "field": "dim_date-mm_dd_yyyy",
+          "period": "day",
+          "start": -1,
+          "count": 30,
+          "allow_empty": true,
+          "to_date": false
+        },
+        {
+          "field": "dim_merchant-merchant_uuid",
+          "op": "eq",
+          "values": [
+            "e295c418-295a-447c-b265-734e25f82503"
+          ],
+          "alias": "merchant_filter1"
+        }
+      ],
+      "sort": [
+        {
+          "field": "adjustments_count",
+          "direction": "desc",
+          "alias": "adjustments_count"
+        }
+      ],
+      "offset": 0,
+      "currency": "USD",
+      "limit": 10,
+      "format": "json"
     }
-}
+  }
 }

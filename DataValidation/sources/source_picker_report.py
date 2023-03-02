@@ -9,7 +9,6 @@ from sources import constants
 from sources.base import SourceBase
 
 path = os.getcwd()
-print(path)
 configs = json.load(open('../config.json'))
 
 

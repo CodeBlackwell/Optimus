@@ -925,6 +925,9 @@ def remove_date_aggregates(ro):
         except KeyError:
             pass
 
+def verify_sorts(ro1,ro2):
+    # Will verify that the sorts, if they exist, are matching
+    pass
 
 def remove_sort(ro):
     ro_key = ''
@@ -962,33 +965,36 @@ def match_date_aggregates(ro_1, ro_2):
 
     """
     verifies that date aggregates in dim_date cols are matching. if they are not - replicates a copy of one to the other.
-    sets ro_2 as the source of truth for which dim_date col will be copied to the other.
+    sets ro_1 as the source of truth for which dim_date col will be copied to the other.
     Args:
-        ro_1: Edw(2 or 3) request object
-        ro_2: Edw(2 or 3) request object
+        ro_1: JSON_Dict, Edw(2 or 3) request object
+        ro_2: JSON_Dict, Edw(2 or 3) request object
 
     Returns:
-
+        None
     """
     ro_key_1 = ''
     ro_key_2 = ''
     ro_1_filter = None
     ro_2_filter = None
+    new_filter = {}
     source_of_truth = None
     for key in ro_1:
         ro_key_1 = key
     for key in ro_2:
         ro_key_2 = key
     try:
-        for col_2 in ro_2[ro_key_2]["cols"]:
-            if "dim_date" in col_2["id"]:
-                source_of_truth = col_2
         for col_1 in ro_1[ro_key_1]["cols"]:
             if "dim_date" in col_1["id"]:
-                del col_1
-                ro_1[ro_key_1]["cols"].append(source_of_truth)
+                source_of_truth = col_1
+        for col_2 in ro_2[ro_key_2]["cols"]:
+            if "dim_date" in col_2["id"]:
+                col_2["aggregate"].append(source_of_truth["aggregate"][0])
     except KeyError:
         pass
+    # print(f"EDW3 AGgregate == {ro_2[ro_key_2]['cols']}")
+
+    # print(f"EDW2 AGgregate == {ro_1[ro_key_1]['cols']}")
 
 
 def get_merchant_id(ro):
@@ -1084,7 +1090,7 @@ def main():
             replace_merchant(edw3_ro, merchant)
 
         # Match the names
-        match_names(edw2_ro, edw3_ro)
+        # match_names(edw2_ro, edw3_ro)
         lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
         verify_relative_dates(edw2_ro, edw3_ro)
         match_date_aggregates(edw2_ro, edw3_ro)
@@ -1096,8 +1102,8 @@ def main():
         else:
             join_on = define_join_on(edw2_ro, edw3_ro)
         #     print(join_on)
-        # print(json.dumps(edw2_ro))
-        # print(json.dumps(edw3_ro))
+        print(json.dumps(edw2_ro))
+        print(json.dumps(edw3_ro))
 
         # if args.remove: #TODO: Implement
         #     drop_columns(args.drop, edw2_ro)
@@ -1120,7 +1126,10 @@ def main():
                         raise
                 else:
                     comparison_col_name = args.comparison_column
-
+            for ro_key in edw2_ro:
+                edw2_ro_key = f"edw2_{comparison_col_name}"
+            for ro_key in edw3_ro:
+                edw3_ro_key = f"edw3_{comparison_col_name}"
 
             output_file = args.merchant or lookup_name + '_' + comparison_col_name
             loop = asyncio.new_event_loop()

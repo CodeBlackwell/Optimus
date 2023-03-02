@@ -296,7 +296,6 @@ class Comparison(KnownDiscrepancies):
                     "category"] + "/" + self.merchant + '_' + xlsx_name + ".xlsx"
             else:
 
-                print(self.merchant, '\n', self.simple_difference, '\n')
                 if self.simple_difference["manual_path"]:
                     filepath = f"{self.simple_difference['manual_path']}/" \
                                + self.merchant + '_' + f"{self.simple_difference['comparison_col_name']}.xlsx"
