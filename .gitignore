@@ -132,7 +132,7 @@ dmypy.json
 # Validation stuffs
 *.csv
 *.xlsx
-
+*.xlsx#
 # Container stuffs
 Dockerfile
 *.dockerignore
@@ -140,6 +140,9 @@ Dockerfile
 # Misc
 .idea
 *.conf
+*.xml
+*.iml
+
 config.json
 creds.json
 bin
