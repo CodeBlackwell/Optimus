@@ -138,7 +138,7 @@ Dockerfile
 *.dockerignore
 
 # Misc
-.idea
+.idea/
 *.conf
 config.json
 creds.json
