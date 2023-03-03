@@ -35,8 +35,8 @@ parser.add_argument("--job", type=str, help="Specifies the name of the job to us
 parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
 parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
 parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
-parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday.", default="")
-parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday.", default="")
+parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
+parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
 parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
@@ -298,17 +298,12 @@ if __name__ == "__main__":
             logging.warning('Start given without end., Defaulting to now')
             end = now
         start_times = args.start.split(',')
-        end_times = args.end.splt(',')
+        end_times = args.end.split(',')
 
     # Run for every input date
     for index, start_time in enumerate(start_times):
         start = start_times[index]
         end = end_times[index]
-
-        # Make sure end isn't after now
-        if end > now:
-            logging.warning(f'End time given {end} is in the future! Resetting to now')
-            end = now
 
         # Try to parse dates
         # Since we allow input args for this, print a complaint if format fails
@@ -317,7 +312,13 @@ if __name__ == "__main__":
             start = start.strftime('%m/%d/%Y')
         except Exception as e:
             logging.error(f'Unable to process input args {start} and {end}')
+            print('Hint: start/end should be in the format mm/dd/yyyy')
             print(e)
+        
+        # Make sure end isn't after now
+        if end > now:
+            logging.warning(f'End time given {end} is in the future! Resetting to now')
+            end = now
 
         # Trigger script
         os.chdir('DataValidation')
