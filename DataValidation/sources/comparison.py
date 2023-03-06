@@ -1052,7 +1052,9 @@ def main():
 
         # js_path = './sources/json_sources/manual_comparison_objects'
         # js_files = os.listdir(js_path)
-        # for js_file in js_files:
+        # for idx, js_file in enumerate(js_files):
+        #     if idx > 2:
+        #         break
         #     print('Running for', js_file)
         #     try:
         #         request_objects = json.load(open(js_path + '/' + js_file))
@@ -1065,6 +1067,8 @@ def main():
         # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
         edw2_ro = request_objects["edw2_request_object"]
         edw3_ro = request_objects["edw3_request_object"]
+
+        # print(f"{edw2_ro} \n \n \n {edw3_ro} \n \n __________________________")
         if args.remove_hidden:
             remove_hidden(edw2_ro)
             remove_hidden(edw3_ro)
@@ -1077,10 +1081,10 @@ def main():
         sim = args.sim or None
 
 
-        if args.start_date and args.end_date:
-            # pass
-            edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
-            edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
+        # if args.start_date and args.end_date:
+        #     # pass
+        #     edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
+        #     edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
         if args.merchant:
             # Replace _ with space
             # This was just for naming and to be able to pass as an arg
@@ -1102,8 +1106,9 @@ def main():
         else:
             join_on = define_join_on(edw2_ro, edw3_ro)
         #     print(join_on)
-        print(json.dumps(edw2_ro))
-        print(json.dumps(edw3_ro))
+        # print(json.dumps(edw2_ro))
+        # print("\n\n")
+        # print(json.dumps(edw3_ro))
 
         # if args.remove: #TODO: Implement
         #     drop_columns(args.drop, edw2_ro)
