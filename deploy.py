@@ -18,10 +18,8 @@ import argparse
 import datetime
 import logging
 import json
-# import requests
 import subprocess
 import glob
-#import boto3
 import shutil
 import time
 
@@ -37,7 +35,7 @@ parser.add_argument("--containers", type=str, help="Comma separated string with 
 parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
 parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
-parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is all.", default="all")
+parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is a set of 5 top merchants.", default="default")
 parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
 parser.add_argument("-ne", "--no-error", action="store_true")
@@ -279,10 +277,15 @@ if __name__ == "__main__":
     # ecs_login() FIXME: Need to uncomment to push images
 
     # Accept list of merchants
-    # For all merchants, use our default merchant list
-    if args.merchants == 'all':
+    # The "default" gives a list of 5 merchants we frequently run. This is the default setting
+    if args.merchants == 'default':
         merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors'.split(',')
-    # Supports multiple merchants
+    # For all merchants, read from merchant map and run them all
+    elif args.merchant == 'all':
+        with open('merchant_map.json', 'r+') as f:
+            data_set = json.load(f)
+            merchants = ','.join(data_set.values())
+    # Custom list or single entry- supports multiple merchants
     else:
         merchants = args.merchants.split(',')
 
@@ -314,7 +317,7 @@ if __name__ == "__main__":
             logging.error(f'Unable to process input args {start} and {end}')
             print('Hint: start/end should be in the format mm/dd/yyyy')
             print(e)
-        
+
         # Make sure end isn't after now
         if end > now:
             logging.warning(f'End time given {end} is in the future! Resetting to now')
@@ -373,10 +376,13 @@ if __name__ == "__main__":
         #register_image(uri, container)
         #push_ecs_image(uri, container)
 
-    # Cleanup
+    # Cleanup deleting files older than 3 days
+    delete_time = 3 * 24 * 60 * 60
     files = glob.glob('DataValidation/validation_outputs/xlsx/*')
     for fid in files:
-        shutil.rmtree(fid)
+        ctime = os.stat(fid).st_ctime
+        if ctime >= delete_time:
+            shutil.rmtree(fid)
 
     # Mark completion of deployment
     now = time.strftime("%c")
