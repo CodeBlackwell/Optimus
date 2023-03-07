@@ -527,7 +527,7 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None, merchants=None):
+                                   sem_count=None, merchants=None, merchant_name=None):
         if categories is None:
             categories = {
                 "trending_widget": {"Sales": True, "Combined Commissions": True,
@@ -548,8 +548,10 @@ class Cascade:
         self.dashboard_regression_path = dashboard_regression_report_dir_path
         os.mkdir(dashboard_regression_report_dir_path)
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
+        if merchant_name:
+            merc_id = search_merchant(merchant_name=merchant_name)
 
-        async def generate_reports(sim_name=None, merchant=None):
+        async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
             if sim_name:
                 dir_basepath = os.path.join(dashboard_regression_report_dir_path, sim_name)
@@ -573,7 +575,6 @@ class Cascade:
                         os.mkdir(os.path.join(dir_basepath, category))
                     except FileExistsError:
                         pass
-
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
                         edw2_request_object = sources.dashboard_objects["edw2_dashboard_objects"][widget] \
                             [category][request_object_name]
@@ -583,9 +584,9 @@ class Cascade:
                             for col in edw2_request_object[report_name]["cols"]:
                                 if "dim_date" not in col["id"] and "hidden" not in col \
                                         and "website" not in col["name"].lower():
-                                    if merchant:
-                                        replace_merchant(edw2_request_object, search_merchant(merchant_name=merchant))
-                                        replace_merchant(edw3_request_object, search_merchant(merchant_name=merchant))
+                                    if merchant_id:
+                                        replace_merchant(edw2_request_object, merchant_id)
+                                        replace_merchant(edw3_request_object, merchant_id)
                                         # merchant_path = os.path.join(dir_basepath, merchant)
                                         # try:
                                         # #     os.mkdir(merchant_path)
@@ -593,11 +594,11 @@ class Cascade:
                                         #     pass
                                         # print(f"{merchant_path} ----- 596, {merchant}")
                                     comparison_col_name = col["name"]
-                                    lookup_merchant_name = search_merchant(id=get_merchant_id(edw3_request_object))
+                                    lookup_merchant_name = search_merchant(merch_id=get_merchant_id(edw3_request_object))
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
-                                                            "merchant": merchant or lookup_merchant_name,
+                                                            "merchant": merchant_id or lookup_merchant_name,
                                                             "sim_name": sim_name
                                                             }
 
@@ -621,9 +622,9 @@ class Cascade:
 
         if sim:
             print("608 ********** RUNNING SIM \n\n")
-            await generate_reports(sim)
+            await generate_reports(sim, search_merchant(merch_id=merchant_name))
             print("608 ********** RUNNING Non-SIM \n\n")
-            await generate_reports()
+            await generate_reports(merchant_id=search_merchant(merch_id=merchant_name))
             print("combining summaries")
             self.combine_summaries()
         # elif merchants:
@@ -631,9 +632,10 @@ class Cascade:
         #         await generate_reports(merchant=name)
         #         print("SYS EXIT -----631")
         #         sys.exit()
-            # self.combine_summaries()
+        # self.combine_summaries()
         else:
-            await generate_reports()
+            print('RUNNING FROM HERE')
+            await generate_reports(merchant_id=merc_id)
         # self.upload_change_log()
 
     def perspective_regression(self):
@@ -792,7 +794,6 @@ def replace_merchant(ro, merchant_id):
                 ro[report_id]["filters"].append(new_filter)
 
 
-
 def relative_to_exact_date(ro, start_date, end_date):
     new_date_filter = {
         "field": "dim_date-mm_dd_yyyy",
@@ -818,14 +819,15 @@ def drop_columns(drop_list, ro):
         if col["name"] in drop_list:
             del col
 
-def search_merchant(merchant_name=None, id=None):
+
+def search_merchant(merchant_name=None, merch_id=None):
     merchant_map = json.load(open('./sources/json_sources/merchant_map.json'))
     if merchant_name:
         for merchant_id in merchant_map:
             if merchant_map[merchant_id].lower() == merchant_name.lower():
                 return merchant_id
-    if id:
-        return merchant_map[id]
+    if merch_id:
+        return merchant_map[merch_id]
 
 
 def replace_merchant(ro, merchant_id):
@@ -980,13 +982,15 @@ def verify_relative_dates(ro_1, ro_2, match=True):
         try:
             if ro_1_filter[key] != ro_2_filter[key]:
                 print(f"Edw2 filter  === \n {ro_1_filter} \n Edw3 filter === \n {ro_2_filter}")
-                raise Exception("mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
+                raise Exception(
+                    "mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
         except KeyError:
             print(f"Edw2 filter  === \n {ro_1_filter} \n Edw3 filter === \n {ro_2_filter}")
-            raise Exception("mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
+            raise Exception(
+                "mismatching relative date filters -Check the values of the relative date filters in the request objects are matching")
+
 
 def match_date_aggregates(ro_1, ro_2):
-
     """
     verifies that date aggregates in dim_date cols are matching. if they are not - replicates a copy of one to the other.
     sets ro_2 as the source of truth for which dim_date col will be copied to the other.
@@ -1055,7 +1059,8 @@ def define_join_on(ro1, ro2):
             edw3_col_names.append(col["name"])
     for col_name in join_on:
         if col_name not in edw3_col_names:
-            raise Exception(f"Join columns established were {join_on} -- a column named -- {col_name}  -- was not found in the EDW3 Request Object Columns")
+            raise Exception(
+                f"Join columns established were {join_on} -- a column named -- {col_name}  -- was not found in the EDW3 Request Object Columns")
     return join_on
 
 
@@ -1140,8 +1145,9 @@ def main():
     # Instructions for Automated Dashboard Regression
     else:
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
-        categories = ["Sales", "Combined Commission", "Network Commission",
-                      "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
+        categories = ["Sales"]
+                      # ,"Combined Commission", "Network Commission",
+                      # "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
         run_categories = {"trending_widget": False, "top_affiliates_widget": False}
         minimum_flag = False
         if args.run_all:
@@ -1153,15 +1159,18 @@ def main():
             start = datetime.now()
             loop = asyncio.new_event_loop()
             merchants = None
+            merchant_name = None
             if args.multi_merchant:
                 merchants = args.multi_merchant.split(',')
                 merchants = [col_name.strip() for col_name in merchants]
+            if args.merchant:
+                merchant_name = args.merchant
             try:
                 start = datetime.now()
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchants=merchants)
+                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name)
                 )
             except KeyboardInterrupt:
                 sys.exit()
