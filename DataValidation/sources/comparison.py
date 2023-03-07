@@ -527,7 +527,7 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None, merchant_name=None):
+                                   sem_count=None, merchants=None):
         if categories is None:
             categories = {
                 "trending_widget": {"Sales": True, "Combined Commissions": True,
@@ -549,7 +549,7 @@ class Cascade:
         os.mkdir(dashboard_regression_report_dir_path)
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
 
-        async def generate_reports(sim_name=None, merchant_name=None):
+        async def generate_reports(sim_name=None, merchant=None):
             futures = []
             if sim_name:
                 dir_basepath = os.path.join(dashboard_regression_report_dir_path, sim_name)
@@ -583,9 +583,9 @@ class Cascade:
                             for col in edw2_request_object[report_name]["cols"]:
                                 if "dim_date" not in col["id"] and "hidden" not in col \
                                         and "website" not in col["name"].lower():
-                                    if merchant_name:
-                                        replace_merchant(edw2_request_object, search_merchant(merchant_name=merchant_name))
-                                        replace_merchant(edw3_request_object, search_merchant(merchant_name=merchant_name))
+                                    if merchant:
+                                        replace_merchant(edw2_request_object, search_merchant(merchant_name=merchant))
+                                        replace_merchant(edw3_request_object, search_merchant(merchant_name=merchant))
                                         # merchant_path = os.path.join(dir_basepath, merchant)
                                         # try:
                                         # #     os.mkdir(merchant_path)
@@ -597,7 +597,7 @@ class Cascade:
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
-                                                            "merchant": merchant_name or lookup_merchant_name,
+                                                            "merchant": merchant or lookup_merchant_name,
                                                             "sim_name": sim_name
                                                             }
 
@@ -626,11 +626,11 @@ class Cascade:
             await generate_reports()
             print("combining summaries")
             self.combine_summaries()
-        elif merchant_name:
-            for name in merchant_name:
-                await generate_reports(merchant_name=name)
-                print("SYS EXIT -----631")
-                sys.exit()
+        # elif merchants:
+        #     for name in merchants:
+        #         await generate_reports(merchant=name)
+        #         print("SYS EXIT -----631")
+        #         sys.exit()
             # self.combine_summaries()
         else:
             await generate_reports()
@@ -1156,14 +1156,12 @@ def main():
             if args.multi_merchant:
                 merchants = args.multi_merchant.split(',')
                 merchants = [col_name.strip() for col_name in merchants]
-            if args.merchant:
-                merchant_name = search_merchant(merchant_name=args.merchant)
             try:
                 start = datetime.now()
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchant_name=merchant_name)
+                                                 sem_count=3, sim=sim, merchants=merchants)
                 )
             except KeyboardInterrupt:
                 sys.exit()
@@ -1217,7 +1215,7 @@ def main():
             # code ...
             loop.run_until_complete(
                 cascade.dashboard_regression(categories=run_categories, interval="last quarter",
-                                             sem_count=3, sim=sim, merchant_name=merchants)
+                                             sem_count=3, sim=sim, merchants=merchants)
             )
             print("Total runtime: ", datetime.now() - start)
         except KeyboardInterrupt:
