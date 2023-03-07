@@ -319,7 +319,7 @@ if __name__ == "__main__":
             print(e)
 
         # Make sure end isn't after now
-        if end > now:
+        if datetime.strptime(end, '%m/%d/%Y') > now:
             logging.warning(f'End time given {end} is in the future! Resetting to now')
             end = now
 
@@ -333,6 +333,7 @@ if __name__ == "__main__":
             else:
                 cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
             try:
+                print(cmd)
                 subprocess.run(cmd, shell=True, timeout=30)
             except:
                 continue # Go to next merchant if it times out
