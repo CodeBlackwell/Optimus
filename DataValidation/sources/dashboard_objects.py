@@ -561,87 +561,87 @@ edw2_dashboard_objects = {
                     "limit": 500
                 }
             },
-            "Conversion Rate": {
-                "trending_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "orders / clicks",
-                            "fact": true,
-                            "name": "Conversion Rate",
-                            "vars": {
-                                "clicks": {
-                                    "id": "fact_hit-summary_hit_count",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum"
-                                        }
-                                    ]
-                                },
-                                "orders": {
-                                    "id": "fact_order_avantlink-order_hash_key",
-                                    "aggregate": [
-                                        {
-                                            "func": "count",
-                                            "distinct": true
-                                        }
-                                    ]
-                                }
-                            },
-                            "alias": "conversion_rate",
-                            "format": "percent2"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-
-                    ],
-                    "totals": false,
-                    "widths": false,
-                    "counts": false,
-                    "partitionLimit": 4,
-                    "offset": 0,
-                    "partitionOffset": 0,
-                    "limit": 500
-                }
-            }
+            # "Conversion Rate": {
+            #     "trending_widget": {
+            #         "cols": [
+            #             {
+            #                 "id": "dim_date-mm_dd_yyyy",
+            #                 "name": "Day",
+            #                 "alias": "mm_dd_yyyy",
+            #                 "aggregate": [
+            #                     {
+            #                         "func": "range"
+            #                     }
+            #                 ]
+            #             },
+            #             {
+            #                 "id": "calculation",
+            #                 "calc": "orders / clicks",
+            #                 "fact": true,
+            #                 "name": "Conversion Rate",
+            #                 "vars": {
+            #                     "clicks": {
+            #                         "id": "fact_hit-summary_hit_count",
+            #                         "aggregate": [
+            #                             {
+            #                                 "func": "sum"
+            #                             }
+            #                         ]
+            #                     },
+            #                     "orders": {
+            #                         "id": "fact_order_avantlink-order_hash_key",
+            #                         "aggregate": [
+            #                             {
+            #                                 "func": "count",
+            #                                 "distinct": true
+            #                             }
+            #                         ]
+            #                     }
+            #                 },
+            #                 "alias": "conversion_rate",
+            #                 "format": "percent2"
+            #             }
+            #         ],
+            #         "report_name": "Custom Report",
+            #         "format": "json",
+            #         "filters": [
+            #             {
+            #                 "field": "dim_date-mm_dd_yyyy",
+            #                 "op": "relative_date",
+            #                 "values": [
+            #
+            #                 ],
+            #                 "alias": "date_filter1",
+            #                 "allow_empty": true,
+            #                 "to_date": false,
+            #                 "count": 30,
+            #                 "start": -1,
+            #                 "period": "day"
+            #             },
+            #             {
+            #                 "field": "dim_merchant-merchant_uuid",
+            #                 "op": "eq",
+            #                 "values": [
+            #                     "e295c418-295a-447c-b265-734e25f82503"
+            #                 ],
+            #                 "alias": "merchant_filter1"
+            #             }
+            #         ],
+            #         "partitions": [
+            #
+            #         ],
+            #         "sort": [
+            #
+            #         ],
+            #         "totals": false,
+            #         "widths": false,
+            #         "counts": false,
+            #         "partitionLimit": 4,
+            #         "offset": 0,
+            #         "partitionOffset": 0,
+            #         "limit": 500
+            #     }
+            # }
         },
         "Combined Commission": {
             "Total Cost": {
