@@ -10,13 +10,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -98,13 +97,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -278,13 +276,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -432,13 +429,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_avantlink-order_hash_key",
@@ -499,13 +495,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_avantlink-order_amount",
@@ -649,13 +644,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -779,13 +773,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -855,13 +848,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -931,13 +923,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
@@ -997,13 +988,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1073,13 +1063,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1151,13 +1140,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_bonus-bonus_commission_amount",
@@ -1217,13 +1205,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_cpc_earning-affiliate_earnings",
@@ -1283,13 +1270,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
@@ -1350,13 +1336,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1420,13 +1405,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1539,13 +1523,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1639,13 +1622,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1779,13 +1761,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -1887,13 +1868,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_cpc_earning-network_earnings",
@@ -1953,13 +1933,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_ppb_earning-network_commission",
@@ -2019,13 +1998,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_bonus-bonus_network_commission_amount",
@@ -2085,13 +2063,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -2155,13 +2132,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -2271,13 +2247,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -2365,13 +2340,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -2492,13 +2466,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -2572,13 +2545,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_hit-summary_hit_count",
@@ -2633,13 +2605,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_impression-summary_impression_count",
@@ -2696,13 +2667,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
@@ -2764,13 +2734,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_adjustment-order_combined_adjustment_amount",
@@ -2832,13 +2801,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_adjustment-adjustment_hash_key",
@@ -2899,13 +2867,12 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4160,13 +4127,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4290,13 +4256,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4366,13 +4331,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4442,13 +4406,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
@@ -4508,13 +4471,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4584,13 +4546,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
@@ -4972,13 +4933,12 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
-                            "aggregate": [
-                                {
-                                    "func": "range"
-                                }
-                            ]
+                            "alias": "date_range",
+                            "name": "Date Range",
+                            "aggregate": [{
+                                "func": "band",
+                                "dim": "dim_date-last_thirty_days"
+                            }]
                         },
                         {
                             "id": "calculation",
