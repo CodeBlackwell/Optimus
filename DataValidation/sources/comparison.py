@@ -1,5 +1,6 @@
 # !#/bin/python3 -> this is just to indicate to the user this script is executable
 
+import argparse
 import asyncio
 import copy
 import json
@@ -14,10 +15,9 @@ import http3
 import pandas as pd
 import requests
 import sources
+from compare_reports import Comparison
 from args import args
 from oauth2client.service_account import ServiceAccountCredentials
-
-from compare_reports import Comparison
 
 configs = json.load(open('../config.json'))
 
@@ -25,7 +25,6 @@ configs = json.load(open('../config.json'))
 class Cascade:
     edw2_request_object = None
     edw3_request_object = None
-    merchant = None
     output_xlsx = True
     simple_difference = False
     force_picker_address = True
@@ -69,14 +68,13 @@ class Cascade:
     prepared_col_map = None
 
     def __init__(self, start_date=None, end_date=None, edw2_request_object=None,
-                 edw3_request_object=None, report_name=None, cascade=False, merchant=None):
+                 edw3_request_object=None, report_name=None, cascade=False):
         self.timestamp = None
         self.cascade_start_date = start_date
         self.report_name = report_name
         self.cascade_end_date = end_date
         self.edw2_request_object = edw2_request_object
         self.edw3_request_object = edw3_request_object
-        self.merchant = merchant
         self.cascade = cascade
         self.true = True
         self.false = False
@@ -307,7 +305,8 @@ class Cascade:
 
     async def run_simple_difference(self, simple_difference_options, report_name=None, edw2_ro=None, edw3_ro=None,
                                     interval=None, dashboard_regression=None,
-                                    sim=None, force_picker=None, manual_path=None, merchant=None):
+                                    sim=None, force_picker=None, manual_path=None):
+
         async with self.sem:
             if report_name is None:
                 report_name = self.report_name
@@ -328,7 +327,6 @@ class Cascade:
                 edw3_request_object = edw3_ro
             else:
                 edw3_request_object = self.edw3_request_object
-            self.merchant = merchant
             # if interval:
             #     self.replace_relative_dates(interval, request_object=edw2_ro)
             #     self.replace_relative_dates(interval, request_object=edw3_ro)
@@ -343,7 +341,8 @@ class Cascade:
                                                          report_name=report_name,
                                                          request_object=edw2_request_object)
                                     )
-            comparison.set_outputs(merchant=merchant, simple_report_name=self.report_name,
+
+            comparison.set_outputs(simple_report_name=self.report_name,
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
             await comparison.run_and_barf()
@@ -528,7 +527,7 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None):
+                                   sem_count=None, merchants=None):
         if categories is None:
             categories = {
                 "trending_widget": {"Sales": True, "Combined Commissions": True,
@@ -548,10 +547,9 @@ class Cascade:
         dashboard_regression_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
         self.dashboard_regression_path = dashboard_regression_report_dir_path
         os.mkdir(dashboard_regression_report_dir_path)
-
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
 
-        async def generate_reports(sim_name=None):
+        async def generate_reports(sim_name=None, merchant=None):
             futures = []
             if sim_name:
                 dir_basepath = os.path.join(dashboard_regression_report_dir_path, sim_name)
@@ -585,20 +583,34 @@ class Cascade:
                             for col in edw2_request_object[report_name]["cols"]:
                                 if "dim_date" not in col["id"] and "hidden" not in col \
                                         and "website" not in col["name"].lower():
+                                    if merchant:
+                                        replace_merchant(edw2_request_object, search_merchant(merchant_name=merchant))
+                                        replace_merchant(edw3_request_object, search_merchant(merchant_name=merchant))
+                                        # merchant_path = os.path.join(dir_basepath, merchant)
+                                        # try:
+                                        # #     os.mkdir(merchant_path)
+                                        # except FileExistsError:
+                                        #     pass
+                                        # print(f"{merchant_path} ----- 596, {merchant}")
                                     comparison_col_name = col["name"]
+                                    lookup_merchant_name = search_merchant(id=get_merchant_id(edw3_request_object))
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
+                                                            "merchant": merchant or lookup_merchant_name,
                                                             "sim_name": sim_name
                                                             }
-                                    file_name = args.merchant + comparison_col_name
-                                    merchant = args.merchant
+
+                                    match_names(edw2_request_object, edw3_request_object)
+
+                                    verify_relative_dates(edw2_request_object, edw3_request_object)
+                                    match_date_aggregates(edw2_request_object, edw3_request_object)
                                     futures.append(self.run_simple_difference(
-                                        {"join_on": [date_interval],
+                                        {"join_on": define_join_on(edw2_request_object, edw3_request_object),
                                          "comparison_col_name": comparison_col_name},
                                         edw2_ro=edw2_request_object, edw3_ro=edw3_request_object,
-                                        interval=interval, sim=sim_name, report_name=file_name,
-                                        dashboard_regression=dashboard_regression, merchant=merchant)
+                                        interval=interval, sim=sim_name, report_name=comparison_col_name,
+                                        dashboard_regression=dashboard_regression)
                                     )
 
             result = await asyncio.gather(*futures)
@@ -614,6 +626,12 @@ class Cascade:
             await generate_reports()
             print("combining summaries")
             self.combine_summaries()
+        elif merchants:
+            for name in merchants:
+                await generate_reports(merchant=name)
+                print("SYS EXIT -----631")
+                sys.exit()
+            # self.combine_summaries()
         else:
             await generate_reports()
         # self.upload_change_log()
@@ -758,31 +776,37 @@ class Cascade:
         return ro
 
 
-def relative_to_exact_date(ro, start_date, end_date, edw3=False):
-    # Find the difference and count between given dates
-    start = datetime.strptime(start_date, "%m/%d/%Y")
-    end = datetime.strptime(end_date, "%m/%d/%Y")
-    now_date = datetime.utcnow()
-    difference = abs(now_date - end).days
-    day_count = (end - start).days + 1
+def replace_merchant(ro, merchant_id):
+    for report_id in ro:
+        for filter in ro[report_id]["filters"]:
+            if filter["field"] == "dim_merchant-merchant_uuid":
+                new_filter = {
+                    "field": "dim_merchant-merchant_uuid",
+                    "op": "eq",
+                    "values": [
+                        f"{merchant_id}"
+                    ],
+                    "alias": "merchant_filter1"
+                }
+                del filter
+                ro[report_id]["filters"].append(new_filter)
 
-    # Replace values with the calculated fields
+
+
+def relative_to_exact_date(ro, start_date, end_date):
+    new_date_filter = {
+        "field": "dim_date-mm_dd_yyyy",
+        "op": "between",
+        "values": [
+            start_date,
+            end_date
+        ]
+    }
     for report_id in ro:
         for filter in ro[report_id]["filters"]:
             if filter["field"] == "dim_date-mm_dd_yyyy" and filter["op"] == "relative_date":
-                filter["count"] = day_count
-                filter["start"] = -difference
-
-    # For edw3, we need to remove the aggregate filter (unless we are doing 30 days)
-    if edw3 is True and day_count > 30:
-        for report_id in ro:
-            for index, column in enumerate(ro[report_id]["cols"]):
-                try:
-                    if column["id"] == "dim_date-mm_dd_yyyy":
-                        column["aggregate"] = []
-                # Hidden columns are missing an ID, just skip those
-                except KeyError:
-                    continue
+                del filter
+                ro[report_id]["filters"].append(new_date_filter)
     return ro
 
 
@@ -793,7 +817,6 @@ def drop_columns(drop_list, ro):
     for col in ro[ro_key]["cols"]:
         if col["name"] in drop_list:
             del col
-
 
 def search_merchant(merchant_name=None, id=None):
     merchant_map = json.load(open('./sources/json_sources/merchant_map.json'))
@@ -901,14 +924,15 @@ def match_names(edw2_ro, edw3_ro):
         raise Exception('The length of the edw2 column names does not match edw3')
 
 
-def remove_hidden(ro):
+def remove_hidden(ro, reversal=None):
     hidden_count = 0
     ro_key = ''
     for key in ro:
         ro_key = key
     for col in ro[ro_key]["cols"]:
         if "hidden" in col:
-            col["hidden"] = False
+            if reversal:
+                col["hidden"] = False
             col["name"] = f"hidden_col_{hidden_count}"
             hidden_count += 1
 
@@ -925,9 +949,6 @@ def remove_date_aggregates(ro):
         except KeyError:
             pass
 
-def verify_sorts(ro1,ro2):
-    # Will verify that the sorts, if they exist, are matching
-    pass
 
 def remove_sort(ro):
     ro_key = ''
@@ -936,7 +957,7 @@ def remove_sort(ro):
     del ro[ro_key]["sort"]
 
 
-def verify_relative_dates(ro_1, ro_2):
+def verify_relative_dates(ro_1, ro_2, match=True):
     ro_key_1 = ''
     ro_key_2 = ''
     ro_1_filter = None
@@ -951,7 +972,10 @@ def verify_relative_dates(ro_1, ro_2):
     for filter_2 in ro_2[ro_key_2]["filters"]:
         if filter_2["op"] == "relative_date":
             ro_2_filter = filter_2
-
+    if match:
+        del ro_2_filter
+        ro_2[ro_key_2]["filters"].append(ro_1_filter)
+        return
     for key in ro_1_filter:
         try:
             if ro_1_filter[key] != ro_2_filter[key]:
@@ -965,19 +989,18 @@ def match_date_aggregates(ro_1, ro_2):
 
     """
     verifies that date aggregates in dim_date cols are matching. if they are not - replicates a copy of one to the other.
-    sets ro_1 as the source of truth for which dim_date col will be copied to the other.
+    sets ro_2 as the source of truth for which dim_date col will be copied to the other.
     Args:
-        ro_1: JSON_Dict, Edw(2 or 3) request object
-        ro_2: JSON_Dict, Edw(2 or 3) request object
+        ro_1: Edw(2 or 3) request object
+        ro_2: Edw(2 or 3) request object
 
     Returns:
-        None
+
     """
     ro_key_1 = ''
     ro_key_2 = ''
     ro_1_filter = None
     ro_2_filter = None
-    new_filter = {}
     source_of_truth = None
     for key in ro_1:
         ro_key_1 = key
@@ -989,12 +1012,10 @@ def match_date_aggregates(ro_1, ro_2):
                 source_of_truth = col_1
         for col_2 in ro_2[ro_key_2]["cols"]:
             if "dim_date" in col_2["id"]:
+                col_2["aggregate"] = []
                 col_2["aggregate"].append(source_of_truth["aggregate"][0])
     except KeyError:
         pass
-    # print(f"EDW3 AGgregate == {ro_2[ro_key_2]['cols']}")
-
-    # print(f"EDW2 AGgregate == {ro_1[ro_key_1]['cols']}")
 
 
 def get_merchant_id(ro):
@@ -1039,89 +1060,57 @@ def define_join_on(ro1, ro2):
 
 
 def main():
+    # Define comparison column name and join_on vars here
+
     # Instantiate the class
     cascade = Cascade()
     cascade.semaphore_count = 3
     cascade.get_prepared_cols()
     cascade.get_display_groups()
-    if args.manual:
-        # Get a list of all files in the output path
-        # It is assumed we'll run for every file in that path
-        js_path = './sources/json_sources/manual_comparison_objects.json'
-        request_objects = json.load(open(js_path))
 
-        # js_path = './sources/json_sources/manual_comparison_objects'
-        # js_files = os.listdir(js_path)
-        # for idx, js_file in enumerate(js_files):
-        #     if idx > 2:
-        #         break
-        #     print('Running for', js_file)
-        #     try:
-        #         request_objects = json.load(open(js_path + '/' + js_file))
-        #     except FileNotFoundError as e:
-        #         print(f"A json File containing an edw2 and edw3 request object "
-        #             f"must be created @@ {e}")
-        #         raise e
+    if args.manual:
+        try:
+            request_objects = json.load(open('./sources/json_sources/manual_comparison_objects.json'))
+        except FileNotFoundError as e:
+            print(f"A json File containing an edw2 and edw3 request object "
+                  f"must be created @@ {e}")
+            raise e
 
         # edw2_ro = cascade.process_prepared_ids(request_objects["edw2_request_object"])
         # edw3_ro = cascade.process_prepared_ids(request_objects["edw3_request_object"])
         edw2_ro = request_objects["edw2_request_object"]
         edw3_ro = request_objects["edw3_request_object"]
 
-        # print(f"{edw2_ro} \n \n \n {edw3_ro} \n \n __________________________")
-        if args.remove_hidden:
-            remove_hidden(edw2_ro)
-            remove_hidden(edw3_ro)
-        if args.remove_date_aggs:
-            remove_date_aggregates(edw2_ro)
-            remove_date_aggregates(edw3_ro)
-        if args.remove_sort:
-            remove_sort(edw2_ro)
-            remove_sort(edw3_ro)
         sim = args.sim or None
-
-
-        # if args.start_date and args.end_date:
-        #     # pass
-        #     edw2_ro = relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
-        #     edw3_ro = relative_to_exact_date(edw3_ro, args.start_date, args.end_date, edw3=True)
-        if args.merchant:
-            # Replace _ with space
-            # This was just for naming and to be able to pass as an arg
-            merchant = args.merchant.replace('_', ' ')
-            cascade.merchant = args.merchant
-            replace_merchant(edw2_ro, merchant)
-            replace_merchant(edw3_ro, merchant)
-
-        # Match the names
-        # match_names(edw2_ro, edw3_ro)
-        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
-        verify_relative_dates(edw2_ro, edw3_ro)
-        match_date_aggregates(edw2_ro, edw3_ro)
-        #@TODO: Add Step: verify/validate calculations
-
         if args.join:
             join_on = args.join.split(',')
             join_on = [col_name.strip() for col_name in join_on]
         else:
             join_on = define_join_on(edw2_ro, edw3_ro)
-        #     print(join_on)
-        # print(json.dumps(edw2_ro))
-        # print("\n\n")
-        # print(json.dumps(edw3_ro))
+
+        if args.start_date and args.end_date:
+            relative_to_exact_date(edw2_ro, args.start_date, args.end_date)
+            relative_to_exact_date(edw3_ro, args.start_date, args.end_date)
+
+        if args.merchant:
+            replace_merchant(edw2_ro, args.merchant)
+            replace_merchant(edw3_ro, args.merchant)
 
         # if args.remove: #TODO: Implement
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
-        timestamp = datetime.now().strftime("%Y%m%d%H%M")
-        timestamped_label = f'/validation_outputs/xlsx/{lookup_name}_manual_comparison--{timestamp.replace("/", "_")}'
+        match_names(edw2_ro, edw3_ro)
+        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
+        verify_relative_dates(edw2_ro, edw3_ro)
+        match_date_aggregates(edw2_ro, edw3_ro)
+        timestamp = datetime.now().strftime("%x %X")
+        timestamped_label = '/validation_outputs/xlsx/manual_comparison--' + timestamp.replace("/", "_")
         manual_comparison_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
-        try:
-            os.mkdir(manual_comparison_report_dir_path)
-        except FileExistsError:
-            pass
+        os.mkdir(manual_comparison_report_dir_path)
         for report_key in edw2_ro:
             for col in edw2_ro[report_key]["cols"]:
+                if "prepared_id" in col:
+                    continue
                 if not args.comparison_column:
                     try:
                         if "dim_date" not in col["id"] and "hidden" not in col \
@@ -1131,12 +1120,6 @@ def main():
                         raise
                 else:
                     comparison_col_name = args.comparison_column
-            for ro_key in edw2_ro:
-                edw2_ro_key = f"edw2_{comparison_col_name}"
-            for ro_key in edw3_ro:
-                edw3_ro_key = f"edw3_{comparison_col_name}"
-
-            output_file = args.merchant or lookup_name + '_' + comparison_col_name
             loop = asyncio.new_event_loop()
             try:
                 start = datetime.now()
@@ -1145,8 +1128,8 @@ def main():
                     cascade.run_simple_difference(
                         {"join_on": join_on,
                          "comparison_col_name": comparison_col_name},
-                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=output_file,
-                        manual_path=manual_comparison_report_dir_path, merchant=args.merchant or lookup_name)
+                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=comparison_col_name,
+                        manual_path=manual_comparison_report_dir_path)
                 )
                 print("Total runtime: ", datetime.now() - start)
             except KeyboardInterrupt:
@@ -1169,12 +1152,16 @@ def main():
             sim = args.sim or None
             start = datetime.now()
             loop = asyncio.new_event_loop()
+            merchants = None
+            if args.multi_merchant:
+                merchants = args.multi_merchant.split(',')
+                merchants = [col_name.strip() for col_name in merchants]
             try:
                 start = datetime.now()
                 # code ...
                 loop.run_until_complete(
-                    cascade.dashboard_regression(categories=run_categories, interval="last quarter",
-                                                 sem_count=3, sim=sim)
+                    cascade.dashboard_regression(categories=run_categories, interval="last month",
+                                                 sem_count=3, sim=sim, merchants=merchants)
                 )
             except KeyboardInterrupt:
                 sys.exit()
@@ -1217,8 +1204,10 @@ def main():
         sim = input("Would you like to specify a build (kiran_dev, adam_dev etc.)? if so - specify the name of it.")
         if sim == "":
             sim = None
-        #@TODO: Add option for running against multiple merchants
-        #@TODO: add option for running multiple date ranges
+        merchants = None
+        if args.multi_merchant:
+            merchants = args.multi_merchant.split(',')
+            merchants = [col_name.strip() for col_name in merchants]
         # Start event loop for the given function
         loop = asyncio.new_event_loop()
         try:
@@ -1226,7 +1215,7 @@ def main():
             # code ...
             loop.run_until_complete(
                 cascade.dashboard_regression(categories=run_categories, interval="last quarter",
-                                             sem_count=3, sim=sim)
+                                             sem_count=3, sim=sim, merchants=merchants)
             )
             print("Total runtime: ", datetime.now() - start)
         except KeyboardInterrupt:
@@ -1237,3 +1226,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+    pass

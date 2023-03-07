@@ -293,12 +293,12 @@ class Comparison(KnownDiscrepancies):
                 xlsx_name = xlsx_name[:26].replace("Average", "Avg").replace("Affiliate", "Affil")
                 # noinspection PyTypeChecker
                 filepath = self.dashboard_regression["path"] + "/" + self.dashboard_regression[
-                    "category"] + "/" + self.merchant + '_' + xlsx_name + ".xlsx"
+                    "category"] + "/" + xlsx_name + ".xlsx"
             else:
 
                 if self.simple_difference["manual_path"]:
                     filepath = f"{self.simple_difference['manual_path']}/" \
-                               + self.merchant + '_' + f"{self.simple_difference['comparison_col_name']}.xlsx"
+                               + "" + '_' + f"{self.simple_difference['comparison_col_name']}.xlsx"
                 else:
                     try:
                         cascade_dir_name = os.path.join(curpath + '/validation_outputs/xlsx/simple_difference')

@@ -45,7 +45,7 @@
           "field": "dim_date-mm_dd_yyyy",
           "period": "day",
           "start": -1,
-          "count": 30,
+          "count": 31,
           "allow_empty": true,
           "to_date": false
         },
