@@ -281,7 +281,7 @@ if __name__ == "__main__":
     if args.merchants == 'default':
         merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors'.split(',')
     # For all merchants, read from merchant map and run them all
-    elif args.merchant == 'all':
+    elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
             data_set = json.load(f)
             merchants = ','.join(data_set.values())
@@ -331,13 +331,15 @@ if __name__ == "__main__":
             if args.no_error:
                 cmd = f'python -m sources.comparison -ne'
             else:
-                cmd = f'python -m sources.comparison -m -sd {start} -ed {end} -mer {merchant}'
+                #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}'
+                cmd = f'python -m sources.comparison -ra -mer={merchant}'
             try:
                 print(cmd)
                 subprocess.run(cmd, shell=True, timeout=30)
             except:
                 continue # Go to next merchant if it times out
         os.chdir('..')
+        break
 
     # Slack configurations
     # Note the file tree here:
@@ -354,6 +356,7 @@ if __name__ == "__main__":
         msg = f'''Regression test results ({now} run)'''
         file_list = build_file_list()
         for fid in file_list:
+            print(fid)
             post_to_slack(channel, msg, fid)
 
     # Grab list of images provided by args
