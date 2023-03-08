@@ -395,7 +395,7 @@ if __name__ == "__main__":
             # On the conclusion of each run, wait 30 seconds
             # This is to prevent Slack from blocking outputs
             logging.info('Waiting 30 seconds before starting next merchant...')
-            time.wait(30)
+            time.sleep(30)
 
         break # This is to skip the extra time ranges for now
 
