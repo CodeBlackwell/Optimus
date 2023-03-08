@@ -32,6 +32,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is ds_validation", default="ds_validation")
 parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
 parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
+#parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="#ds_validation")
 parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
 parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
@@ -41,7 +42,7 @@ parser.add_argument("--tag", type=str, help="Gives the tag label for the deploym
 parser.add_argument("-ne", "--no-error", action="store_true")
 args = parser.parse_args()
 
-def post_to_slack(channel, msg, fid):
+def post_to_slack(channel, msg, fid, merchant):
     '''
     Posts a message to the chosen Slack channel
 
@@ -49,6 +50,7 @@ def post_to_slack(channel, msg, fid):
         channel: str, the slack channel to post the alert to
         msg: str, contents to post to the Slack channel
         fid: str, gives the name of the file to post to Slack as an attachment
+        merchant: str, the merchant name tied to this data result
 
     Returns:
         None
@@ -58,21 +60,23 @@ def post_to_slack(channel, msg, fid):
     config.read('avantlinkpy2.conf')
     slack_key = config.get('slack', 'api_key')
 
-    # Build API client (with logging)
-    client = WebClient(token=slack_key)
-    logger = logging.getLogger(__name__)
+    # Build an upload curl command to post to slack
+    # The components here govern how the data is displayed- note the display file name != system file name
+    upload_name = merchant + '_' + fid.split('/')[-1]
+    # Simplify summary name
+    if 'summary' in upload_name:
+        upload_name = merchant + '_' + 'Combined_Summary.xlsx'
+    cmd = f"curl -F title='{upload_name}' -F initial_comment='{msg}'  --form-string channels=ds_validation   -F file=@{fid} -F filename={upload_name}   -F token={slack_key}   https://slack.com/api/files.upload --no-progress-meter"
+    proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+    result = json.loads(proc.stdout)
 
-    # Grab result and log it
-    try:
-        result = client.files_upload_v2(
-            channel=channel,
-            initial_comment=msg,
-            file=fid
-        )
-        # Log the result
-        logger.info(result)
-    except SlackApiError as e:
-        logger.error("Error uploading file: {}".format(e))
+    # Log result
+    # If it failed, log the stdout for debug
+    if result["ok"] is True:
+        print('Posted to Slack')
+    else:
+        print('Error posting to slack')
+        print(result)
 
 def comment(comment):
     '''
@@ -113,14 +117,6 @@ def register_image(image_name, job_name, cpus=2, memory=2000):
     #     print (response['jobDefinitionArn'])
     # except Exception as e:
     #     print(e) # Logs errors registering job
-
-def approve_mfa():
-    '''
-    We have MFA enabled on our AWS account
-    Therefore, it's necessary to initialize a session with an approved connection
-    These sessions are good for 24
-    '''
-    pass # TODO: Fill this in once design is tested elsewhere
 
 def ecs_login():
     '''
@@ -298,7 +294,7 @@ if __name__ == "__main__":
     else:
         # Cover case where end wasn't given
         if args.start != '' and args.end == '':
-            logging.warning('Start given without end., Defaulting to now')
+            logging.warning('Start given without end. Defaulting to now')
             end = now
         start_times = args.start.split(',')
         end_times = args.end.split(',')
@@ -324,8 +320,12 @@ if __name__ == "__main__":
             end = now
 
         # Trigger script
-        os.chdir('DataValidation')
         for merchant in merchants:
+            print(f'Running regression for merchant {merchant}')
+            try:
+                os.chdir('DataValidation')
+            except:
+                print(os.getcwd())
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
@@ -338,55 +338,66 @@ if __name__ == "__main__":
                 subprocess.run(cmd, shell=True, timeout=30)
             except:
                 continue # Go to next merchant if it times out
-        os.chdir('..')
-        break
 
-    # Slack configurations
-    # Note the file tree here:
-    '''
-    xlsx
-        date folder
-            regression test folder
-                EDW3_Production
-                    xlsx file
-        '''
-    # Give the option to bypass Slack posting
-    if args.skip_slack is False:
-        channel = args.channel
-        msg = f'''Regression test results ({now} run)'''
-        file_list = build_file_list()
-        for fid in file_list:
-            print(fid)
-            post_to_slack(channel, msg, fid)
+            # Slack configurations
+            # Note the file tree here:
+            '''
+            xlsx
+                date folder
+                    regression test folder
+                        EDW3_Production
+                            xlsx file
+            '''
+            os.chdir('..')
+            # Give the option to bypass Slack posting
+            if args.skip_slack is False:
+                channel = args.channel
+                msg = f'''Regression test results ({now} run)'''
+                file_list = build_file_list()
+                for fid in file_list:
+                    if ' ' in fid:
+                        try:
+                            os.rename(fid, fid.replace(' ', '_'))
+                            fid = fid.replace(' ', '_')
+                        except FileNotFoundError:
+                            print(fid)
+                            raise
+                    post_to_slack(channel, msg, fid, merchant)
 
-    # Grab list of images provided by args
-    containers = args.containers.split(',')
-    if containers == ['']:
-        logging.warning('No containers specified to deploy')
-        #exit()
-    else:
-        print(containers)
+            # Grab list of images provided by args
+            containers = args.containers.split(',')
+            if containers == ['']:
+                logging.warning('No containers specified to deploy')
+                #exit()
+            else:
+                print(containers)
 
-    # For each container in the args list, 1st see if it needs to be dcreated
-    # Then, register and deploy it
-    for container in containers:
-        if args.create_required is True:
-            print('Will create in a future release')
-            #create_ecs_image(container)
-        else:
-            print('Skipping image creation')
+            # For each container in the args list, 1st see if it needs to be dcreated
+            # Then, register and deploy it
+            for container in containers:
+                if args.create_required is True:
+                    print('Will create in a future release')
+                    #create_ecs_image(container)
+                else:
+                    print('Skipping image creation')
 
-        # Register and deploy- eventually, maybe
-        #register_image(uri, container)
-        #push_ecs_image(uri, container)
+                # Register and deploy- eventually, maybe
+                #register_image(uri, container)
+                #push_ecs_image(uri, container)
 
-    # Cleanup deleting files older than 3 days
-    delete_time = 3 * 24 * 60 * 60
-    files = glob.glob('DataValidation/validation_outputs/xlsx/*')
-    for fid in files:
-        ctime = os.stat(fid).st_ctime
-        if ctime >= delete_time:
-            shutil.rmtree(fid)
+            # Cleanup files stored on server
+            files = glob.glob('DataValidation/validation_outputs/xlsx/*')
+            for fid in files:
+                ctime = os.stat(fid).st_ctime
+                shutil.rmtree(fid)
+                print(f'Cleanup done for merchant {merchant}')
+
+            # On the conclusion of each run, wait 30 seconds
+            # This is to prevent Slack from blocking outputs
+            logging.info('Waiting 30 seconds before starting next merchant...')
+            time.wait(30)
+
+        break # This is to skip the extra time ranges for now
 
     # Mark completion of deployment
     now = time.strftime("%c")

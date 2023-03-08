@@ -543,7 +543,8 @@ class Cascade:
         # Create a timestamped Directory to hold all reports
         timestamp = datetime.now().strftime("%x %X")
         self.timestamp = timestamp
-        timestamped_label = '/validation_outputs/xlsx/dashboard_regression--' + timestamp.replace("/", "_")
+        timestamp = timestamp.replace(" ", "_")
+        timestamped_label = '/validation_outputs/xlsx/' + timestamp.replace("/", "_")
         dashboard_regression_report_dir_path = os.path.join(os.getcwd() + timestamped_label)
         self.dashboard_regression_path = dashboard_regression_report_dir_path
         os.mkdir(dashboard_regression_report_dir_path)
@@ -572,7 +573,8 @@ class Cascade:
                     if not categories[widget][category]:
                         continue
                     try:
-                        os.mkdir(os.path.join(dir_basepath, category))
+                        category_dir = category.replace(' ', '_')
+                        os.mkdir(os.path.join(dir_basepath, category_dir))
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
@@ -1145,9 +1147,7 @@ def main():
     # Instructions for Automated Dashboard Regression
     else:
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
-        categories = ["Sales"]
-                      # ,"Combined Commission", "Network Commission",
-                      # "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
+        categories = ["Sales","Combined Commission", "Network Commission", "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
         run_categories = {"trending_widget": False, "top_affiliates_widget": False}
         minimum_flag = False
         if args.run_all:

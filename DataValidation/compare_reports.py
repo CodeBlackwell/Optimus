@@ -292,8 +292,8 @@ class Comparison(KnownDiscrepancies):
                 xlsx_name = self.simple_difference["comparison_col_name"].replace(" ", "")
                 xlsx_name = xlsx_name[:26].replace("Average", "Avg").replace("Affiliate", "Affil")
                 # noinspection PyTypeChecker
-                filepath = self.dashboard_regression["path"] + "/" + self.dashboard_regression[
-                    "category"] + "/" + xlsx_name + ".xlsx"
+                category_dir = self.dashboard_regression["category"].replace(' ', '_')
+                filepath = self.dashboard_regression["path"] + "/" + category_dir + "/" + xlsx_name + ".xlsx"
             else:
 
                 if self.simple_difference["manual_path"]:
@@ -309,7 +309,7 @@ class Comparison(KnownDiscrepancies):
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
             # noinspection PyUnboundLocalVariable
-            print("outputting " + filepath)
+            #print("outputting " + filepath)
             # self.validate_calculations()
             # if self.reports[0].sql_query is not None:
             #     # print(f"This report sent a Query {filepath}")
