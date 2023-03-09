@@ -414,7 +414,8 @@ if __name__ == "__main__":
             for fid in files:
                 ctime = os.stat(fid).st_ctime
                 shutil.rmtree(fid)
-                print(f'Cleanup done for merchant {merchant}')
+            print(f'Cleanup done for merchant {merchant}')
+
 
             # On the conclusion of each run, wait 30 seconds
             # This is to prevent Slack from blocking outputs

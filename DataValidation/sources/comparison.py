@@ -551,6 +551,7 @@ class Cascade:
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
+            print(merc_id)
 
         async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
@@ -569,7 +570,6 @@ class Cascade:
                 if not categories[widget]:
                     continue
                 for category in categories[widget]:
-
                     if not categories[widget][category]:
                         continue
                     try:
@@ -596,7 +596,8 @@ class Cascade:
                                         #     pass
                                         # print(f"{merchant_path} ----- 596, {merchant}")
                                     comparison_col_name = col["name"]
-                                    lookup_merchant_name = search_merchant(merch_id=get_merchant_id(edw3_request_object))
+                                    merch_id=get_merchant_id(edw3_request_object)
+                                    lookup_merchant_name = search_merchant(merch_id=merch_id)
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
@@ -825,7 +826,10 @@ def drop_columns(drop_list, ro):
 
 def search_merchant(merchant_name=None, merch_id=None):
     merchant_map = json.load(open('./sources/json_sources/merchant_map.json'))
+    # Remove "_ from merchant passed as argument"
     if merchant_name:
+        if "_" in merchant_name:
+            merchant_name = merchant_name.replace("_", " ")
         for merchant_id in merchant_map:
             if merchant_map[merchant_id].lower() == merchant_name.lower():
                 return merchant_id
