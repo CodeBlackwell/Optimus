@@ -303,7 +303,7 @@ if __name__ == "__main__":
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
             data_set = json.load(f)
-            merchants = ','.join(data_set.values())
+            merchants = list(data_set.values())
     # Custom list or single entry- supports multiple merchants
     else:
         merchants = args.merchants.split(',')
