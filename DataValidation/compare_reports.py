@@ -168,6 +168,12 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
+        try:
+            edw2_df['Date Range'].stack().str.replace(' ', '_').unstack()
+            edw3_df['Date Range'].stack().str.replace(' ', '_').unstack()
+        except:
+            pass
+
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
 
