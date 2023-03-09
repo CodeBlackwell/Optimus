@@ -727,7 +727,8 @@ class Cascade:
                     except IndexError as e:
                         pass
                     except KeyError as e:
-                        print(report_dataframe.head(2))
+                        # print(report_dataframe.head(2), "--- 730 -- comparison.py")
+                        pass
                     finally:
                         report_dataframe.dropna(axis="columns", how="all", inplace=True)
                         report_dataframe.to_excel(workbook_path, sheet_name=entry, encoding='utf-8')
@@ -1074,6 +1075,9 @@ def main():
     cascade.semaphore_count = 3
     cascade.get_prepared_cols()
     cascade.get_display_groups()
+
+    if args.no_error:
+        pass
 
     if args.manual:
         try:

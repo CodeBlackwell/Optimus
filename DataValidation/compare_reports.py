@@ -161,6 +161,9 @@ class Comparison(KnownDiscrepancies):
                             print(e, 'was not specified to be True in', col["id"])
                             pass
 
+    def remove_spaces(self, string_val):
+        cleaned_string = string_val.replace(" ", "")
+        return cleaned_string
     def __get_diff(self):
         # Create a new dataframe filled with false values that matches the size of the first report.
         # This is just a simple way of accomplishing this:
@@ -168,11 +171,6 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
-        try:
-            edw2_df['Date Range'].stack().str.replace(' ', '_').unstack()
-            edw3_df['Date Range'].stack().str.replace(' ', '_').unstack()
-        except:
-            pass
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
@@ -315,7 +313,8 @@ class Comparison(KnownDiscrepancies):
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
             # noinspection PyUnboundLocalVariable
-            #print("outputting " + filepath)
+
+            # print("outputting " + filepath)
             # self.validate_calculations()
             # if self.reports[0].sql_query is not None:
             #     # print(f"This report sent a Query {filepath}")
