@@ -10,10 +10,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sales + adjustments",
@@ -94,10 +97,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
@@ -270,10 +276,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
@@ -420,10 +429,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_avantlink-order_hash_key",
                             "fact": true,
@@ -483,10 +495,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_avantlink-order_amount",
                             "fact": true,
@@ -629,10 +644,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale",
@@ -755,10 +773,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affsales+affadjustments+netwsales+netwadjustments",
@@ -827,10 +848,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliateppb + networkppb",
@@ -899,10 +923,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
                             "fact": true,
@@ -961,10 +988,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliatecpc + networkcpc",
@@ -1033,10 +1063,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliatebonus + networkcommission",
@@ -1107,10 +1140,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_bonus-bonus_commission_amount",
                             "fact": true,
@@ -1169,10 +1205,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_cpc_earning-affiliate_earnings",
                             "fact": true,
@@ -1231,10 +1270,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
                             "fact": true,
@@ -1294,10 +1336,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sales+adjustments",
@@ -1360,10 +1405,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(sale+incentive+cpc+adjustment) / (sales + cadjustments)",
@@ -1475,10 +1523,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sale+incentive+cpc+ppb+bonus+adjustment",
@@ -1571,10 +1622,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(sale+incentive+cpc+ppb+bonus+adjustment)/(sales+cadjustments)",
@@ -1707,10 +1761,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(sale+incentive+cpc+ppb+bonus+adjustment)/(clicks/100)",
@@ -1811,10 +1868,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_cpc_earning-network_earnings",
                             "fact": true,
@@ -1873,10 +1933,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_ppb_earning-network_commission",
                             "fact": true,
@@ -1935,10 +1998,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_bonus-bonus_network_commission_amount",
                             "fact": true,
@@ -1997,10 +2063,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sales+adjustments",
@@ -2063,10 +2132,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(ncpc+nsale+adjustment) / (sales+cadjustments)",
@@ -2175,10 +2247,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "adjustment+cpc+ppb+bonus+sale",
@@ -2265,10 +2340,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "(nadjustment+ncpc+nppb+nbonus+nsale) / (sales+cadjustments)",
@@ -2388,10 +2466,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "clicks / impressions",
@@ -2464,10 +2545,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_hit-summary_hit_count",
                             "fact": true,
@@ -2521,10 +2605,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_impression-summary_impression_count",
                             "fact": true,
@@ -2580,10 +2667,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
                             "fact": true,
@@ -2644,10 +2734,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_adjustment-order_combined_adjustment_amount",
                             "fact": true,
@@ -2708,10 +2801,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_adjustment-adjustment_hash_key",
                             "fact": true,
@@ -2771,10 +2867,13 @@ edw2_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "adjustments/orders",
@@ -4028,10 +4127,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale",
@@ -4154,10 +4256,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affsales+affadjustments+netwsales+netwadjustments",
@@ -4226,10 +4331,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliateppb + networkppb",
@@ -4298,10 +4406,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "fact_order_commission-incentive_commission_amount",
                             "fact": true,
@@ -4360,10 +4471,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliatecpc + networkcpc",
@@ -4432,10 +4546,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "affiliatebonus + networkcommission",
@@ -4816,10 +4933,13 @@ edw3_dashboard_objects = {
                     "cols": [
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
                             "name": "Day",
-                            "aggregate": []
-                        },
+                            "alias": "mm_dd_yyyy",
+                            "aggregate": [
+                                {
+                                    "func": "range"
+                                }
+                            ]},
                         {
                             "id": "calculation",
                             "calc": "clicks / impressions",
