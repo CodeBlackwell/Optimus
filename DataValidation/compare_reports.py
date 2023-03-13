@@ -64,7 +64,7 @@ class Comparison(KnownDiscrepancies):
         await self.load()
         for report in self.reports:
             if report.data is None:
-                print("Skipping report that returned no data...")
+                print("Skipping report that returned no data...", vars(report))
                 return False
         self.__validate()
         self.__make_names_distinct()
@@ -75,7 +75,7 @@ class Comparison(KnownDiscrepancies):
 
     async def run_and_barf(self):
         if not await self.run():
-            print("Skipping barf due to no data")
+            # print("Skipping barf due to no data")
             return
         self.output_to_excel()
 
@@ -290,14 +290,22 @@ class Comparison(KnownDiscrepancies):
             merge['difference'] = merge[col_x] - merge[col_y]
             self.simple_difference_comparison = merge
             if self.dashboard_regression:
+                if self.dashboard_regression["widget"] == "trending_widget":
+                    widget_marker = 'TW_'
+                elif self.dashboard_regression["widget"] == "top_affiliates_widget":
+                    widget_marker = 'TA_'
+                else:
+                    widget_marker = 'NW_'
                 merge["Dashboard Category"] = self.dashboard_regression["category"]
                 merge["Dashboard Report Name"] = self.dashboard_regression["dashboard report name"]
-
                 xlsx_name = self.simple_difference["comparison_col_name"].replace(" ", "")
                 xlsx_name = xlsx_name[:26].replace("Average", "Avg").replace("Affiliate", "Affil")
+                xlsx_name = widget_marker + xlsx_name
                 # noinspection PyTypeChecker
                 category_dir = self.dashboard_regression["category"].replace(' ', '_')
-                filepath = self.dashboard_regression["path"] + "/" + category_dir + "/" + xlsx_name + ".xlsx"
+                filepath = os.path.join(self.dashboard_regression["path"], self.dashboard_regression["widget"],
+                                        category_dir,  xlsx_name) + ".xlsx"
+                print("NEW BROKEN FILEPATH ------", filepath)
             else:
 
                 if self.simple_difference["manual_path"]:

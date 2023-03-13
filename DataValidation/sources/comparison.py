@@ -539,7 +539,7 @@ class Cascade:
                                          "Clicks % Impressions": True, "Adjustments": True
                                          }
             }
-
+        # categories["top_affiliate_widget"] = False
         # Create a timestamped Directory to hold all reports
         timestamp = datetime.now().strftime("%x %X")
         self.timestamp = timestamp
@@ -566,6 +566,8 @@ class Cascade:
                 pass
 
             for widget in categories:
+                if categories[widget]:
+                    os.mkdir(os.path.join(dir_basepath, widget))
                 if not categories[widget]:
                     continue
                 for category in categories[widget]:
@@ -574,7 +576,7 @@ class Cascade:
                         continue
                     try:
                         category_dir = category.replace(' ', '_')
-                        os.mkdir(os.path.join(dir_basepath, category_dir))
+                        os.mkdir(os.path.join(dir_basepath, widget, category_dir))
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
@@ -601,7 +603,8 @@ class Cascade:
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
                                                             "merchant": merchant_id or lookup_merchant_name,
-                                                            "sim_name": sim_name
+                                                            "sim_name": sim_name,
+                                                            "widget": widget
                                                             }
 
                                     match_names(edw2_request_object, edw3_request_object)
@@ -618,8 +621,8 @@ class Cascade:
 
             result = await asyncio.gather(*futures)
             # self.create_change_log(result, sim_name)
-            if dashboard_regression is not None:
-                self.write_dashboard_regression_summary(date_interval, sim_name)
+            # if dashboard_regression is not None:
+            #     self.write_dashboard_regression_summary(date_interval, sim_name)
             return result
 
         if sim:
