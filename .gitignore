@@ -142,7 +142,7 @@ Dockerfile
 *.conf
 *.xml
 *.iml
-
+validation_outputs/*/**
 config.json
 creds.json
 bin

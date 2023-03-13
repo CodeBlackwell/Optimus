@@ -142,6 +142,11 @@ class Cascade:
                     print(f"This Prepared id was not found === {e}")
         self.prepared_col_map = new_map
 
+    async def timeout_wrapper(self, func):
+        try:
+            await func
+        except:
+            pass
     async def get_prepared_cols(self):
         client = http3.AsyncClient()
         headers = {
@@ -336,15 +341,18 @@ class Cascade:
                 simple_difference_options["manual_path"] = manual_path
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
-                                                         request_object=edw3_request_object),
+                                                         request_object=edw3_request_object,
+                                                         currency="NATIVE"),
                                     sources.PickerReport(picker_url=picker_url_2,
                                                          report_name=report_name,
-                                                         request_object=edw2_request_object)
+                                                         request_object=edw2_request_object,
+                                                         currency="NATIVE")
                                     )
 
             comparison.set_outputs(simple_report_name=self.report_name,
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
+
             await comparison.run_and_barf()
             self.comparisons["simple"].append(comparison.simple_difference_comparison)
 
