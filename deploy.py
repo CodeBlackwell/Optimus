@@ -431,7 +431,7 @@ if __name__ == "__main__":
 
             # On the conclusion of each run, wait 30 seconds if running again
             # This is to prevent Slack from blocking outputs
-            if merchant != merchants[-1]:
+            if merchant.replace('_', ' ') != merchants[-1]:
                 print('Waiting 30 seconds before starting next merchant...')
                 time.sleep(30)
 
