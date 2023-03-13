@@ -530,16 +530,23 @@ class Cascade:
                                    sem_count=None, merchants=None, merchant_name=None):
         if categories is None:
             categories = {
-                "trending_widget": {"Sales": True, "Combined Commissions": True,
-                                    "Affiliate Commission": True, "Network Commission": True,
-                                    "Clicks % Impressions": True, "Adjustments": True
+                "trending_widget": {
+                                    "Sales": True,
+                                    "Combined Commissions": True,
+                                    "Affiliate Commission": True,
+                                    "Network Commission": True,
+                                    "Clicks % Impressions": True,
+                                    "Adjustments": True
                                     },
-                "top_affiliate_widget": {"Sales": True, "Combined Commissions": True,
-                                         "Affiliate Commission": True, "Network Commission": True,
-                                         "Clicks % Impressions": True, "Adjustments": True
+                "top_affiliate_widget": {
+                                         "Sales": True,
+                                         "Combined Commissions": True,
+                                         "Affiliate Commission": True,
+                                         "Network Commission": True,
+                                         "Clicks % Impressions": True,
+                                         "Adjustments": True
                                          }
             }
-        # categories["top_affiliate_widget"] = False
         # Create a timestamped Directory to hold all reports
         timestamp = datetime.now().strftime("%x %X")
         self.timestamp = timestamp
@@ -603,7 +610,7 @@ class Cascade:
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
-                                                            "merchant": merchant_id or lookup_merchant_name,
+                                                            "merchant": lookup_merchant_name,
                                                             "sim_name": sim_name,
                                                             "widget": widget
                                                             }
@@ -623,7 +630,11 @@ class Cascade:
             result = await asyncio.gather(*futures)
             # self.create_change_log(result, sim_name)
             # if dashboard_regression is not None:
+            #     print("RUNNING COMBINE")
             #     self.write_dashboard_regression_summary(date_interval, sim_name)
+            if dashboard_regression is not None:
+                print("RUNNING COMBINE")
+                self.simple_combine_summaries(dashboard_regression["path"])
             return result
 
         if sim:
@@ -695,6 +706,7 @@ class Cascade:
 
     def write_dashboard_regression_summary(self, date_interval, sim=None):
         summary = []
+        widget = self.dashboard_regression["widget"]
         if sim:
             basepath = os.path.join(self.dashboard_regression_path, sim)
             workbook_path = f"{self.dashboard_regression_path}/{self.dashboard_regression_path.split('/').pop()}" \
@@ -711,34 +723,37 @@ class Cascade:
             year = int(storage[2])
             return datetime(year, month, day).strftime("%m/%d/%Y")
 
-        for directory in os.listdir(basepath):
-            category_directory = os.path.join(basepath, directory)
-            for entry in os.listdir(category_directory):
-
-                if os.path.isfile(os.path.join(category_directory, entry)):
-                    filepath = os.path.join(category_directory, entry)
-                    report_dataframe = pd.read_excel(filepath, engine="openpyxl")
-                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[2])
-                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[3])
-                    report_dataframe.rename({
-                        edw2_comparison_col_name: "edw2_result",
-                        edw3_comparison_col_name: "edw3_result"
-                    }, axis=1, inplace=True)
-                    try:
-                        report_dataframe[date_interval] = [format_dates(date) for date in
-                                                           report_dataframe[date_interval]]
-
-                    except IndexError as e:
-                        pass
-                    except KeyError as e:
-                        # print(report_dataframe.head(2), "--- 730 -- comparison.py")
-                        pass
-                    finally:
-                        report_dataframe.dropna(axis="columns", how="all", inplace=True)
-                        report_dataframe.to_excel(workbook_path, sheet_name=entry, encoding='utf-8')
-                    summary.append(report_dataframe)
-                else:
-                    print(f"{os.path.join(category_directory, entry)} is not a file!!")
+        for widget_directory in os.listdir(basepath):
+            widget_directory_path = os.path.join(basepath, widget_directory)
+            print(f"726, {widget_directory_path}")
+            for category_directory in os.listdir(widget_directory_path):
+                category_directory_path = os.path.join(basepath, widget_directory, category_directory)
+                print(f"729, {category_directory_path}")
+                for entry in os.listdir(category_directory_path):
+                    if os.path.isfile(os.path.join(category_directory_path, entry)):
+                        filepath = os.path.join(category_directory_path, entry)
+                        print(f"733, {filepath}")
+                        report_dataframe = pd.read_excel(filepath, engine="openpyxl")
+                        edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[2])
+                        edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[3])
+                        report_dataframe.rename({
+                            edw2_comparison_col_name: "edw2_result",
+                            edw3_comparison_col_name: "edw3_result"
+                        }, axis=1, inplace=True)
+                        try:
+                            report_dataframe[date_interval] = [format_dates(date) for date in
+                                                               report_dataframe[date_interval]]
+                        except IndexError as e:
+                            pass
+                        except KeyError as e:
+                            # print(report_dataframe.head(2), "--- 730 -- comparison.py")
+                            pass
+                        finally:
+                            report_dataframe.dropna(axis="columns", how="all", inplace=True)
+                            report_dataframe.to_excel(workbook_path, sheet_name=entry, encoding='utf-8')
+                        summary.append(report_dataframe)
+                    else:
+                        print(f"{os.path.join(category_directory, entry)} is not a file!!")
 
         summary = pd.concat(summary)
         summary = summary.drop(["Unnamed: 0"], axis=1)
@@ -747,6 +762,26 @@ class Cascade:
             summary.to_excel(writer, sheet_name="Summary", engine='openpyxl', encoding='utf-8')
             summary.swapaxes("index", "columns").to_excel(writer, sheet_name="Summary_inverted",
                                                           engine='openpyxl', encoding='utf-8')
+
+    def simple_combine_summaries(self, regression_dir_path):
+        summary_df = []
+        for root, dirs, files in os.walk(regression_dir_path):
+            for name in files:
+                fid = os.path.join(root, name)
+                if name.endswith('.xlsx'):
+                    report_dataframe = pd.read_excel(fid, engine="openpyxl")
+                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[2])
+                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[3])
+                    report_dataframe.rename({
+                        edw2_comparison_col_name: "edw2_result",
+                        edw3_comparison_col_name: "edw3_result"
+                    }, axis=1, inplace=True)
+                    report_dataframe.dropna(axis="columns", how="all", inplace=True)
+                    summary_df.append(report_dataframe)
+        summary_df = pd.concat(summary_df)
+        summary_df = summary_df.drop(["Unnamed: 0"], axis=1)
+        with pd.ExcelWriter(os.path.join(regression_dir_path, "combined_summary.xlsx")) as writer:
+            summary_df.to_excel(writer, engine='openpyxl')
 
     def combine_summaries(self):
         summaries = []
@@ -1158,8 +1193,18 @@ def main():
     # Instructions for Automated Dashboard Regression
     else:
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
-        categories = ["Sales","Combined Commission", "Network Commission", "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
-        run_categories = {"trending_widget": False, "top_affiliates_widget": False}
+        categories = [
+                      "Sales",
+                      "Combined Commission",
+                      "Network Commission",
+                      "Clicks % Impressions",
+                      "Adjustments",
+                      "Affiliate Commission"
+        ]
+        run_categories = {
+            "trending_widget": False,
+            "top_affiliates_widget": False
+        }
         minimum_flag = False
         if args.run_all:
             for widget in run_categories:

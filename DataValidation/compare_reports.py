@@ -3,6 +3,8 @@ import json
 import os
 import re
 from typing import List
+import sys
+import json
 
 import colorama
 import pandas
@@ -64,7 +66,7 @@ class Comparison(KnownDiscrepancies):
         await self.load()
         for report in self.reports:
             if report.data is None:
-                print("Skipping report that returned no data...", vars(report))
+                print(f"\n \n Skipping report that returned no data from - {vars(report)['picker_url']}...", json.dumps(vars(report)["request_object"]), "\n")
                 return False
         self.__validate()
         self.__make_names_distinct()
@@ -86,9 +88,11 @@ class Comparison(KnownDiscrepancies):
             futures.append(report.load())
         await asyncio.gather(*futures)
         try:
+            # print(futures[0])
             self.prepared_col_map = futures[0].prepared_col_map
             self.display_groups = futures[0].display_groups
-        except:
+        except Exception as e:
+            # print(e)
             pass
 
     def set_outputs(self,
@@ -277,27 +281,31 @@ class Comparison(KnownDiscrepancies):
             mismatches['difference'] = mismatches[col_x] - mismatches[col_y]
             orphans['difference'] = orphans[col_x] - orphans[col_y]
             matches['difference'] = 0
-            # Append Request objects directly to the rows as they are generated
-            matches['edw2_request_object'] = edw2_ro
-            matches['edw3_request_object'] = edw3_ro
-            orphans['edw2_request_object'] = edw2_ro
-            orphans['edw3_request_object'] = edw3_ro
-            mismatches['edw2_request_object'] = edw2_ro
-            mismatches['edw3_request_object'] = edw3_ro
+            # # Append Request objects directly to the rows as they are generated
+            # matches['edw2_request_object'] = edw2_ro
+            # matches['edw3_request_object'] = edw3_ro
+            # orphans['edw2_request_object'] = edw2_ro
+            # orphans['edw3_request_object'] = edw3_ro
+            # mismatches['edw2_request_object'] = edw2_ro
+            # mismatches['edw3_request_object'] = edw3_ro
             merge = pd.concat([matches, mismatches, orphans])
             merge[col_x] = merge[col_x].replace(regex_query_selector, '', regex=True).astype(float)
             merge[col_y] = merge[col_y].replace(regex_query_selector, '', regex=True).astype(float)
             merge['difference'] = merge[col_x] - merge[col_y]
             self.simple_difference_comparison = merge
+
             if self.dashboard_regression:
+                merge["Dashboard Report Name"] = self.dashboard_regression["dashboard report name"]
+                merge["Dashboard Category"] = self.dashboard_regression["category"]
+                merge["merchant"] = self.dashboard_regression["merchant"]
+                merge["widget"] = self.dashboard_regression["widget"]
                 if self.dashboard_regression["widget"] == "trending_widget":
                     widget_marker = 'TW_'
                 elif self.dashboard_regression["widget"] == "top_affiliates_widget":
                     widget_marker = 'TA_'
                 else:
                     widget_marker = 'NW_'
-                merge["Dashboard Category"] = self.dashboard_regression["category"]
-                merge["Dashboard Report Name"] = self.dashboard_regression["dashboard report name"]
+
                 xlsx_name = self.simple_difference["comparison_col_name"].replace(" ", "")
                 xlsx_name = xlsx_name[:26].replace("Average", "Avg").replace("Affiliate", "Affil")
                 xlsx_name = widget_marker + xlsx_name
@@ -305,7 +313,6 @@ class Comparison(KnownDiscrepancies):
                 category_dir = self.dashboard_regression["category"].replace(' ', '_')
                 filepath = os.path.join(self.dashboard_regression["path"], self.dashboard_regression["widget"],
                                         category_dir,  xlsx_name) + ".xlsx"
-                print("NEW BROKEN FILEPATH ------", filepath)
             else:
 
                 if self.simple_difference["manual_path"]:
@@ -322,7 +329,7 @@ class Comparison(KnownDiscrepancies):
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
             # noinspection PyUnboundLocalVariable
 
-            # print("outputting " + filepath)
+            print("outputting " + filepath)
             # self.validate_calculations()
             # if self.reports[0].sql_query is not None:
             #     # print(f"This report sent a Query {filepath}")
@@ -331,6 +338,8 @@ class Comparison(KnownDiscrepancies):
             # else:
             #     for validation in self.validate_sql():
             #         merge[validation] = "N/A"
+            merge['edw2_request_object'] = edw2_ro
+            merge['edw3_request_object'] = edw3_ro
             self.merge = merge
             merge.to_excel(filepath, encoding='utf-8')
 

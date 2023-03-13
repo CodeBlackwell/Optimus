@@ -2946,868 +2946,3815 @@ edw2_dashboard_objects = {
         }
     },
     "top_affiliates_widget": {
-        "Sales": {
-            "Average Order Amount": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "sales / total",
-                            "fact": true,
-                            "name": "Average Order Amount",
-                            "vars": {
-                                "sales": {
-                                    "id": "fact_order_avantlink-order_amount",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ]
-                                },
-                                "total": {
-                                    "id": "fact_order_avantlink-order_hash_key",
-                                    "aggregate": [
-                                        {
-                                            "func": "count",
-                                            "distinct": true
-                                        }
-                                    ]
-                                }
-                            },
-                            "alias": "avg_order_amount",
-                            "format": "money"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "avg_order_amount",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
             "Sales": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "sales + adjustments",
-                            "fact": true,
-                            "name": "Sales",
-                            "vars": {
-                                "sales": {
-                                    "id": "fact_order_avantlink-order_amount",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "sales"
-                                    ]
-                                },
-                                "adjustments": {
-                                    "id": "fact_order_adjustment-order_combined_adjustment_amount",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "sales"
-                                    ]
-                                }
+                "Average Order Amount": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
                             },
-                            "alias": "net_sales",
-                            "format": "money"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "net_sales",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
-            "ROAS %": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
-                            "fact": true,
-                            "name": "ROAS %",
-                            "vars": {
-                                "cpc": {
-                                    "id": "fact_cpc_earning-affiliate_earnings",
-                                    "alias": "fact_cpc_earning-affiliate_earnings-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "ppb": {
-                                    "id": "fact_ppb_earning-bid_amount",
-                                    "alias": "fact_ppb_earning-bid_amount-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "ncpc": {
-                                    "id": "fact_cpc_earning-network_earnings",
-                                    "alias": "fact_cpc_earning-network_earnings-01",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nppb": {
-                                    "id": "fact_ppb_earning-network_commission",
-                                    "alias": "fact_ppb_earning-network_commission-01",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "sale": {
-                                    "id": "fact_order_commission-sale_commission_amount",
-                                    "alias": "fact_order_commission-sale_commission_amount-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "bonus": {
-                                    "id": "fact_order_bonus-bonus_commission_amount",
-                                    "alias": "fact_order_bonus-bonus_commission_amount-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nsale": {
-                                    "id": "fact_order_commission-network_commission_amount",
-                                    "alias": "fact_order_commission-network_commission_amount-01",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "sales": {
-                                    "id": "fact_order_avantlink-order_amount",
-                                    "alias": "fact_order_avantlink-order_amount-02",
-                                    "format": "money",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "sales"
-                                    ]
-                                },
-                                "nbonus": {
-                                    "id": "fact_order_bonus-bonus_network_commission_amount",
-                                    "alias": "fact_order_bonus-bonus_network_commission_amount-01",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "incentive": {
-                                    "id": "fact_order_commission-incentive_commission_amount",
-                                    "alias": "fact_order_commission-incentive_commission_amount-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "adjustment": {
-                                    "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
-                                    "alias": "fact_order_commission_adjustment-order_commission_adjustment_amount-02",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nadjustment": {
-                                    "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
-                                    "alias": "fact_order_commission_adjustment-network_commission_adjustment_amount-01",
-                                    "format": "money",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "cadjustments": {
-                                    "id": "fact_order_adjustment-order_combined_adjustment_amount",
-                                    "alias": "fact_order_adjustment-order_combined_adjustment_amount-02",
-                                    "format": "money",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "adjustments"
-                                    ]
-                                }
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
                             },
-                            "alias": "return_on_ad_spend_percent",
-                            "format": "percent1"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "return_on_ad_spend_percent",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
-            "ROAS": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
-                            "fact": true,
-                            "name": "ROAS",
-                            "vars": {
-                                "cpc": {
-                                    "id": "fact_cpc_earning-affiliate_earnings",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "ppb": {
-                                    "id": "fact_ppb_earning-bid_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "ncpc": {
-                                    "id": "fact_cpc_earning-network_earnings",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nppb": {
-                                    "id": "fact_ppb_earning-network_commission",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "sale": {
-                                    "id": "fact_order_commission-sale_commission_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "bonus": {
-                                    "id": "fact_order_bonus-bonus_commission_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nsale": {
-                                    "id": "fact_order_commission-network_commission_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "sales": {
-                                    "id": "fact_order_avantlink-order_amount",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "sales"
-                                    ]
-                                },
-                                "nbonus": {
-                                    "id": "fact_order_bonus-bonus_network_commission_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "incentive": {
-                                    "id": "fact_order_commission-incentive_commission_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "adjustment": {
-                                    "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "nadjustment": {
-                                    "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
-                                    "required_groups": [
-                                        "commission"
-                                    ]
-                                },
-                                "cadjustments": {
-                                    "id": "fact_order_adjustment-order_combined_adjustment_amount",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum",
-                                            "distinct": true
-                                        }
-                                    ],
-                                    "required_groups": [
-                                        "adjustments"
-                                    ]
-                                }
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
                             },
-                            "alias": "return_on_ad_spend",
-                            "format": "money"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "return_on_ad_spend",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
-            "Orders": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "fact_order_avantlink-order_hash_key",
-                            "fact": true,
-                            "name": "Orders",
-                            "alias": "number_of_orders",
-                            "format": "int",
-                            "aggregate": [
-                                {
-                                    "func": "count",
-                                    "distinct": true
-                                }
-                            ]
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "number_of_orders",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
-            "Gross Sales": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "fact_order_avantlink-order_amount",
-                            "fact": true,
-                            "name": "Gross Sales",
-                            "alias": "gross_sales",
-                            "format": "money",
-                            "aggregate": [
-                                {
-                                    "func": "sum",
-                                    "distinct": true
-                                }
-                            ]
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
-
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
-
-                    ],
-                    "sort": [
-                        {
-                            "field": "gross_sales",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
-                }
-            },
-            "Conversion Rate": {
-                "top_five_widget": {
-                    "cols": [
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
-                            "name": "Affiliate Default Website",
-                            "alias": "affiliate_default_website0"
-                        },
-                        {
-                            "id": "dim_date-mm_dd_yyyy",
-                            "alias": "date_range",
-                            "name": "Day",
-                            "aggregate": [
-                                {
-                                    "func": "band",
-                                    "dim": "dim_date-last_three_months"
-                                }
-                            ]
-                        },
-                        {
-                            "id": "dim_affiliate_default_website-affiliate_website_id",
-                            "alias": "affiliate_default_website1",
-                            "hidden": true
-                        },
-                        {
-                            "id": "calculation",
-                            "calc": "orders / clicks",
-                            "fact": true,
-                            "name": "Conversion Rate",
-                            "vars": {
-                                "clicks": {
-                                    "id": "fact_hit-summary_hit_count",
-                                    "aggregate": [
-                                        {
-                                            "func": "sum"
-                                        }
-                                    ]
+                            {
+                                "id": "calculation",
+                                "calc": "sales / total",
+                                "fact": true,
+                                "name": "Average Order Amount",
+                                "vars": {
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ]
+                                    },
+                                    "total": {
+                                        "id": "fact_order_avantlink-order_hash_key",
+                                        "aggregate": [
+                                            {
+                                                "func": "count",
+                                                "distinct": true
+                                            }
+                                        ]
+                                    }
                                 },
-                                "orders": {
-                                    "id": "fact_order_avantlink-order_hash_key",
-                                    "aggregate": [
-                                        {
-                                            "func": "count",
-                                            "distinct": true
-                                        }
-                                    ]
-                                }
+                                "alias": "avg_order_amount",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
                             },
-                            "alias": "conversion_rate",
-                            "format": "percent2"
-                        }
-                    ],
-                    "report_name": "Custom Report",
-                    "format": "json",
-                    "filters": [
-                        {
-                            "field": "dim_date-mm_dd_yyyy",
-                            "op": "relative_date",
-                            "values": [
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
 
-                            ],
-                            "alias": "date_filter1",
-                            "allow_empty": true,
-                            "to_date": false,
-                            "count": 30,
-                            "start": -1,
-                            "period": "day"
-                        },
-                        {
-                            "field": "dim_merchant-merchant_uuid",
-                            "op": "eq",
-                            "values": [
-                                "e295c418-295a-447c-b265-734e25f82503"
-                            ],
-                            "alias": "merchant_filter1"
-                        }
-                    ],
-                    "partitions": [
+                        ],
+                        "sort": [
+                            {
+                                "field": "avg_order_amount",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Sales": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "sales + adjustments",
+                                "fact": true,
+                                "name": "Sales",
+                                "vars": {
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "adjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    }
+                                },
+                                "alias": "net_sales",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
 
-                    ],
-                    "sort": [
-                        {
-                            "field": "conversion_rate",
-                            "direction": "desc"
-                        }
-                    ],
-                    "totals": true,
-                    "widths": true,
-                    "counts": true,
-                    "partitionLimit": 1,
-                    "offset": 0,
-                    "limit": 10,
-                    "partitionOffset": 0
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "net_sales",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "ROAS %": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
+                                "fact": true,
+                                "name": "ROAS %",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "alias": "fact_cpc_earning-affiliate_earnings-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "alias": "fact_ppb_earning-bid_amount-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ncpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "alias": "fact_cpc_earning-network_earnings-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "alias": "fact_ppb_earning-network_commission-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "alias": "fact_order_commission-sale_commission_amount-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "alias": "fact_order_bonus-bonus_commission_amount-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nsale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "alias": "fact_order_commission-network_commission_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "alias": "fact_order_avantlink-order_amount-02",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "nbonus": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "alias": "fact_order_bonus-bonus_network_commission_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "alias": "fact_order_commission-incentive_commission_amount-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-order_commission_adjustment_amount-02",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nadjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-network_commission_adjustment_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "alias": "fact_order_adjustment-order_combined_adjustment_amount-02",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "return_on_ad_spend_percent",
+                                "format": "percent1"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "return_on_ad_spend_percent",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "ROAS": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(sales + cadjustments) / (sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale)",
+                                "fact": true,
+                                "name": "ROAS",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ncpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nsale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "nbonus": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nadjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "return_on_ad_spend",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "return_on_ad_spend",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Orders": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_avantlink-order_hash_key",
+                                "fact": true,
+                                "name": "Orders",
+                                "alias": "number_of_orders",
+                                "format": "int",
+                                "aggregate": [
+                                    {
+                                        "func": "count",
+                                        "distinct": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "number_of_orders",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Gross Sales": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_avantlink-order_amount",
+                                "fact": true,
+                                "name": "Gross Sales",
+                                "alias": "gross_sales",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum",
+                                        "distinct": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "gross_sales",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Conversion Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "name": "Day",
+                                "alias": "mm_dd_yyyy",
+                                "aggregate": [
+                                    {
+                                        "func": "range"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "orders / clicks",
+                                "fact": true,
+                                "name": "Conversion Rate",
+                                "vars": {
+                                    "clicks": {
+                                        "id": "fact_hit-summary_hit_count",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum"
+                                            }
+                                        ]
+                                    },
+                                    "orders": {
+                                        "id": "fact_order_avantlink-order_hash_key",
+                                        "aggregate": [
+                                            {
+                                                "func": "count",
+                                                "distinct": true
+                                            }
+                                        ]
+                                    }
+                                },
+                                "alias": "conversion_rate",
+                                "format": "percent2"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "conversion_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                }
+            },
+            "Combined Commission": {
+                "Total Cost": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "sale+incentive+cpc+ppb+bonus+adjustment+nadjustment+ncpc+nppb+nbonus+nsale",
+                                "fact": true,
+                                "name": "Total Cost",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ncpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nsale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nbonus": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nadjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "total_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "total_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Sale Commission": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "affsales+affadjustments+netwsales+netwadjustments",
+                                "fact": true,
+                                "name": "Sale Commission",
+                                "vars": {
+                                    "affsales": {
+                                        "id": "fact_order_commission-sale_commission_amount"
+                                    },
+                                    "netwsales": {
+                                        "id": "fact_order_commission-network_commission_amount"
+                                    },
+                                    "affadjustments": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount"
+                                    },
+                                    "netwadjustments": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount"
+                                    }
+                                },
+                                "alias": "sale_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "sale_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Paid Placement": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "affiliateppb + networkppb",
+                                "fact": true,
+                                "name": "Paid Placement",
+                                "vars": {
+                                    "networkppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    },
+                                    "affiliateppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "combined_ppb",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "combined_ppb",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Incentive Commission": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_commission-incentive_commission_amount",
+                                "fact": true,
+                                "name": "Incentive Commission",
+                                "alias": "incentive_commission",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "incentive_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "CPC": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "affiliatecpc + networkcpc",
+                                "fact": true,
+                                "name": "CPC",
+                                "vars": {
+                                    "networkcpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    },
+                                    "affiliatecpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "combined_cpc",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "combined_cpc",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Bonus": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "networkcommission + affiliatebonus",
+                                "fact": true,
+                                "name": "Bonus",
+                                "vars": {
+                                    "affiliatebonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    },
+                                    "networkcommission": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "required_groups": [
+                                            "combined commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "combined_bonus",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "combined_bonus",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                }
+            },
+            "Affiliate Commission": {
+                "Affiliate Bonus": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_bonus-bonus_commission_amount",
+                                "fact": true,
+                                "name": "Affiliate Bonus",
+                                "alias": "affiliate_bonus",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_bonus",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate CPC": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_cpc_earning-affiliate_earnings",
+                                "fact": true,
+                                "name": "Affiliate CPC",
+                                "alias": "affiliate_cpc",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_cpc",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Incentive Commission": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_commission-incentive_commission_amount",
+                                "fact": true,
+                                "name": "Affiliate Incentive Commission",
+                                "alias": "affiliate_incentive_commission",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_incentive_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Paid Placement": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_ppb_earning-bid_amount",
+                                "fact": true,
+                                "name": "Affiliate Paid Placement",
+                                "alias": "affiliate_ppb",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_ppb",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Sale Commission": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "sales+adjustments",
+                                "fact": true,
+                                "name": "Affiliate Sale Commission",
+                                "vars": {
+                                    "sales": {
+                                        "id": "fact_order_commission-sale_commission_amount"
+                                    },
+                                    "adjustments": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount"
+                                    }
+                                },
+                                "alias": "affiliate_sale_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_sale_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Total Commission Average Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(sale+incentive+cpc+adjustment) / (sales + cadjustments)",
+                                "fact": true,
+                                "name": "Affiliate Total Commission Average Rate",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-order_commission_adjustment_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "affiliate_total_commission_average_rate",
+                                "format": "percent1"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_total_commission_average_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Total Earnings": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "sale+incentive+cpc+ppb+bonus+adjustment",
+                                "fact": true,
+                                "name": "Affiliate Total Earnings",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "affiliate_total_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_total_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Affiliate Total Earnings Average Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(sale+incentive+cpc+ppb+bonus+adjustment)/(sales+cadjustments)",
+                                "fact": true,
+                                "name": "Affiliate Total Earnings Average Rate",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "alias": "fact_cpc_earning-affiliate_earnings-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "alias": "fact_ppb_earning-bid_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "alias": "fact_order_commission-sale_commission_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "alias": "fact_order_bonus-bonus_commission_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "alias": "fact_order_avantlink-order_amount-01",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "alias": "fact_order_commission-incentive_commission_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-order_commission_adjustment_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "alias": "fact_order_adjustment-order_combined_adjustment_amount-01",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "affiliate_total_earnings_average_rate",
+                                "format": "percent1"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "affiliate_total_earnings_average_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "EPC": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(sale+incentive+cpc+ppb+bonus+adjustment)/(clicks/100)",
+                                "fact": true,
+                                "name": "EPC",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-affiliate_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-bid_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-sale_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "clicks": {
+                                        "id": "fact_hit-summary_hit_count",
+                                        "required_groups": [
+                                            "clicks"
+                                        ]
+                                    },
+                                    "incentive": {
+                                        "id": "fact_order_commission-incentive_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "earnings_per_click",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "earnings_per_click",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                }
+            },
+            "Network Commission": {
+                "Network CPC": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_cpc_earning-network_earnings",
+                                "fact": true,
+                                "name": "Network CPC",
+                                "alias": "network_cpc",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_cpc",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Paid Placement": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_ppb_earning-network_commission",
+                                "fact": true,
+                                "name": "Network Paid Placement",
+                                "alias": "network_ppb",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_ppb",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Bonus": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_bonus-bonus_network_commission_amount",
+                                "fact": true,
+                                "name": "Network Bonus",
+                                "alias": "network_bonus",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum"
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_bonus",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Sale Commission": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "sales+adjustments",
+                                "fact": true,
+                                "name": "Network Sale Commission",
+                                "vars": {
+                                    "sales": {
+                                        "id": "fact_order_commission-network_commission_amount"
+                                    },
+                                    "adjustments": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount"
+                                    }
+                                },
+                                "alias": "network_sale_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_sale_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Total Commission Average Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(ncpc+nsale+adjustment) / (sales+cadjustments)",
+                                "fact": true,
+                                "name": "Network Total Commission Average Rate",
+                                "vars": {
+                                    "ncpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "alias": "fact_cpc_earning-network_earnings",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nsale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "alias": "fact_order_commission-network_commission_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "alias": "fact_order_avantlink-order_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-network_commission_adjustment_amount-01",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "alias": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "network_total_commission_average_rate",
+                                "format": "percent1"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_total_commission_average_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Total Earnings": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "adjustment+cpc+ppb+bonus+sale",
+                                "fact": true,
+                                "name": "Network Total Earnings",
+                                "vars": {
+                                    "cpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "ppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "bonus": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "adjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    }
+                                },
+                                "alias": "network_total_commission",
+                                "format": "money"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_total_commission",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Network Total Earnings Average Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "(nadjustment+ncpc+nppb+nbonus+nsale) / (sales+cadjustments)",
+                                "fact": true,
+                                "name": "Network Total Earnings Average Rate",
+                                "vars": {
+                                    "ncpc": {
+                                        "id": "fact_cpc_earning-network_earnings",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nppb": {
+                                        "id": "fact_ppb_earning-network_commission",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nsale": {
+                                        "id": "fact_order_commission-network_commission_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "sales": {
+                                        "id": "fact_order_avantlink-order_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": true
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "sales"
+                                        ]
+                                    },
+                                    "nbonus": {
+                                        "id": "fact_order_bonus-bonus_network_commission_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "nadjustment": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "format": "money",
+                                        "required_groups": [
+                                            "commission"
+                                        ]
+                                    },
+                                    "cadjustments": {
+                                        "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "adjustments"
+                                        ]
+                                    }
+                                },
+                                "alias": "network_total_earnings_average_rate",
+                                "format": "percent1"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "network_total_earnings_average_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                }
+            },
+            "Clicks % Impressions": {
+                "Click Through Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "clicks / impressions",
+                                "fact": true,
+                                "name": "Click Through Rate",
+                                "vars": {
+                                    "clicks": {
+                                        "id": "fact_hit-summary_hit_count",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum"
+                                            }
+                                        ]
+                                    },
+                                    "impressions": {
+                                        "id": "fact_impression-summary_impression_count",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum"
+                                            }
+                                        ]
+                                    }
+                                },
+                                "alias": "click_through_rate",
+                                "format": "percent2"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "click_through_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Clicks": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_hit-summary_hit_count",
+                                "fact": true,
+                                "name": "Clicks",
+                                "alias": "number_of_clicks",
+                                "format": "int"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "number_of_clicks",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Impressions": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_impression-summary_impression_count",
+                                "fact": true,
+                                "name": "Impressions",
+                                "alias": "number_of_impressions",
+                                "format": "int"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "number_of_impressions",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                }
+            },
+            "Adjustments": {
+                "Adjusted Affiliate Earnings": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                "fact": true,
+                                "name": "Adjusted Affiliate Earnings",
+                                "alias": "adjusted_affiliate_earnings",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum",
+                                        "distinct": false
+                                    }
+                                ],
+                                "invert_sort": true
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "adjusted_affiliate_earnings",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Adjusted Cost": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "affiliate + network",
+                                "fact": true,
+                                "name": "Adjusted Cost",
+                                "vars": {
+                                    "network": {
+                                        "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                        "fact": true,
+                                        "alias": "fact_order_commission_adjustment-network_commission_adjustment_amount-02",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "fact_order_commission_adjustment-network_commission_adjustment_amount-02"
+                                        ]
+                                    },
+                                    "affiliate": {
+                                        "id": "fact_order_commission_adjustment-order_commission_adjustment_amount",
+                                        "alias": "fact_order_commission_adjustment-order_commission_adjustment_amount-01",
+                                        "format": "money",
+                                        "aggregate": [
+                                            {
+                                                "func": "sum",
+                                                "distinct": false
+                                            }
+                                        ],
+                                        "required_groups": [
+                                            "fact_order_commission_adjustment-order_commission_adjustment_amount-01"
+                                        ]
+                                    }
+                                },
+                                "alias": "adjusted_cost",
+                                "format": "money",
+                                "invert_sort": true
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "adjusted_cost",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Adjusted Network Earnings": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_commission_adjustment-network_commission_adjustment_amount",
+                                "fact": true,
+                                "name": "Adjusted Network Earnings",
+                                "alias": "adjusted_network_earnings",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum",
+                                        "distinct": false
+                                    }
+                                ],
+                                "invert_sort": true
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "adjusted_network_earnings",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Adjusted Sales": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_adjustment-order_combined_adjustment_amount",
+                                "fact": true,
+                                "name": "Adjusted Sales",
+                                "alias": "adjustments_sum",
+                                "format": "money",
+                                "aggregate": [
+                                    {
+                                        "func": "sum",
+                                        "distinct": false
+                                    }
+                                ],
+                                "invert_sort": true
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "adjustments_sum",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Adjustments": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "fact_order_adjustment-adjustment_hash_key",
+                                "fact": true,
+                                "name": "Adjustments",
+                                "alias": "adjustments_count",
+                                "format": "int",
+                                "aggregate": [
+                                    {
+                                        "func": "count",
+                                        "distinct": true
+                                    }
+                                ]
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "adjustments_count",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
+                },
+                "Reversal Rate": {
+                    "top_five_widget": {
+                        "cols": [
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                                "name": "Affiliate Default Website",
+                                "alias": "affiliate_default_website0"
+                            },
+                            {
+                                "id": "dim_date-mm_dd_yyyy",
+                                "alias": "date_range",
+                                "name": "Date Range",
+                                "aggregate": [
+                                    {
+                                        "func": "band",
+                                        "dim": "dim_date-last_thirty_days"
+                                    }
+                                ]
+                            },
+                            {
+                                "id": "dim_affiliate_default_website-affiliate_website_id",
+                                "alias": "affiliate_default_website1",
+                                "hidden": true
+                            },
+                            {
+                                "id": "calculation",
+                                "calc": "adjustments/orders",
+                                "fact": true,
+                                "name": "Reversal Rate",
+                                "vars": {
+                                    "orders": {
+                                        "id": "fact_order_avantlink-order_hash_key",
+                                        "aggregate": [
+                                            {
+                                                "func": "count",
+                                                "distinct": true
+                                            }
+                                        ]
+                                    },
+                                    "adjustments": {
+                                        "id": "fact_order_adjustment-adjustment_hash_key",
+                                        "aggregate": [
+                                            {
+                                                "func": "count",
+                                                "distinct": true
+                                            }
+                                        ]
+                                    }
+                                },
+                                "alias": "reversal_rate",
+                                "format": "percent2"
+                            }
+                        ],
+                        "report_name": "Custom Report",
+                        "format": "json",
+                        "filters": [
+                            {
+                                "field": "dim_date-mm_dd_yyyy",
+                                "op": "relative_date",
+                                "values": [
+
+                                ],
+                                "alias": "date_filter1",
+                                "allow_empty": true,
+                                "to_date": false,
+                                "count": 30,
+                                "start": -1,
+                                "period": "day"
+                            },
+                            {
+                                "field": "dim_merchant-merchant_uuid",
+                                "op": "eq",
+                                "values": [
+                                    "e295c418-295a-447c-b265-734e25f82503"
+                                ],
+                                "alias": "merchant_filter1"
+                            }
+                        ],
+                        "partitions": [
+
+                        ],
+                        "sort": [
+                            {
+                                "field": "reversal_rate",
+                                "direction": "desc"
+                            }
+                        ],
+                        "totals": true,
+                        "widths": true,
+                        "counts": true,
+                        "partitionLimit": 1,
+                        "offset": 0,
+                        "limit": 10,
+                        "partitionOffset": 0
+                    }
                 }
             }
-        },
-        "Combined Commission": {
-            "Total Cost": {},
-            "Sale Commission": {},
-            "Paid Placement": {},
-            "Incentive Commission": {},
-            "CPC": {},
-            "Bonus": {}
-        },
-        "Affiliate Commission": {
-            "Affiliate Bonus": {},
-            "Affiliate CPC": {},
-            "Affiliate Incentive Commission": {},
-            "Affiliate Paid Placement": {},
-            "Affiliate Sale Commission": {},
-            "Affiliate Total Commission Average Rate": {},
-            "Affiliate Total Earnings": {},
-            "Affiliate Total Earnings Average Rate": {},
-            "EPC": {}
-        },
-        "Network Commission": {
-            "Network CPC": {},
-            "Network Paid Placement": {},
-            "Network Bonus": {},
-            "Network Sale Commission": {},
-            "Network Total Commission Average Rate": {},
-            "Network Total Earnings": {},
-            "Network Total Earnings Average Rate": {}
-        },
-        "Clicks % Impressions": {
-            "Click Through Rate": {},
-            "Clicks": {},
-            "Impressions": {}
-        },
-        "Adjustments": {
-            "Adjusted Affiliate Earnings": {},
-            "Adjusted Cost": {},
-            "Adjusted Network Earnings": {},
-            "Adjusted Sales": {},
-            "Adjustments": {},
-            "Reversal Rate": {}
         }
     }
-}
 
 edw3_dashboard_objects = {
     "trending_widget": {
@@ -5700,9 +8647,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -5715,9 +8662,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -5767,9 +8714,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -5782,9 +8729,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -5834,9 +8781,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -5849,9 +8796,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -5901,9 +8848,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -5916,9 +8863,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -5968,9 +8915,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -5983,9 +8930,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6035,9 +8982,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6050,9 +8997,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6102,9 +9049,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6117,9 +9064,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6171,9 +9118,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6186,9 +9133,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6238,9 +9185,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6253,9 +9200,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6305,9 +9252,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6320,9 +9267,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6372,9 +9319,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6387,9 +9334,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6439,9 +9386,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6454,9 +9401,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6506,9 +9453,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6521,9 +9468,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6575,9 +9522,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6590,9 +9537,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6642,9 +9589,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6657,9 +9604,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6709,9 +9656,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6724,9 +9671,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6776,9 +9723,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6791,9 +9738,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6843,9 +9790,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6858,9 +9805,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6910,9 +9857,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6925,9 +9872,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -6977,9 +9924,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -6992,9 +9939,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7044,9 +9991,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7059,9 +10006,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7111,9 +10058,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7126,9 +10073,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7180,9 +10127,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7195,9 +10142,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7247,9 +10194,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7262,9 +10209,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7314,9 +10261,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7329,9 +10276,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7381,9 +10328,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7396,9 +10343,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7448,9 +10395,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7463,9 +10410,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7515,9 +10462,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7530,9 +10477,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7582,9 +10529,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7597,9 +10544,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7651,9 +10598,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7666,9 +10613,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7718,9 +10665,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7733,9 +10680,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7785,9 +10732,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7800,9 +10747,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7854,9 +10801,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7869,9 +10816,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7921,9 +10868,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -7936,9 +10883,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -7988,9 +10935,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -8003,9 +10950,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -8055,9 +11002,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -8070,9 +11017,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -8122,9 +11069,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -8137,9 +11084,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
@@ -8189,9 +11136,9 @@ edw3_dashboard_objects = {
                             "alias": "dim_date-mm_dd_yyyy",
                             "aggregate": [
                                 {
-                                    "func": "band",
-                                    "bands": null,
-                                    "dim": "dim_date-last_three_months"
+                                    "func": "range",
+                                    "upper_bound": null,
+                                    "lower_bound": null
                                 }
                             ],
                             "name": "Day"
@@ -8204,9 +11151,9 @@ edw3_dashboard_objects = {
                         {
                             "op": "relative_date",
                             "field": "dim_date-mm_dd_yyyy",
-                            "period": "month",
+                            "period": "day",
                             "start": -1,
-                            "count": 3,
+                            "count": 30,
                             "allow_empty": true,
                             "to_date": false
                         },
