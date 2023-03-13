@@ -4,7 +4,7 @@
 '''
 Note the following default run settings:
 Merchants: REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors
-(Reference available in json _sources/merchant_map.json)
+(Reference available in merchant_map.json)
 By default, we run for all metrics for these merchants for the following intervals:
     - Last 30 days
     - Last Year
@@ -33,17 +33,17 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is ds_validation", default="ds_validation")
 parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
 parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
-#parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="#ds_validation")
 parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
 parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is a set of 5 top merchants.", default="default")
 parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
+parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
 parser.add_argument("-ne", "--no-error", action="store_true")
 args = parser.parse_args()
 
-def post_to_slack(channel, msg, fid, merchant):
+def post_to_slack(channel, msg, fid, merchant, timeout=False):
     '''
     Posts a message to the chosen Slack channel
 
@@ -52,6 +52,7 @@ def post_to_slack(channel, msg, fid, merchant):
         msg: str, contents to post to the Slack channel
         fid: str, gives the name of the file to post to Slack as an attachment
         merchant: str, the merchant name tied to this data result
+        timeout: boolean (optional), indicates if a timeout happened
 
     Returns:
         None
@@ -60,6 +61,14 @@ def post_to_slack(channel, msg, fid, merchant):
     config = configparser.ConfigParser()
     config.read('avantlinkpy2.conf')
     slack_key = config.get('slack', 'api_key')
+
+    # If a timeout happend, go ahead and post that and carry on
+    if timeout is True:
+        title = f'{merchant} timed out'
+        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage --no-progress-meter'''
+        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+        result = json.loads(proc.stdout)
+        return
 
     # Check if file matches between edw and edw3
     # Only send those that do not match to Slack
@@ -358,9 +367,10 @@ if __name__ == "__main__":
                 cmd = f'python -m sources.comparison -ra -mer={merchant}'
             try:
                 print(cmd)
-                subprocess.run(cmd, shell=True, timeout=30)
-            except:
-                continue # Go to next merchant if it times out
+                subprocess.run(cmd, shell=True, timeout=args.timeout)
+                timeout = False
+            except subprocess.TimeoutExpired:
+                timeout = True # Log the timeout and then continue
 
             # Slack configurations
             # Note the file tree here:
@@ -386,7 +396,10 @@ if __name__ == "__main__":
                         except FileNotFoundError:
                             print(fid)
                             raise
-                    post_to_slack(channel, msg, fid, merchant)
+                    post_to_slack(channel, msg, fid, merchant, timeout=timeout)
+                    # Only post 1 timeout message
+                    if timeout is True:
+                        break
 
             # Grab list of images provided by args
             containers = args.containers.split(',')
@@ -416,11 +429,11 @@ if __name__ == "__main__":
                 shutil.rmtree(fid)
             print(f'Cleanup done for merchant {merchant}')
 
-
-            # On the conclusion of each run, wait 30 seconds
+            # On the conclusion of each run, wait 30 seconds if running again
             # This is to prevent Slack from blocking outputs
-            logging.info('Waiting 30 seconds before starting next merchant...')
-            time.sleep(30)
+            if merchant != merchants[-1]:
+                print('Waiting 30 seconds before starting next merchant...')
+                time.sleep(30)
 
         break # This is to skip the extra time ranges for now
 
