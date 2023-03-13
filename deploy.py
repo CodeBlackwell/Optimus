@@ -22,6 +22,7 @@ import subprocess
 import glob
 import shutil
 import time
+import pandas as pd
 
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
@@ -60,15 +61,37 @@ def post_to_slack(channel, msg, fid, merchant):
     config.read('avantlinkpy2.conf')
     slack_key = config.get('slack', 'api_key')
 
+    # Check if file matches between edw and edw3
+    # Only send those that do not match to Slack
+    df = pd.read_excel(fid)
+    columns = df.columns.to_list()
+    for column in columns:
+        if "edw2" in column and "request_object" not in column:
+            edw2_column = column
+        elif "edw3" in column and "request_object" not in column:
+            edw3_column = column
+    if df[edw2_column].equals(df[edw3_column]) is True:
+        matches = True
+    else:
+        matches = False
+
     # Build an upload curl command to post to slack
     # The components here govern how the data is displayed- note the display file name != system file name
+    # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
-    # Simplify summary name
-    if 'summary' in upload_name:
-        upload_name = merchant + '_' + 'Combined_Summary.xlsx'
-    cmd = f"curl -F title='{upload_name}' -F initial_comment='{msg}'  --form-string channels=ds_validation   -F file=@{fid} -F filename={upload_name}   -F token={slack_key}   https://slack.com/api/files.upload --no-progress-meter"
-    proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
-    result = json.loads(proc.stdout)
+    if matches is True:
+        title = upload_name.replace('.xlsx', '') + ' passed'
+        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage --no-progress-meter'''
+        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+        result = json.loads(proc.stdout)
+    else:
+        title = upload_name.replace('.xlsx', '') + ' FAILED!'
+        # Simplify summary name
+        if 'summary' in upload_name:
+             upload_name = merchant + '_' + 'Combined_Summary.xlsx'
+        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels=ds_validation   -F file=@{fid} -F filename={upload_name}   -F token={slack_key}   https://slack.com/api/files.upload --no-progress-meter"
+        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+        result = json.loads(proc.stdout)
 
     # Log result
     # If it failed, log the stdout for debug
@@ -280,7 +303,7 @@ if __name__ == "__main__":
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
             data_set = json.load(f)
-            merchants = ','.join(data_set.values())
+            merchants = list(data_set.values())
     # Custom list or single entry- supports multiple merchants
     else:
         merchants = args.merchants.split(',')
@@ -353,6 +376,7 @@ if __name__ == "__main__":
             if args.skip_slack is False:
                 channel = args.channel
                 msg = f'''Regression test results ({now} run)'''
+                logging.info(msg)
                 file_list = build_file_list()
                 for fid in file_list:
                     if ' ' in fid:
@@ -390,7 +414,8 @@ if __name__ == "__main__":
             for fid in files:
                 ctime = os.stat(fid).st_ctime
                 shutil.rmtree(fid)
-                print(f'Cleanup done for merchant {merchant}')
+            print(f'Cleanup done for merchant {merchant}')
+
 
             # On the conclusion of each run, wait 30 seconds
             # This is to prevent Slack from blocking outputs
