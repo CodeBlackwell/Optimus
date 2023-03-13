@@ -558,8 +558,6 @@ class Cascade:
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
-            print(merc_id)
-
         async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
             if sim_name:
@@ -629,11 +627,7 @@ class Cascade:
 
             result = await asyncio.gather(*futures)
             # self.create_change_log(result, sim_name)
-            # if dashboard_regression is not None:
-            #     print("RUNNING COMBINE")
-            #     self.write_dashboard_regression_summary(date_interval, sim_name)
             if dashboard_regression is not None:
-                print("RUNNING COMBINE")
                 self.simple_combine_summaries(dashboard_regression["path"])
             return result
 
@@ -651,7 +645,6 @@ class Cascade:
         #         sys.exit()
         # self.combine_summaries()
         else:
-            print('RUNNING FROM HERE')
             await generate_reports(merchant_id=merc_id)
         # self.upload_change_log()
 
