@@ -38,6 +38,24 @@ The following arguments are available for the deploy script:
 
 The idea is to have the deploy script run under default settings (or with args) on a cron job until it is integrated into the avant cli
 
+## Automation
+
+This is currently deployed and set to run on the dev etl server. Any updates done to the system should be deployed to there. It observes the following cron schedule:
+
+- Everyday at 00:00 UTC the Picker Test Suite is run (see details on what the Picker Test Suite runs)
+- Everyday at 12:00 UTC the full regression libary is run without any arguments (top 5 merchants)
+
+## Logging
+
+We log the results in the ds_data_vlidation directory at /logs. There are separate logs for each cronjob which are cleared weekly (Sat at midnight)
+
+## Picker Test Suite
+
+The Picker Test Suite is a variation of the regression library intended to return no file outputs, but rather to just indicate if an error occured
+or not for a collection of request object.
+
+To run this, pass the argument -ne to the deploy.py wrapper script.
+
 ## Versioning and Issues
 
 We'll release major and minor version releases to maintain this and keep it working as expected as updates come through our system. The code is, admittedly, set up for a quick release, but since we're using this for data control, some maintenance will be done.
