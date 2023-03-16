@@ -31,6 +31,7 @@ class Cascade:
     cascade = False
     change_logs = []
     loop = None
+    errors = []
     totals = {"count": {}, "difference": {}}
     cascade_start_date = None
     cascade_end_date = None
@@ -130,7 +131,6 @@ class Cascade:
         finally:
             loop.close()
             self.process_map(self.prepared_col_map)
-        pass
 
     def process_map(self, prepared_cols_map):
         new_map = {}
@@ -142,11 +142,6 @@ class Cascade:
                     print(f"This Prepared id was not found === {e}")
         self.prepared_col_map = new_map
 
-    async def timeout_wrapper(self, func):
-        try:
-            await func
-        except:
-            pass
     async def get_prepared_cols(self):
         client = http3.AsyncClient()
         headers = {
@@ -341,19 +336,22 @@ class Cascade:
                 simple_difference_options["manual_path"] = manual_path
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
-                                                         request_object=edw3_request_object,
-                                                         currency="NATIVE"),
+                                                         request_object=edw3_request_object),
                                     sources.PickerReport(picker_url=picker_url_2,
                                                          report_name=report_name,
-                                                         request_object=edw2_request_object,
-                                                         currency="NATIVE")
+                                                         request_object=edw2_request_object)
                                     )
 
             comparison.set_outputs(simple_report_name=self.report_name,
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
-
-            await comparison.run_and_barf()
+            try:
+                await asyncio.wait_for(comparison.run_and_barf(), timeout=75)
+            except asyncio.TimeoutError as e:
+                self.errors.append({
+                    "error": "timeout",
+                    "technical_print": e
+                })
             self.comparisons["simple"].append(comparison.simple_difference_comparison)
 
             return comparison
@@ -1188,8 +1186,10 @@ def main():
                 print("Total runtime: ", datetime.now() - start)
             except KeyboardInterrupt:
                 sys.exit()
-            finally:
-                loop.close()
+            except asyncio.TimeoutError as e:
+                print(e)
+            # finally:
+            #     loop.close()
 
     # Instructions for Automated Dashboard Regression
     else:

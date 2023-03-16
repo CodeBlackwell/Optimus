@@ -66,7 +66,7 @@ class Comparison(KnownDiscrepancies):
         await self.load()
         for report in self.reports:
             if report.data is None:
-                print(f"\n \n Skipping report that returned no data from - {vars(report)['picker_url']}...", json.dumps(vars(report)["request_object"]), "\n")
+                # print(f"\n \n Skipping report that returned no data from - {vars(report)['picker_url']}...", json.dumps(vars(report)["request_object"]), "\n")
                 return False
         self.__validate()
         self.__make_names_distinct()
@@ -329,7 +329,7 @@ class Comparison(KnownDiscrepancies):
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
             # noinspection PyUnboundLocalVariable
 
-            print("outputting " + filepath)
+            # print("outputting " + filepath)
             # self.validate_calculations()
             # if self.reports[0].sql_query is not None:
             #     # print(f"This report sent a Query {filepath}")
