@@ -2957,11 +2957,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3052,11 +3053,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3088,7 +3090,7 @@ edw2_dashboard_objects = {
                                     "aggregate": [
                                         {
                                             "func": "sum",
-                                            "distinct": true
+                                            "distinct": false
                                         }
                                     ],
                                     "required_groups": [
@@ -3153,11 +3155,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3281,7 +3284,7 @@ edw2_dashboard_objects = {
                                     "aggregate": [
                                         {
                                             "func": "sum",
-                                            "distinct": true
+                                            "distinct": false
                                         }
                                     ],
                                     "required_groups": [
@@ -3346,11 +3349,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3448,7 +3452,7 @@ edw2_dashboard_objects = {
                                     "aggregate": [
                                         {
                                             "func": "sum",
-                                            "distinct": true
+                                            "distinct": false
                                         }
                                     ],
                                     "required_groups": [
@@ -3513,11 +3517,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3593,11 +3598,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
@@ -3673,11 +3679,12 @@ edw2_dashboard_objects = {
                         },
                         {
                             "id": "dim_date-mm_dd_yyyy",
-                            "name": "Day",
-                            "alias": "mm_dd_yyyy",
+                            "alias": "date_range",
+                            "name": "Date Range",
                             "aggregate": [
                                 {
-                                    "func": "range"
+                                    "func": "band",
+                                    "dim": "dim_date-last_thirty_days"
                                 }
                             ]
                         },
