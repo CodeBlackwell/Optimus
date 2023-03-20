@@ -634,7 +634,9 @@ class Cascade:
             result = await asyncio.gather(*futures)
             # self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
-                self.simple_combine_summaries(dashboard_regression["path"])
+                # self.simple_combine_summaries(dashboard_regression["path"])
+                #TODO: Get COmbined summaries working
+                pass
             return result
 
         if sim:
@@ -763,7 +765,10 @@ class Cascade:
                                                           engine='openpyxl', encoding='utf-8')
 
     def simple_combine_summaries(self, regression_dir_path):
-        summary_df = []
+        summary_df = {
+            "trending_widget": [],
+            "top_affiliates_widget": []
+        }
         for root, dirs, files in os.walk(regression_dir_path):
             for name in files:
                 fid = os.path.join(root, name)
@@ -776,11 +781,13 @@ class Cascade:
                         edw3_comparison_col_name: "edw3_result"
                     }, axis=1, inplace=True)
                     report_dataframe.dropna(axis="columns", how="all", inplace=True)
-                    summary_df.append(report_dataframe)
-        summary_df = pd.concat(summary_df)
-        summary_df = summary_df.drop(["Unnamed: 0"], axis=1)
-        with pd.ExcelWriter(os.path.join(regression_dir_path, "combined_summary.xlsx")) as writer:
-            summary_df.to_excel(writer, engine='openpyxl')
+                    summary_df[report_dataframe['widget'][0]].append(report_dataframe)
+        print(summary_df)
+        for widget in summary_df:
+            widget_df = pd.concat(summary_df[widget])
+            widget_df = widget_df.drop(["Unnamed: 0"], axis=1)
+            with pd.ExcelWriter(os.path.join(regression_dir_path, "combined_summary.xlsx")) as writer:
+                widget_df.to_excel(writer, engine='openpyxl', sheet_name=widget)
 
     def combine_summaries(self):
         summaries = []
