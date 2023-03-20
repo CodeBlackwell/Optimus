@@ -13,6 +13,7 @@ import arrow
 import gspread
 import http3
 import pandas as pd
+from openpyxl import Workbook
 import requests
 import sources
 from compare_reports import Comparison
@@ -634,7 +635,7 @@ class Cascade:
             result = await asyncio.gather(*futures)
             # self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
-                # self.simple_combine_summaries(dashboard_regression["path"])
+                self.simple_combine_summaries(dashboard_regression["path"])
                 #TODO: Get COmbined summaries working
                 pass
             return result
@@ -774,20 +775,30 @@ class Cascade:
                 fid = os.path.join(root, name)
                 if name.endswith('.xlsx'):
                     report_dataframe = pd.read_excel(fid, engine="openpyxl")
-                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[2])
-                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[3])
+                    report_dataframe.drop(["Unnamed: 0"], axis=1, inplace=True)
+                    if report_dataframe['widget'][0] == "trending_widget":
+                        column_change_index_1 = 1
+                        column_change_index_2 = 2
+                    if report_dataframe['widget'][0] == "top_affiliates_widget":
+                        column_change_index_1 = 2
+                        column_change_index_2 = 3
+                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_1])
+                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_2])
+                    # print(edw2_comparison_col_name, edw3_comparison_col_name)
                     report_dataframe.rename({
                         edw2_comparison_col_name: "edw2_result",
                         edw3_comparison_col_name: "edw3_result"
                     }, axis=1, inplace=True)
+
                     report_dataframe.dropna(axis="columns", how="all", inplace=True)
                     summary_df[report_dataframe['widget'][0]].append(report_dataframe)
-        print(summary_df)
         for widget in summary_df:
-            widget_df = pd.concat(summary_df[widget])
-            widget_df = widget_df.drop(["Unnamed: 0"], axis=1)
-            with pd.ExcelWriter(os.path.join(regression_dir_path, "combined_summary.xlsx")) as writer:
-                widget_df.to_excel(writer, engine='openpyxl', sheet_name=widget)
+            if widget == "trending_widget":
+                widget_prefix = "TW"
+            elif widget == "top_affiliates_widget":
+                widget_prefix = "TA"
+            with pd.ExcelWriter(os.path.join(regression_dir_path, f"{widget_prefix}_combined_summary.xlsx")) as writer:
+                pd.concat(summary_df[widget]).to_excel(writer, engine='openpyxl')
 
     def combine_summaries(self):
         summaries = []
