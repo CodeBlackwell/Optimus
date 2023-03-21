@@ -6892,7 +6892,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -6936,7 +6936,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -6980,7 +6980,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7024,7 +7024,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7068,7 +7068,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7112,7 +7112,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7156,7 +7156,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7202,7 +7202,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7246,7 +7246,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7290,7 +7290,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7334,7 +7334,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7378,7 +7378,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7422,7 +7422,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7468,7 +7468,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7512,7 +7512,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7556,7 +7556,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7600,7 +7600,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7644,7 +7644,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7688,7 +7688,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7732,7 +7732,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7778,7 +7778,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7822,7 +7822,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7866,7 +7866,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7912,7 +7912,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -7956,7 +7956,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8000,7 +8000,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8044,7 +8044,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8090,7 +8090,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8134,7 +8134,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8178,7 +8178,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8222,7 +8222,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8266,7 +8266,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8310,7 +8310,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8354,7 +8354,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8398,7 +8398,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8442,7 +8442,7 @@ edw3_dashboard_objects = {
                     ],
                     "totals": false,
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 500,
                     "format": "json"
                 }
@@ -8513,7 +8513,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8580,7 +8580,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8647,7 +8647,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8714,7 +8714,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8781,7 +8781,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8848,7 +8848,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8915,7 +8915,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -8984,7 +8984,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9051,7 +9051,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9118,7 +9118,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9185,7 +9185,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9252,7 +9252,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9319,7 +9319,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9388,7 +9388,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9455,7 +9455,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9522,7 +9522,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9589,7 +9589,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9656,7 +9656,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9723,7 +9723,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9790,7 +9790,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9857,7 +9857,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9924,7 +9924,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -9993,7 +9993,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10060,7 +10060,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10127,7 +10127,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10194,7 +10194,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10261,7 +10261,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10328,7 +10328,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10395,7 +10395,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10464,7 +10464,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10531,7 +10531,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10598,7 +10598,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10667,7 +10667,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10734,7 +10734,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10801,7 +10801,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10868,7 +10868,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -10935,7 +10935,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
@@ -11002,7 +11002,7 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "offset": 0,
-                    "currency": "USD",
+                    "currency": "NATIVE",
                     "limit": 10,
                     "format": "json"
                 }
