@@ -1249,6 +1249,9 @@ def main():
                 )
             except KeyboardInterrupt:
                 sys.exit()
+            except Exception as e:
+                print(e)
+                raise
             finally:
                 loop.close()
                 print("Total runtime: ", datetime.now() - start)

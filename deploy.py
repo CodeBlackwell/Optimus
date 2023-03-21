@@ -361,10 +361,10 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                cmd = f'python -m sources.comparison -ne'
+                cmd = f'python3.8 -m sources.comparison -ne'
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}'
-                cmd = f'python -m sources.comparison -ra -mer={merchant}'
+                cmd = f'python3.8 -m sources.comparison -ra -mer={merchant}'
             try:
                 print(cmd)
                 subprocess.run(cmd, shell=True, timeout=args.timeout)
