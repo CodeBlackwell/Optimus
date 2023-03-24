@@ -65,7 +65,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
     # If a timeout happend, go ahead and post that and carry on
     if timeout is True:
         title = f'{merchant} timed out'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage --no-progress-meter'''
+        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
         return
@@ -90,7 +90,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
     upload_name = merchant + '_' + fid.split('/')[-1]
     if matches is True:
         title = upload_name.replace('.xlsx', '') + ' passed'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage --no-progress-meter'''
+        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
     else:
@@ -98,7 +98,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
-        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels=ds_validation   -F file=@{fid} -F filename={upload_name}   -F token={slack_key}   https://slack.com/api/files.upload --no-progress-meter"
+        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels=ds_validation -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
@@ -307,7 +307,7 @@ if __name__ == "__main__":
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
     if args.merchants == 'default':
-        merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors'.split(',')
+        merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
@@ -350,6 +350,9 @@ if __name__ == "__main__":
         if datetime.strptime(end, '%m/%d/%Y') > now:
             logging.warning(f'End time given {end} is in the future! Resetting to now')
             end = now
+
+        # Move to working directory (for cron)
+        os.chdir('/home/ubuntu/ds-data_validation/')
 
         # Trigger script
         for merchant in merchants:

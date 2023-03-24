@@ -565,6 +565,9 @@ class Cascade:
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
+        # Don't default to REI if merc_id is none
+        if merc_id is None:
+            raise Exception(f'Cannot find merchant {merchant_name}')
         async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
             if sim_name:
@@ -1313,4 +1316,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    pass
