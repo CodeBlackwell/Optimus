@@ -221,7 +221,7 @@ edw2_dashboard_objects = {
                                     "aggregate": [
                                         {
                                             "func": "sum",
-                                            "distinct": true
+                                            "distinct": false
                                         }
                                     ],
                                     "required_groups": [
