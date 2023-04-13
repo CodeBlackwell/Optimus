@@ -22,6 +22,7 @@ parser.add_argument('-ne', '--no-error', action='store_true')
 parser.add_argument('-rh', '--remove_hidden', action="store_true")
 parser.add_argument('-rda', '--remove-date-aggs', action="store_true")
 parser.add_argument('-rs', '--remove-sort', action="store_true")
+parser.add_argument('-ul', '--update-logs', action="store_true", help="including this option will cause the changelogs generated to upload to the company spreadsheet")
 parser.add_argument('-mm', '--multi-merchant', type=str,
                         help="The name of the merchants to run - use ',' to separate the merchant names")
 args = parser.parse_args()

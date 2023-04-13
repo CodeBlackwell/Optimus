@@ -534,7 +534,7 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None, merchants=None, merchant_name=None, should_update_logs=True):
+                                   sem_count=None, merchants=None, merchant_name=None, should_update_logs=False):
         if categories is None:
             categories = {
                 "trending_widget": {
@@ -659,7 +659,6 @@ class Cascade:
             await generate_reports(merchant_id=merc_id)
             if should_update_logs:
                 sources.update_log(self.change_logs)
-                # sources.update_logs(self.change_logs)
 
     def perspective_regression(self):
         pass
@@ -1132,6 +1131,10 @@ def main():
     cascade.semaphore_count = 3
     cascade.get_prepared_cols()
     cascade.get_display_groups()
+    if args.update_logs:
+        should_update_logs = True
+    else:
+        should_update_logs = False
 
     if args.no_error:
         pass
@@ -1243,7 +1246,8 @@ def main():
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name)
+                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name,
+                                                 should_update_logs=should_update_logs)
                 )
             except KeyboardInterrupt:
                 sys.exit()
@@ -1300,7 +1304,8 @@ def main():
             # code ...
             loop.run_until_complete(
                 cascade.dashboard_regression(categories=run_categories, interval="last quarter",
-                                             sem_count=3, sim=sim, merchants=merchants)
+                                             sem_count=3, sim=sim, merchants=merchants,
+                                             should_update_logs=should_update_logs)
             )
             print("Total runtime: ", datetime.now() - start)
         except KeyboardInterrupt:
