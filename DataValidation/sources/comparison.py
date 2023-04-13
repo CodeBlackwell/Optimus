@@ -636,7 +636,7 @@ class Cascade:
                                     )
 
             result = await asyncio.gather(*futures)
-            # self.create_change_log(result, sim_name)
+            self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
                 self.simple_combine_summaries(dashboard_regression["path"])
                 #TODO: Get COmbined summaries working
@@ -658,23 +658,14 @@ class Cascade:
         # self.combine_summaries()
         else:
             await generate_reports(merchant_id=merc_id)
-        # self.upload_change_log()
+            print("upload change log")
+        self.upload_change_log()
 
     def perspective_regression(self):
         pass
 
     def upload_change_log(self):
-        scope = ["https://spreadsheets.google.com/feeds", 'https://www.googleapis.com/auth/spreadsheets',
-                 "https://www.googleapis.com/auth/drive.file", "https://www.googleapis.com/auth/drive"]
-        creds = ServiceAccountCredentials.from_json_keyfile_name("creds.json", scope)
-        client = gspread.authorize(creds)
-        sheet = client.open("AvantLink Validation Changelog").sheet1
-
-        for log in self.change_logs:
-            for prop in log:
-                if log[prop] is None:
-                    log[prop] = "N/A"
-        sheet.append_rows(self.change_logs)
+        print(self.change_logs)
 
     def create_change_log(self, comparisons, sim_name):
         if sim_name is None:
@@ -691,23 +682,26 @@ class Cascade:
                     self.totals["count"][sim_name][report_name] += 1
 
                 self.totals["difference"][sim_name][report_name] += float(val)
-
-            self.change_logs.append({
+            change_log = {
                 "Run Time": self.timestamp,
                 "Simulation Name": sim_name,
                 "Timeframe": None,
-                "Dashboard": None,
+                "Dashboard": comparison.dashboard_regression["widget"],
                 "Dashboard Category": comparison.dashboard_regression["category"],
                 "Dashboard Report Name": comparison.dashboard_regression["dashboard report name"],
                 "Records Passed (Total)": f"{len(diff_col) - int(self.totals['count'][sim_name][report_name])} / {len(diff_col)}",
                 "Total Difference": self.totals["difference"][sim_name][report_name],
                 "Calculation Val.": comparison.validations["calculations"],
                 "OLAP Val.": comparison.validations["OLAP"],
-                "Merchant ID": None,
+                "Merchant ID": comparison.dashboard_regression["merchant"],
                 "Affiliate ID": None,
                 "Admin ID": None,
                 "Agency ID": None
-            })
+            }
+            formatted_log = []
+            for key in change_log:
+                formatted_log.append(change_log[key])
+            self.change_logs.append(formatted_log)
 
     def write_dashboard_regression_summary(self, date_interval, sim=None):
         summary = []
@@ -1217,11 +1211,11 @@ def main():
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
                       "Sales",
-                      "Combined Commission",
-                      "Network Commission",
-                      "Clicks % Impressions",
-                      "Adjustments",
-                      "Affiliate Commission"
+                      # "Combined Commission",
+                      # "Network Commission",
+                      # "Clicks % Impressions",
+                      # "Adjustments",
+                      # "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,
