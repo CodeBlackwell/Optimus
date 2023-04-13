@@ -534,25 +534,25 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None, merchants=None, merchant_name=None):
+                                   sem_count=None, merchants=None, merchant_name=None, should_update_logs=True):
         if categories is None:
             categories = {
                 "trending_widget": {
-                                    "Sales": True,
-                                    "Combined Commissions": True,
-                                    "Affiliate Commission": True,
-                                    "Network Commission": True,
-                                    "Clicks % Impressions": True,
-                                    "Adjustments": True
-                                    },
+                    "Sales": True,
+                    "Combined Commissions": True,
+                    "Affiliate Commission": True,
+                    "Network Commission": True,
+                    "Clicks % Impressions": True,
+                    "Adjustments": True
+                },
                 "top_affiliate_widget": {
-                                         "Sales": True,
-                                         "Combined Commissions": True,
-                                         "Affiliate Commission": True,
-                                         "Network Commission": True,
-                                         "Clicks % Impressions": True,
-                                         "Adjustments": True
-                                         }
+                    "Sales": True,
+                    "Combined Commissions": True,
+                    "Affiliate Commission": True,
+                    "Network Commission": True,
+                    "Clicks % Impressions": True,
+                    "Adjustments": True
+                }
             }
         # Create a timestamped Directory to hold all reports
         timestamp = datetime.now().strftime("%x %X")
@@ -568,6 +568,7 @@ class Cascade:
         # Don't default to REI if merc_id is none
         if merc_id is None:
             raise Exception(f'Cannot find merchant {merchant_name}')
+
         async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
             if sim_name:
@@ -613,7 +614,7 @@ class Cascade:
                                         #     pass
                                         # print(f"{merchant_path} ----- 596, {merchant}")
                                     comparison_col_name = col["name"]
-                                    merch_id=get_merchant_id(edw3_request_object)
+                                    merch_id = get_merchant_id(edw3_request_object)
                                     lookup_merchant_name = search_merchant(merch_id=merch_id)
                                     dashboard_regression = {"path": dir_basepath,
                                                             "category": category,
@@ -639,8 +640,6 @@ class Cascade:
             self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
                 self.simple_combine_summaries(dashboard_regression["path"])
-                #TODO: Get COmbined summaries working
-                pass
             return result
 
         if sim:
@@ -658,13 +657,15 @@ class Cascade:
         # self.combine_summaries()
         else:
             await generate_reports(merchant_id=merc_id)
-            print("upload change log")
-        self.upload_change_log()
+            if should_update_logs:
+                sources.update_log(self.change_logs)
+                # sources.update_logs(self.change_logs)
 
     def perspective_regression(self):
         pass
 
     def upload_change_log(self):
+
         print(self.change_logs)
 
     def create_change_log(self, comparisons, sim_name):

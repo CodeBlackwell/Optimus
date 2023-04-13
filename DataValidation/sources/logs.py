@@ -45,15 +45,8 @@ def update_log(logs_batch=None):
 
         # Call the Sheets API
         sheet = service.spreadsheets().values()
-        values = [
-            [
-                2, 4, 6, 8, 10
-            ],
+        values = logs_batch # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
 
-            # Additional rows ...
-        ]
-
-        # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
         body = {
             'values': values
         }
