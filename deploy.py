@@ -38,6 +38,7 @@ parser.add_argument("--start", type=str, help="Specifies a start date for valida
 parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
 parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is a set of 5 top merchants.", default="default")
 parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
+parser.add_argument("--skip-logging", action="store_true", help="Indicates if logging should be skipped to the master spreadsheet")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
 parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
 parser.add_argument("-ne", "--no-error", action="store_true")
@@ -367,7 +368,12 @@ if __name__ == "__main__":
                 cmd = f'python3.8 -m sources.comparison -ne'
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}'
-                cmd = f'python3.8 -m sources.comparison -ra -mer={merchant}'
+                # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
+                # It can be skipped however (see args)
+                if args.skip_logging is False:
+                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant} -ul'
+                else:
+                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant}'
             try:
                 print(cmd)
                 subprocess.run(cmd, shell=True, timeout=args.timeout)
