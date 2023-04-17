@@ -89,6 +89,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -269,6 +270,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -423,6 +425,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -490,6 +493,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -557,6 +561,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -638,6 +643,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -720,6 +726,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -851,6 +858,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -926,6 +934,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1001,6 +1010,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1066,6 +1076,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1141,6 +1152,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1216,6 +1228,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1283,6 +1296,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1348,6 +1362,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1413,6 +1428,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1483,6 +1499,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1601,6 +1618,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1700,6 +1718,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1839,6 +1858,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -1944,6 +1964,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2011,6 +2032,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2076,6 +2098,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2141,6 +2164,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2210,6 +2234,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2325,6 +2350,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2418,6 +2444,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2542,6 +2569,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2623,6 +2651,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2683,6 +2712,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2743,6 +2773,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2812,6 +2843,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2879,6 +2911,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -2945,6 +2978,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -3026,6 +3060,7 @@ edw2_dashboard_objects = {
                     "counts": false,
                     "partitionLimit": 4,
                     "offset": 0,
+                    "currency": "NATIVE",
                     "partitionOffset": 0,
                     "limit": 500
                 }
@@ -3229,6 +3264,7 @@ edw2_dashboard_objects = {
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -3417,12 +3453,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -3585,12 +3622,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -3666,12 +3704,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -3747,12 +3786,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -3842,12 +3882,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
@@ -3988,12 +4029,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4078,12 +4120,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4168,12 +4211,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4248,12 +4292,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4338,12 +4383,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4428,12 +4474,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
@@ -4510,12 +4557,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4590,12 +4638,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4670,12 +4719,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4750,12 +4800,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4834,12 +4885,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -4967,12 +5019,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5081,12 +5134,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5235,12 +5289,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5355,12 +5410,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
@@ -5437,12 +5493,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5517,12 +5574,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5597,12 +5655,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5681,12 +5740,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5811,12 +5871,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -5919,12 +5980,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6058,12 +6120,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
@@ -6154,12 +6217,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6229,12 +6293,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6304,12 +6369,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
@@ -6388,12 +6454,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6496,12 +6563,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6578,12 +6646,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6660,12 +6729,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6741,12 +6811,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             },
@@ -6837,12 +6908,13 @@ edw2_dashboard_objects = {
                             "direction": "desc"
                         }
                     ],
-                    "totals": true,
+                   "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
                     "offset": 0,
                     "limit": 10,
+                    "currency": "NATIVE",
                     "partitionOffset": 0
                 }
             }
