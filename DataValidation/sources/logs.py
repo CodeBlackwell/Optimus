@@ -11,9 +11,7 @@ from googleapiclient.errors import HttpError
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
-# The ID and range of a sample spreadsheet.
-SPREADSHEET_ID = '1BxiMVs0XRA5nFMdKvBdBZjgmUUqptlbs74OgvE2upms'
-RANGE = "Sheet1!A1:Z"
+RANGE = "DashboardWidgets!A1:Z"
 avantlog_spreadsheet_id = "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
 VALUE_INPUT_OPTION = "USER_ENTERED"
 

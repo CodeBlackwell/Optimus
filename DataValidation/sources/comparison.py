@@ -640,6 +640,7 @@ class Cascade:
             self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
                 self.simple_combine_summaries(dashboard_regression["path"])
+            # print(self.change_logs)
             return result
 
         if sim:
@@ -685,7 +686,7 @@ class Cascade:
             change_log = {
                 "Run Time": self.timestamp,
                 "Simulation Name": sim_name,
-                "Timeframe": None,
+                "Timeframe": comparison.dashboard_regression["Report Date Range"],
                 "Dashboard": comparison.dashboard_regression["widget"],
                 "Dashboard Category": comparison.dashboard_regression["category"],
                 "Dashboard Report Name": comparison.dashboard_regression["dashboard report name"],
@@ -1215,11 +1216,11 @@ def main():
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
                       "Sales",
-                      # "Combined Commission",
-                      # "Network Commission",
-                      # "Clicks % Impressions",
-                      # "Adjustments",
-                      # "Affiliate Commission"
+                      "Combined Commission",
+                      "Network Commission",
+                      "Clicks % Impressions",
+                      "Adjustments",
+                      "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,

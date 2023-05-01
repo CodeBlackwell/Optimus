@@ -299,6 +299,7 @@ class Comparison(KnownDiscrepancies):
                 merge["Dashboard Category"] = self.dashboard_regression["category"]
                 merge["merchant"] = self.dashboard_regression["merchant"]
                 merge["widget"] = self.dashboard_regression["widget"]
+                report_date_range = None
                 if self.dashboard_regression["widget"] == "trending_widget":
                     widget_marker = 'TW_'
                 elif self.dashboard_regression["widget"] == "top_affiliates_widget":
@@ -306,6 +307,29 @@ class Comparison(KnownDiscrepancies):
                 else:
                     widget_marker = 'NW_'
 
+                ## Date Validation and addition to report
+                try:
+                    if merge["Day"] is not None:
+                        last_day_index = len(merge["Day"].values) - 1
+                        last_day = merge["Day"].values[last_day_index]
+                        first_day = merge["Day"].values[0]
+                        report_date_range = f"{first_day} - {last_day}"
+                except Exception as e:
+                    # print(e)
+                    pass
+                try:
+                    if merge["Date Range"][0] is not None:
+                        last_range_index = len(merge["Date Range"]) - 1
+                        last_range = merge["Date Range"][last_range_index]
+                        first_range = merge["Date Range"][0]
+                        if first_range == last_range:
+                            report_date_range = first_range
+                        else:
+                            report_date_range = f"Mixed:[{first_range}, {last_range}]"
+                except:
+                    pass
+                finally:
+                    self.dashboard_regression["Report Date Range"] = report_date_range
                 xlsx_name = self.simple_difference["comparison_col_name"].replace(" ", "")
                 xlsx_name = xlsx_name[:26].replace("Average", "Avg").replace("Affiliate", "Affil")
                 xlsx_name = widget_marker + xlsx_name
