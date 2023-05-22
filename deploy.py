@@ -41,6 +41,7 @@ parser.add_argument("--skip-slack", action="store_true", help="Indicates if we s
 parser.add_argument("--skip-logging", action="store_true", help="Indicates if logging should be skipped to the master spreadsheet")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
 parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
+parser.add_argument("--source", type=str, help="Tells the picker to use a particular data source. Default is empty, which will use typical fallback system.", default="")
 parser.add_argument("-ne", "--no-error", action="store_true")
 args = parser.parse_args()
 
@@ -289,6 +290,65 @@ def calculate_times(now):
     end_times = [mtd_end, lm_end, ly_end]
     return start_times, end_times
 
+class RunCommand():
+
+    def __init__(self, 
+            args='',
+            merchants='',
+            logging=True
+        ):
+        '''
+        Parameters:
+            args: str, list of custom arguments joined into a string to append to command
+            merchants: str, gives all of the merchants in a joined string to run for
+            logging: boolean, indicates if we should send results to ouput loggin dashboard
+        '''
+        self.args = args
+        
+        # Start with base command we always use
+        _base_command = 'python3.8 -m sources.comparison'
+
+        # Merchants argument
+        if self.merchants != '':
+            _base_command += f' -mer {self.merchants}'
+
+        # Custom argument list
+        if self.args != '':
+            _base_command += self.args
+
+        # Logging argument
+        if self.logging is True:
+            _base_command += ' -ul'
+        
+        # Final command to run
+        self.command = _base_command
+
+class NoErrorCommand(RunCommand):
+    '''
+    Picker test suite, gives simple pass/fail
+    '''
+    args = ' -ne'
+    logging = False
+
+    def __init__(self):
+        super().__init(
+            args = self.args
+        )
+
+class RunMerchantsCommand(RunCommand):
+    '''
+    Used for running full regression on merchants
+    '''
+    args = ' -ra'
+
+    def __init__(self,
+         merchants=''):
+         self.merchants=merchants
+         super().__init(
+             args=self.args,
+             merchants=self.merchants
+         )
+
 if __name__ == "__main__":
     # Init
     now = time.strftime("%c")
@@ -317,6 +377,16 @@ if __name__ == "__main__":
     # Custom list or single entry- supports multiple merchants
     else:
         merchants = args.merchants.split(',')
+
+    # Check is source was specified. If it was, confirm we can use it
+    if args.source != '':
+        valid_sources = ['fact_redshift', 'fact_postgres', 'olap', 'cube_postgres', 'athena']
+        if args.source not in valid_sources:
+            raise TypeError(f'The given source is not valid. Must be in {valid_sources} but got {args.source}')
+        else:
+            source = args.source
+    else:
+        source = None
 
     # Let's trigger Le's code here for now
     # TODO: Comment this guy out once containerized- container will do this once run
