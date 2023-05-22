@@ -1,4 +1,5 @@
 # Argument parse for Le's comparison script
+# Note that defaults are not needed here because they are passed from deploy.py (which has its own argument set)
 
 import argparse
 
@@ -18,6 +19,7 @@ parser.add_argument('-c', '--comparison-column', type=str,
 parser.add_argument('-sd', '--start-date', type=str, help="The Start Date - Format == mm_dd_yyyy")
 parser.add_argument('-ed', '--end-date', type=str, help="The End Date - Format === mm_dd_yyyy")
 parser.add_argument('-mer', '--merchant', type=str, help="The merchant uuid or merchant name")
+parser.add_argument('-source', '--source', type=str, help="Gives the specifc data type source to retrieve")
 parser.add_argument('-ne', '--no-error', action='store_true')
 parser.add_argument('-rh', '--remove_hidden', action="store_true")
 parser.add_argument('-rda', '--remove-date-aggs', action="store_true")

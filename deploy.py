@@ -27,22 +27,8 @@ import pandas as pd
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-
-# Argument collector
-parser = argparse.ArgumentParser()
-parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is ds_validation", default="ds_validation")
-parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
-parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
-parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
-parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
-parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
-parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is a set of 5 top merchants.", default="default")
-parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
-parser.add_argument("--skip-logging", action="store_true", help="Indicates if logging should be skipped to the master spreadsheet")
-parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
-parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
-parser.add_argument("-ne", "--no-error", action="store_true")
-args = parser.parse_args()
+from runtime_args import args
+from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 
 def post_to_slack(channel, msg, fid, merchant, timeout=False):
     '''
@@ -318,6 +304,17 @@ if __name__ == "__main__":
     else:
         merchants = args.merchants.split(',')
 
+    # Check is source was specified. If it was, confirm we can use it
+    if args.source != '':
+        valid_sources = ['fact_redshift', 'fact_postgres', 'olap', 'cube_postgres', 'athena']
+        if args.source not in valid_sources:
+            valid_string = ', '.join(valid_sources)
+            raise TypeError(f'The given source is not valid. Must be in {valid_string} but got {args.source}')
+        else:
+            source = args.source
+    else:
+        source = ''
+
     # Let's trigger Le's code here for now
     # TODO: Comment this guy out once containerized- container will do this once run
     # Grab dates (30 days back ending yesterday is default)
@@ -365,15 +362,19 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                cmd = f'python3.8 -m sources.comparison -ne'
+                cmd = NoErrorCommand.command
             else:
-                #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}'
+                #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
                 # It can be skipped however (see args)
                 if args.skip_logging is False:
-                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant} -ul'
+                    run_command = RunCommand(merchants=merchant, source=source)
                 else:
-                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant}'
+                    run_command = NoLoggingCommand(merchants=merchant, source=source)
+                cmd = run_command.command
+
+            # Print the command and run it
+            # If it should fail, make note of that here as well so we can print that out to slack
             try:
                 print(cmd)
                 subprocess.run(cmd, shell=True, timeout=args.timeout)

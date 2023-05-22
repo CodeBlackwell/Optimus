@@ -306,7 +306,7 @@ class Cascade:
 
     async def run_simple_difference(self, simple_difference_options, report_name=None, edw2_ro=None, edw3_ro=None,
                                     interval=None, dashboard_regression=None,
-                                    sim=None, force_picker=None, manual_path=None):
+                                    sim=None, source=None, force_picker=None, manual_path=None):
 
         async with self.sem:
             if report_name is None:
@@ -333,6 +333,8 @@ class Cascade:
             #     self.replace_relative_dates(interval, request_object=edw3_ro)
             if sim and edw3_ro:
                 self.insert_simulation(sim, request_object=edw3_request_object)
+            if source and edw3_ro:
+                self.insert_source(source, request_object=edw3_request_object)
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
@@ -457,6 +459,13 @@ class Cascade:
                 if "prepared_id" in col:
                     col["sim"] = sim_name
 
+    def insert_source(self, source, request_object=None):
+        request = request_object or self.edw3_request_object
+        for report_id in request:
+            for col in request[report_id]["cols"]:
+                if "prepared_id" in col:
+                    col["source"] = source
+
     def replace_relative_dates(self, interval, request_object=None):
         intervals = {
             "last_quarter": {
@@ -534,7 +543,8 @@ class Cascade:
                             request_object[report_id]["filters"].append(intervals["last_year"])
 
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
-                                   sem_count=None, merchants=None, merchant_name=None, should_update_logs=False):
+                                   sem_count=None, merchants=None, merchant_name=None, should_update_logs=False,
+                                   source=None):
         if categories is None:
             categories = {
                 "trending_widget": {
@@ -621,6 +631,7 @@ class Cascade:
                                                             "dashboard report name": request_object_name,
                                                             "merchant": lookup_merchant_name,
                                                             "sim_name": sim_name,
+                                                            "source": source,
                                                             "widget": widget
                                                             }
 
@@ -632,8 +643,8 @@ class Cascade:
                                         {"join_on": define_join_on(edw2_request_object, edw3_request_object),
                                          "comparison_col_name": comparison_col_name},
                                         edw2_ro=edw2_request_object, edw3_ro=edw3_request_object,
-                                        interval=interval, sim=sim_name, report_name=comparison_col_name,
-                                        dashboard_regression=dashboard_regression)
+                                        interval=interval, sim=sim_name, source=source,
+                                        report_name=comparison_col_name, dashboard_regression=dashboard_regression)
                                     )
 
             result = await asyncio.gather(*futures)
@@ -1154,6 +1165,7 @@ def main():
         edw3_ro = request_objects["edw3_request_object"]
 
         sim = args.sim or None
+        source = args.source or None
         if args.join:
             join_on = args.join.split(',')
             join_on = [col_name.strip() for col_name in join_on]
@@ -1200,8 +1212,8 @@ def main():
                     cascade.run_simple_difference(
                         {"join_on": join_on,
                          "comparison_col_name": comparison_col_name},
-                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, report_name=comparison_col_name,
-                        manual_path=manual_comparison_report_dir_path)
+                        edw2_ro=edw2_ro, edw3_ro=edw3_ro, sim=sim, source=source,
+                        report_name=comparison_col_name, manual_path=manual_comparison_report_dir_path)
                 )
                 print("Total runtime: ", datetime.now() - start)
             except KeyboardInterrupt:
@@ -1242,6 +1254,13 @@ def main():
                 merchants = [col_name.strip() for col_name in merchants]
             if args.merchant:
                 merchant_name = args.merchant
+
+            # Add source if specified
+            if args.source:
+                source = args.source
+            else:
+                source = None
+
             try:
                 start = datetime.now()
                 # code ...
