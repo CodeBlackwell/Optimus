@@ -6,7 +6,8 @@ class RunCommand():
             args='',
             merchants='',
             source='',
-            logging=True
+            logging=True,
+            no_error=False
         ):
         '''
         Parameters:
@@ -14,33 +15,40 @@ class RunCommand():
             merchants: str, gives all of the merchants in a joined string to run for
             source: str, specifies a particular data source we desire to pull the data from
             logging: boolean, indicates if we should send results to ouput loggin dashboard
+            no_error: boolean, indicates command is for Picker test/suite and should pass/fail only
         '''
         self.args = args
         self.merchants = merchants
         self.source = source
         self.logging = logging
+        self.no_error = no_error
 
-        # Start with base command we always use
-        _base_command = 'python3.8 -m sources.comparison'
+        # Test suite command
+        if self.no_error is True:
+            self.command = 'python 3.8 -m sources.comparison -ne'
 
-        # Merchants argument
-        if self.merchants != '':
-            _base_command += f' -ra -mer {self.merchants}'
+        else:
+            # Start with base command we always use
+            _base_command = 'python3.8 -m sources.comparison'
 
-        # Source argument
-        if self.source != '':
-            _base_command += f' -source {self.source}'
+            # Merchants argument
+            if self.merchants != '':
+                _base_command += f' -ra -mer {self.merchants}'
 
-        # Custom argument list
-        if self.args != '':
-            _base_command += self.args
+            # Source argument
+            if self.source != '':
+                _base_command += f' -source {self.source}'
 
-        # Logging argument
-        if self.logging is True:
-            _base_command += ' -ul'
+            # Custom argument list
+            if self.args != '':
+                _base_command += self.args
 
-        # Final command to run
-        self.command = _base_command
+            # Logging argument
+            if self.logging is True:
+                _base_command += ' -ul'
+
+            # Final command to run
+            self.command = _base_command
 
 class NoLoggingCommand(RunCommand):
     '''
@@ -54,3 +62,4 @@ class NoErrorCommand(RunCommand):
     '''
     args = ' -ne'
     logging = False
+    no_error = True
