@@ -63,11 +63,11 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_
     if fid is None:
         # Get result for Slack
         if is_pass is True:
-            title = f'Picker {test_name} passed'
+            title = f'Picker {test_name} test passed'
         elif is_fail is True:
-            title = f'Picker {test_name} failed'
+            title = f'Picker {test_name} test failed'
         else:
-            title = f'Picker {test_name} gave an unexpected result'
+            title = f'Picker {test_name} test gave an unexpected result'
 
         # Post to Slack and exit
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
@@ -299,7 +299,10 @@ if __name__ == "__main__":
 
                 # For Picker test suite, don't post files
                 if args.no_error:
-                    post_to_slack(channel, msg, None, merchant, timeout=timeout)
+                    is_pass = True
+                    is_fail = False
+                    test_name = 'Zachs Test run'
+                    post_to_slack(channel, msg, None, merchant, timeout=timeout, is_pass=True, is_fail=False, test_name=test_name)
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
@@ -307,27 +310,6 @@ if __name__ == "__main__":
                         # Only post 1 timeout message
                         if timeout is True:
                             break
-
-            # Grab list of images provided by args
-            containers = args.containers.split(',')
-            if containers == ['']:
-                logging.warning('No containers specified to deploy')
-                #exit()
-            else:
-                print(containers)
-
-            # For each container in the args list, 1st see if it needs to be dcreated
-            # Then, register and deploy it
-            for container in containers:
-                if args.create_required is True:
-                    print('Will create in a future release')
-                    #create_ecs_image(container)
-                else:
-                    print('Skipping image creation')
-
-                # Register and deploy- eventually, maybe
-                #register_image(uri, container)
-                #push_ecs_image(uri, container)
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
