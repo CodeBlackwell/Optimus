@@ -22,6 +22,7 @@ class RunCommand():
         self.source = source
         self.logging = logging
         self.no_error = no_error
+        print(self.no_error)
 
         # Test suite command
         if self.no_error is True:
@@ -63,3 +64,16 @@ class NoErrorCommand(RunCommand):
     args = ' -ne'
     logging = False
     no_error = True
+
+    def __init__(self, merchants=None, source=None):
+        self.merchants = merchants
+        self.source = source
+
+        # Init base run command with Picker Test Suite attributes
+        super().__init__(
+            args=self.args, 
+            merchants=self.merchants, 
+            source=self.source, 
+            logging=self.logging, 
+            no_error=self.no_error
+        )
