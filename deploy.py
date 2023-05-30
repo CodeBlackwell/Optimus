@@ -52,7 +52,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_
     # If a timeout happend, go ahead and post that and carry on
     if timeout is True:
         title = f'{merchant} timed out'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
         return
@@ -70,7 +70,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_
             title = f'Picker {test_name} gave an unexpected result'
 
         # Post to Slack and exit
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
         return
