@@ -362,7 +362,7 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                cmd = NoErrorCommand.command
+                run_command = NoErrorCommand(merchants=merchant, source=source)
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
@@ -371,7 +371,7 @@ if __name__ == "__main__":
                     run_command = RunCommand(merchants=merchant, source=source)
                 else:
                     run_command = NoLoggingCommand(merchants=merchant, source=source)
-                cmd = run_command.command
+            cmd = run_command.command
 
             # Print the command and run it
             # If it should fail, make note of that here as well so we can print that out to slack
