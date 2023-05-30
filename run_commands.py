@@ -22,11 +22,10 @@ class RunCommand():
         self.source = source
         self.logging = logging
         self.no_error = no_error
-        print(self.no_error)
 
         # Test suite command
         if self.no_error is True:
-            self.command = 'python3.8 -m sources.comparison -ne'
+            self.command = 'python3.8 -m sources.comparison -ne -ra'
 
         else:
             # Start with base command we always use
