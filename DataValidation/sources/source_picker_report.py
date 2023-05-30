@@ -87,7 +87,7 @@ class PickerReport(SourceBase):
             # Post a request object to Picker 1.0
         data_request = await client.post(self.picker_url, data={
             "q": json.dumps(self.request_object)
-        }, headers=self.__get_headers(), verify=False, timeout=60000)
+        }, headers=self.__get_headers(), verify=False, timeout=3000000)
         self.report = data_request.json()
         self.report_key = [x for x in list(self.report.keys()) if x[0] != '_'][0]
         col_data = []

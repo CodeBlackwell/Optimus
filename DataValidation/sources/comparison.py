@@ -60,8 +60,8 @@ class Cascade:
     }
     sem = None
     semaphore_count = 3
-    edw2_url = 'https://picker-dev.avantlink.com/rpt'
-    edw3_url = 'https://picker-shard.avantlink.com/rpt'
+    edw2_url = 'https://picker-dev.avantlink.com/rpt?timeout=2900000'
+    edw3_url = 'https://picker-shard.avantlink.com/rpt?timeout=2900000'
     arrow_formats = {
         "mm_dd_yyyy": "%m/%d/%Y",
         "yyyymmdd": "%Y%m%d"
