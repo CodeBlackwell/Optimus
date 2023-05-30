@@ -26,7 +26,7 @@ class RunCommand():
 
         # Test suite command
         if self.no_error is True:
-            self.command = 'python 3.8 -m sources.comparison -ne'
+            self.command = 'python3.8 -m sources.comparison -ne'
 
         else:
             # Start with base command we always use
@@ -71,9 +71,9 @@ class NoErrorCommand(RunCommand):
 
         # Init base run command with Picker Test Suite attributes
         super().__init__(
-            args=self.args, 
-            merchants=self.merchants, 
-            source=self.source, 
-            logging=self.logging, 
+            args=self.args,
+            merchants=self.merchants,
+            source=self.source,
+            logging=self.logging,
             no_error=self.no_error
         )
