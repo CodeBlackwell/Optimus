@@ -37,6 +37,7 @@ class Cascade:
     cascade_start_date = None
     cascade_end_date = None
     report_name = ""
+    log_file = 'test_suite_outputs.json'
     request_objects = {
         "day": [],
         "week": [],
@@ -337,6 +338,19 @@ class Cascade:
                 self.insert_source(source, request_object=edw3_request_object)
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
+
+            # Store needed information in log file
+            # Delete the log if it already exists
+            if os.path.exists(self.log_file):
+                os.remove(self.log_file)
+
+            log_dict = {}
+            log_dict['test_name'] = report_name
+            log_dict['edw2_request_object'] = edw2_request_object
+            log_dict['edw3_request_object'] = edw3_request_object
+            with open(self.log_file, 'a+') as f:
+                f.write(json.dumps(log_dict))
+
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
                                                          request_object=edw3_request_object),
@@ -575,6 +589,8 @@ class Cascade:
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
+        else:
+            merc_id = None
         # Don't default to REI if merc_id is none
         if merc_id is None:
             raise Exception(f'Cannot find merchant {merchant_name}')
