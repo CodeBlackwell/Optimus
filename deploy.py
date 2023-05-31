@@ -61,23 +61,35 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
     # Picker test suite doesn't post excel files
     # Instead post a pass/fail
     if fid is None:
-        # Unpack json
-        test_name = js['test_name']
+        # Unpack json results for Slack
+        title = js['test_name']
         edw2_ro = js['edw2_request_object']
         edw3_ro = js['edw3_request_object']
 
+        # Create temp files
+        #with open('edw2_request_objects.json') as f:
+        #    f.write(json.dumps(edw2_ro))
+
+        # Create temp file
+        fid = 'edw3_request_objects.json'
+        with open(fid) as f:
+            f.write(json.dumps(edw3_ro))
+
         # Get result for Slack
-        if is_pass is True:
-            title = f'Picker {test_name} test passed'
-        elif is_fail is True:
-            title = f'Picker {test_name} test failed'
-        else:
-            title = f'Picker {test_name} test gave an unexpected result'
+        #if is_pass is True:
+        #    title = f'Picker {test_name} test passed'
+        #elif is_fail is True:
+        #    title = f'Picker {test_name} test failed'
+        #else:
+        #    title = f'Picker {test_name} test gave an unexpected result'
 
         # Post to Slack and exit
-        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
+
+        # Delete temp file
+        os.remove(fid)
         return
 
     # Check if file matches between edw and edw3
@@ -100,7 +112,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
     upload_name = merchant + '_' + fid.split('/')[-1]
     if matches is True:
         title = upload_name.replace('.xlsx', '') + ' passed'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
     else:
@@ -108,7 +120,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
-        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels=ds_validation -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
+        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
@@ -200,7 +212,10 @@ if __name__ == "__main__":
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
     if args.merchants == 'default':
-        merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
+        if args.no_error:
+            merchants = ['REI.com']
+        else:
+            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
@@ -308,12 +323,9 @@ if __name__ == "__main__":
                     json_dicts = []
                     with open('DataValidation/test_suite_outputs.json') as f:
                         for line in f:
-                            json_dicts.append(line)
-                    print(json_dicts)
-                    kill()
-                    #is_pass = True
-                    #is_fail = False
-                    #test_name = 'Zachs Test run'
+                            json_dicts.append(json.loads(line))
+
+                    # Post results to Slack
                     for json_dict in json_dicts:
                         post_to_slack(channel, msg, None, merchant, timeout=timeout, js=json_dict)
                 else:
