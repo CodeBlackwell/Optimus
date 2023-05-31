@@ -72,7 +72,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
 
         # Create temp file
         fid = 'edw3_request_objects.json'
-        with open(fid) as f:
+        with open(fid, 'a+') as f:
             f.write(json.dumps(edw3_ro))
 
         # Get result for Slack
