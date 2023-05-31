@@ -346,6 +346,7 @@ class Cascade:
             log_dict['edw3_request_object'] = edw3_request_object
             with open(self.log_file, 'a+') as f:
                 f.write(json.dumps(log_dict))
+                f.write('\n')
 
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
