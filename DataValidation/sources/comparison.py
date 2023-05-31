@@ -340,10 +340,6 @@ class Cascade:
                 simple_difference_options["manual_path"] = manual_path
 
             # Store needed information in log file
-            # Delete the log if it already exists
-            if os.path.exists(self.log_file):
-                os.remove(self.log_file)
-
             log_dict = {}
             log_dict['test_name'] = report_name
             log_dict['edw2_request_object'] = edw2_request_object

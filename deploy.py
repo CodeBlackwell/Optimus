@@ -298,7 +298,14 @@ if __name__ == "__main__":
                 logging.info(msg)
 
                 # For Picker test suite, don't post files
+                # Instead, grab results from the log file on disk
                 if args.no_error:
+                    json_dicts = []
+                    with open('DataValidation/test_suite_outputs.json') as f:
+                        for line in f:
+                            json_dicts.append(json.loads(line))
+                    print(json_dicts)
+                    kill()
                     is_pass = True
                     is_fail = False
                     test_name = 'Zachs Test run'
