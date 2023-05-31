@@ -303,13 +303,15 @@ if __name__ == "__main__":
                     json_dicts = []
                     with open('DataValidation/test_suite_outputs.json') as f:
                         for line in f:
-                            json_dicts.append(json.loads(str(x)) for x in line.split('\n'))
+                            print(json.loads(line))
+                            #json_dicts.append(json.loads(str(x)) for x in line.split('\n'))
                     print(json_dicts)
                     kill()
-                    is_pass = True
-                    is_fail = False
-                    test_name = 'Zachs Test run'
-                    post_to_slack(channel, msg, None, merchant, timeout=timeout, is_pass=True, is_fail=False, test_name=test_name)
+                    #is_pass = True
+                    #is_fail = False
+                    #test_name = 'Zachs Test run'
+                    for json_dict in json_dicts:
+                        post_to_slack(channel, msg, None, merchant, timeout=timeout, js=json_dict)
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
