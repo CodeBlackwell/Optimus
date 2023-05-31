@@ -593,7 +593,8 @@ class Cascade:
             merc_id = None
         # Don't default to REI if merc_id is none
         if merc_id is None:
-            raise Exception(f'Cannot find merchant {merchant_name}')
+            if args.no_error is False:
+                raise Exception(f'Cannot find merchant {merchant_name} and merchant regression was requested')
 
         async def generate_reports(sim_name=None, merchant_id=None):
             futures = []
