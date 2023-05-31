@@ -30,7 +30,7 @@ from slack_sdk.errors import SlackApiError
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 
-def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_fail=False, test_name=''):
+def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
     '''
     Posts a message to the chosen Slack channel
 
@@ -40,6 +40,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_
         fid: str, gives the name of the file to post to Slack as an attachment
         merchant: str, the merchant name tied to this data result
         timeout: boolean (optional), indicates if a timeout happened
+        js: json object, contains a set of metadata required for reporting on the test suite (only usage)
 
     Returns:
         None
@@ -59,8 +60,12 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, is_pass=False, is_
 
     # Picker test suite doesn't post excel files
     # Instead post a pass/fail
-    # TODO: Add json containing request object
     if fid is None:
+        # Unpack json
+        test_name = js['test_name']
+        edw2_ro = js['edw2_request_object']
+        edw3_ro = js['edw3_request_object']
+
         # Get result for Slack
         if is_pass is True:
             title = f'Picker {test_name} test passed'
@@ -303,8 +308,7 @@ if __name__ == "__main__":
                     json_dicts = []
                     with open('DataValidation/test_suite_outputs.json') as f:
                         for line in f:
-                            print(json.loads(line))
-                            #json_dicts.append(json.loads(str(x)) for x in line.split('\n'))
+                            json_dicts.append(line)
                     print(json_dicts)
                     kill()
                     #is_pass = True
