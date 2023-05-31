@@ -303,7 +303,7 @@ if __name__ == "__main__":
                     json_dicts = []
                     with open('DataValidation/test_suite_outputs.json') as f:
                         for line in f:
-                            json_dicts.append(json.loads(x) for x in line.split('\n'))
+                            json_dicts.append(json.loads(str(x)) for x in line.split('\n'))
                     print(json_dicts)
                     kill()
                     is_pass = True
