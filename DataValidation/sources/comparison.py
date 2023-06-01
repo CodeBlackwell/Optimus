@@ -1252,6 +1252,18 @@ def main():
             "trending_widget": False,
             "top_affiliates_widget": False
         }
+
+        # Add source if specified
+        if args.source:
+            source = args.source
+        else:
+            source = None
+
+        # If source is Redshift, remove data stored on Silo
+        if source == 'fact_redshift':
+            removal_list = ['Combined Commission', 'Network Commission', 'Affiliate Commission']
+            categories = [item for item in categories if item not in removal_list]
+
         minimum_flag = False
         if args.run_all:
             for widget in run_categories:
@@ -1268,12 +1280,6 @@ def main():
                 merchants = [col_name.strip() for col_name in merchants]
             if args.merchant:
                 merchant_name = args.merchant
-
-            # Add source if specified
-            if args.source:
-                source = args.source
-            else:
-                source = None
 
             try:
                 start = datetime.now()
