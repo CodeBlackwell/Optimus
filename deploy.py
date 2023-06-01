@@ -30,7 +30,7 @@ from slack_sdk.errors import SlackApiError
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 
-def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
+def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
     '''
     Posts a message to the chosen Slack channel
 
@@ -39,6 +39,7 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
         msg: str, contents to post to the Slack channel
         fid: str, gives the name of the file to post to Slack as an attachment
         merchant: str, the merchant name tied to this data result
+        source: str, data source we're loading from- displays in title
         timeout: boolean (optional), indicates if a timeout happened
         js: json object, contains a set of metadata required for reporting on the test suite (only usage)
 
@@ -66,22 +67,10 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
         edw2_ro = js['edw2_request_object']
         edw3_ro = js['edw3_request_object']
 
-        # Create temp files
-        #with open('edw2_request_objects.json') as f:
-        #    f.write(json.dumps(edw2_ro))
-
         # Create temp file
         fid = 'edw3_request_objects.json'
         with open(fid, 'a+') as f:
             f.write(json.dumps(edw3_ro))
-
-        # Get result for Slack
-        #if is_pass is True:
-        #    title = f'Picker {test_name} test passed'
-        #elif is_fail is True:
-        #    title = f'Picker {test_name} test failed'
-        #else:
-        #    title = f'Picker {test_name} test gave an unexpected result'
 
         # Post to Slack and exit
         cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
@@ -111,12 +100,12 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False, js=None):
     # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
     if matches is True:
-        title = upload_name.replace('.xlsx', '') + ' passed'
+        title = upload_name.replace('.xlsx', '') + f'({source})' + ' passed'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
     else:
-        title = upload_name.replace('.xlsx', '') + ' FAILED!'
+        title = upload_name.replace('.xlsx', '') + f'({source})' + ' FAILED!'
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
@@ -200,14 +189,6 @@ def calculate_times(now):
 if __name__ == "__main__":
     # Init
     now = time.strftime("%c")
-
-    # Global parameters
-    #global client, tag
-    #client = boto3.client('ecs')
-    tag = args.tag
-
-    # Specify the uri of the image here
-    uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/avantlink/" + args.job
 
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
@@ -327,11 +308,11 @@ if __name__ == "__main__":
 
                     # Post results to Slack
                     for json_dict in json_dicts:
-                        post_to_slack(channel, msg, None, merchant, timeout=timeout, js=json_dict)
+                        post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict)
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
-                        post_to_slack(channel, msg, fid, merchant, timeout=timeout)
+                        post_to_slack(channel, msg, fid, merchant, source, timeout=timeout)
                         # Only post 1 timeout message
                         if timeout is True:
                             break
