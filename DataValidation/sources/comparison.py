@@ -560,6 +560,8 @@ class Cascade:
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
                                    sem_count=None, merchants=None, merchant_name=None, should_update_logs=False,
                                    source=None):
+        print(source)
+        kill()
         if categories is None:
             categories = {
                 "trending_widget": {
@@ -1290,7 +1292,8 @@ def main():
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name,
+                                                 sem_count=3, sim=sim, source=source, merchants=merchants,
+                                                 merchant_name=merchant_name,
                                                  should_update_logs=should_update_logs)
                 )
             except KeyboardInterrupt:
