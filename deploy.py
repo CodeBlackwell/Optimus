@@ -100,7 +100,11 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
     # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
     if matches is True:
-        title = upload_name.replace('.xlsx', '') + f'({source})' + ' passed'
+        if source != '':
+             source = source.replace('fact_', '')
+             title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed'
+        else:
+            title = upload_name.replace('.xlsx', '') + ' passed'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)

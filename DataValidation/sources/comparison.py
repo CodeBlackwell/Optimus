@@ -471,11 +471,12 @@ class Cascade:
                     col["sim"] = sim_name
 
     def insert_source(self, source, request_object=None):
+        '''
+        Given a specified source type, force that into the request object here
+        '''
         request = request_object or self.edw3_request_object
         for report_id in request:
-            for col in request[report_id]["cols"]:
-                if "prepared_id" in col:
-                    col["source"] = source
+            request[report_id]["source"] = source
 
     def replace_relative_dates(self, interval, request_object=None):
         intervals = {
@@ -1252,6 +1253,18 @@ def main():
             "trending_widget": False,
             "top_affiliates_widget": False
         }
+
+        # Add source if specified
+        if args.source:
+            source = args.source
+        else:
+            source = None
+
+        # If source is Redshift, remove data stored on Silo
+        if source == 'fact_redshift':
+            removal_list = ['Combined Commission', 'Network Commission', 'Affiliate Commission']
+            categories = [item for item in categories if item not in removal_list]
+
         minimum_flag = False
         if args.run_all:
             for widget in run_categories:
@@ -1269,18 +1282,13 @@ def main():
             if args.merchant:
                 merchant_name = args.merchant
 
-            # Add source if specified
-            if args.source:
-                source = args.source
-            else:
-                source = None
-
             try:
                 start = datetime.now()
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name,
+                                                 sem_count=3, sim=sim, source=source, merchants=merchants,
+                                                 merchant_name=merchant_name,
                                                  should_update_logs=should_update_logs)
                 )
             except KeyboardInterrupt:
