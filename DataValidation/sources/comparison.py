@@ -310,8 +310,6 @@ class Cascade:
                                     sim=None, source=None, force_picker=None, manual_path=None):
 
         async with self.sem:
-            print(source)
-            kill()
             if report_name is None:
                 report_name = self.report_name
             else:
@@ -473,13 +471,12 @@ class Cascade:
                     col["sim"] = sim_name
 
     def insert_source(self, source, request_object=None):
+        '''
+        Given a specified source type, force that into the request object here
+        '''
         request = request_object or self.edw3_request_object
-        print(request)
-        kill()
         for report_id in request:
-            for col in request[report_id]["cols"]:
-                if "prepared_id" in col:
-                    col["source"] = source
+            request[report_id]["source"] = source
 
     def replace_relative_dates(self, interval, request_object=None):
         intervals = {
@@ -560,8 +557,6 @@ class Cascade:
     async def dashboard_regression(self, categories=None, interval="last_month", sim=None, date_interval="Day",
                                    sem_count=None, merchants=None, merchant_name=None, should_update_logs=False,
                                    source=None):
-        print(source)
-        kill()
         if categories is None:
             categories = {
                 "trending_widget": {
