@@ -27,24 +27,10 @@ import pandas as pd
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+from runtime_args import args
+from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 
-# Argument collector
-parser = argparse.ArgumentParser()
-parser.add_argument("--job", type=str, help="Specifies the name of the job to use. Default is ds_validation", default="ds_validation")
-parser.add_argument("--create-required", type=bool, help="Indicates if we need to use this script to create an image. Default is false.", default=False)
-parser.add_argument("--containers", type=str, help="Comma separated string with a list of containers to deploy. Default is empty", default="")
-parser.add_argument("--channel", type=str, help="Specifies the channel (ID) to output to slack. Default is ds_data_validation", default="C04HP5S5YNB")
-parser.add_argument("--start", type=str, help="Specifies a start date for validation. Default is blank, which will use 30 days relative to yesterday. Format: mm/dd/yyyy", default="")
-parser.add_argument("--end", type=str, help="Specifies an end date for validation. Default is blank, which will force validation to end at yesterday. Format: mm/dd/yyyy", default="")
-parser.add_argument("--merchants", type=str, help="Specifies which merchant to run. Default is a set of 5 top merchants.", default="default")
-parser.add_argument("--skip-slack", action="store_true", help="Indicates if we should skip posting to Slack for this run. Default is False")
-parser.add_argument("--skip-logging", action="store_true", help="Indicates if logging should be skipped to the master spreadsheet")
-parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default='test')
-parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
-parser.add_argument("-ne", "--no-error", action="store_true")
-args = parser.parse_args()
-
-def post_to_slack(channel, msg, fid, merchant, timeout=False):
+def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
     '''
     Posts a message to the chosen Slack channel
 
@@ -53,7 +39,9 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
         msg: str, contents to post to the Slack channel
         fid: str, gives the name of the file to post to Slack as an attachment
         merchant: str, the merchant name tied to this data result
+        source: str, data source we're loading from- displays in title
         timeout: boolean (optional), indicates if a timeout happened
+        js: json object, contains a set of metadata required for reporting on the test suite (only usage)
 
     Returns:
         None
@@ -66,9 +54,31 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
     # If a timeout happend, go ahead and post that and carry on
     if timeout is True:
         title = f'{merchant} timed out'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
+        return
+
+    # Picker test suite doesn't post excel files
+    # Instead post a pass/fail
+    if fid is None:
+        # Unpack json results for Slack
+        title = js['test_name']
+        edw2_ro = js['edw2_request_object']
+        edw3_ro = js['edw3_request_object']
+
+        # Create temp file
+        fid = 'edw3_request_objects.json'
+        with open(fid, 'a+') as f:
+            f.write(json.dumps(edw3_ro))
+
+        # Post to Slack and exit
+        cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
+        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+        result = json.loads(proc.stdout)
+
+        # Delete temp file
+        os.remove(fid)
         return
 
     # Check if file matches between edw and edw3
@@ -90,16 +100,16 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
     # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
     if matches is True:
-        title = upload_name.replace('.xlsx', '') + ' passed'
-        cmd = f'''curl -d "text={title}" -d "channel=ds_validation" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        title = upload_name.replace('.xlsx', '') + f'({source})' + ' passed'
+        cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
     else:
-        title = upload_name.replace('.xlsx', '') + ' FAILED!'
+        title = upload_name.replace('.xlsx', '') + f'({source})' + ' FAILED!'
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
-        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels=ds_validation -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
+        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
@@ -110,128 +120,6 @@ def post_to_slack(channel, msg, fid, merchant, timeout=False):
     else:
         print('Error posting to slack')
         print(result)
-
-def comment(comment):
-    '''
-    This posts comments to the batch job (such as status updates)
-
-    Parameters:
-        comment: str, gives the contents of the info you want to display
-
-    Returns:
-        None
-    '''
-    datetime_str = str(datetime.now())
-    if (comment != None):
-        logging.info('-- %s [%s] %s' % (datetime_str,str(os.getpid()),comment))
-        print('INFO: -- %s [%s] %s' % (datetime_str,str(os.getpid()),comment))
-
-def register_image(image_name, job_name, cpus=2, memory=2000):
-    '''
-    Registers the image with ECS so it can be run from batch
-
-    Parameters:
-        image_name: str, gives the full URI path of the image
-        cpus: int (optional), specifies the number of CPU cores required to process the job
-        memory: int (optional), gives the memory (in mb) to use on container
-    '''
-    comment("Registering job for  " + job_name)
-    # client = boto3.client('batch')
-    # try:
-    #     response = client.register_job_definition(
-    #         jobDefinitionName=job_name,
-    #         type='container',
-    #         containerProperties={
-    #             'image': image_name,
-    #             'vcpus': cpus,
-    #             'memory': memory
-    #         }
-    #     )
-    #     print (response['jobDefinitionArn'])
-    # except Exception as e:
-    #     print(e) # Logs errors registering job
-
-def ecs_login():
-    '''
-    This sets up the log in for the session
-    Needed to do any ecs operations
-    '''
-    # Login to Docker using --no-include-email
-    try:
-        docker_login = subprocess.check_output("aws ecr --no-include-email get-login --region us-east-1",
-            shell=True).decode(sys.stdout.encoding).strip()
-    except Exception as e:
-        print(e)
-        raise
-    print(docker_login)
-    return_code = subprocess.run(docker_login, shell=True, stdout=os.devnull)
-    if return_code.returncode != 0:
-        comment("ERROR: Error login to ECS")
-        print(return_code.returncode)
-    else:
-        comment("Successfully logged to ECS")
-
-def create_ecs_image(job_name):
-    '''
-    Creates the actual docker image to be used by ECS
-
-    Maybe can be done manually for purposes of this repo
-    '''
-    try :
-        comment("Creating ECS for  " + job_name)
-        #job_location = repo_directory + job_name
-        #comment("Working on directory " + job_location)
-        #os.chdir(job_location)
-
-        # Build docker image
-        return_code = subprocess.run("docker build -t avantlink/" + job_name + " .",shell=True, stdout=os.devnull)
-        if return_code.returncode != 0:
-            comment("ERROR: Error building ECS image")
-        else:
-            comment("Successfully built the docker image for " + job_name)
-
-        # Tag the image
-        job = "avantlink/" + job_name + ":" + tag + ""
-        uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/" + job + ""
-        return_code = subprocess.run("docker tag " + job + " " + uri + "", shell=True, stdout=os.devnull)
-        if return_code.returncode != 0:
-            comment("ERROR: Error tagging ECS")
-        else:
-            comment("Successfully tagged the image for " + job_name)
-
-        # Delete last tag
-        return_code = subprocess.run("aws ecr batch-delete-image --repository-name " + "avantlink/" + job_name + " --image-ids imageTag=production", shell=True, stdout=os.devnull)
-        return_code1 = subprocess.run("aws ecr batch-delete-image --repository-name " + "avantlink/" + job_name + " --image-ids imageTag=Production", shell=True, stdout=os.devnull)
-        return_code2 = subprocess.run("aws ecr batch-delete-image --repository-name " + "avantlink/" + job_name + " --image-ids imageTag=latest", shell=True, stdout=os.devnull)
-        if return_code.returncode != 0 or return_code1.returncode != 0 or return_code2.returncode != 0:
-            comment("ERROR: Error deleting prior tags")
-        else:
-            comment("Successfully deleted old tags/images")
-
-    except Exception as e:
-        print(e)
-
-def push_ecs_image(uri, job_name):
-    '''
-    Tags and pushes the image to the AWS repository
-
-    Parameters:
-       uri: str, gives the reporitory uri in AWS for accessing the image
-
-    Returns:
-        None
-    '''
-    # Tag image
-    tag_string = uri + f':{tag}'
-    cmd = f'docker tag {tag_string}'
-    subprocess.run(cmd, shell=True)
-
-    # Push
-    return_code = subprocess.run("docker push " + uri, shell=True)
-    if return_code.returncode != 0:
-        comment("ERROR: Error pushing ECS image")
-    else:
-        comment("Successfully pushed the image for " + job_name)
 
 def build_file_list():
     '''
@@ -246,7 +134,16 @@ def build_file_list():
     for root, dirs, files in os.walk(output_dir):
         for name in files:
             fid = os.path.join(root, name)
+            # Only applend excel files
             if name.endswith('.xlsx'):
+                # Replace empty spaces with _
+                if ' ' in fid:
+                    try:
+                        os.rename(fid, fid.replace(' ', '_'))
+                        fid = fid.replace(' ', '_')
+                    except FileNotFoundError:
+                        print(fid)
+                        raise
                 file_list.append(fid)
     return file_list
 
@@ -292,23 +189,14 @@ def calculate_times(now):
 if __name__ == "__main__":
     # Init
     now = time.strftime("%c")
-    comment("Starting the release process on " + now)
-
-    # Global parameters
-    #global client, tag
-    #client = boto3.client('ecs')
-    tag = args.tag
-
-    # Specify the uri of the image here
-    uri = "701912468211.dkr.ecr.us-east-1.amazonaws.com/avantlink/" + args.job
-
-    # Log in to ecs
-    # ecs_login() FIXME: Need to uncomment to push images
 
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
     if args.merchants == 'default':
-        merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
+        if args.no_error:
+            merchants = ['REI.com']
+        else:
+            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
@@ -318,8 +206,17 @@ if __name__ == "__main__":
     else:
         merchants = args.merchants.split(',')
 
-    # Let's trigger Le's code here for now
-    # TODO: Comment this guy out once containerized- container will do this once run
+    # Check is source was specified. If it was, confirm we can use it
+    if args.source != '':
+        valid_sources = ['fact_redshift', 'fact_postgres', 'olap', 'cube_postgres', 'athena']
+        if args.source not in valid_sources:
+            valid_string = ', '.join(valid_sources)
+            raise TypeError(f'The given source is not valid. Must be in {valid_string} but got {args.source}')
+        else:
+            source = args.source
+    else:
+        source = ''
+
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
     if args.start == '' and args.end == '':
@@ -365,15 +262,19 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                cmd = f'python3.8 -m sources.comparison -ne'
+                run_command = NoErrorCommand(merchants=merchant, source=source)
             else:
-                #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}'
+                #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
                 # It can be skipped however (see args)
                 if args.skip_logging is False:
-                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant} -ul'
+                    run_command = RunCommand(merchants=merchant, source=source)
                 else:
-                    cmd = f'python3.8 -m sources.comparison -ra -mer={merchant}'
+                    run_command = NoLoggingCommand(merchants=merchant, source=source)
+            cmd = run_command.command
+
+            # Print the command and run it
+            # If it should fail, make note of that here as well so we can print that out to slack
             try:
                 print(cmd)
                 subprocess.run(cmd, shell=True, timeout=args.timeout)
@@ -396,40 +297,25 @@ if __name__ == "__main__":
                 channel = args.channel
                 msg = f'''Regression test results ({now} run)'''
                 logging.info(msg)
-                file_list = build_file_list()
-                for fid in file_list:
-                    if ' ' in fid:
-                        try:
-                            os.rename(fid, fid.replace(' ', '_'))
-                            fid = fid.replace(' ', '_')
-                        except FileNotFoundError:
-                            print(fid)
-                            raise
-                    post_to_slack(channel, msg, fid, merchant, timeout=timeout)
-                    # Only post 1 timeout message
-                    if timeout is True:
-                        break
 
-            # Grab list of images provided by args
-            containers = args.containers.split(',')
-            if containers == ['']:
-                logging.warning('No containers specified to deploy')
-                #exit()
-            else:
-                print(containers)
+                # For Picker test suite, don't post files
+                # Instead, grab results from the log file on disk
+                if args.no_error:
+                    json_dicts = []
+                    with open('DataValidation/test_suite_outputs.json') as f:
+                        for line in f:
+                            json_dicts.append(json.loads(line))
 
-            # For each container in the args list, 1st see if it needs to be dcreated
-            # Then, register and deploy it
-            for container in containers:
-                if args.create_required is True:
-                    print('Will create in a future release')
-                    #create_ecs_image(container)
+                    # Post results to Slack
+                    for json_dict in json_dicts:
+                        post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict)
                 else:
-                    print('Skipping image creation')
-
-                # Register and deploy- eventually, maybe
-                #register_image(uri, container)
-                #push_ecs_image(uri, container)
+                    file_list = build_file_list()
+                    for fid in file_list:
+                        post_to_slack(channel, msg, fid, merchant, source, timeout=timeout)
+                        # Only post 1 timeout message
+                        if timeout is True:
+                            break
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
@@ -448,4 +334,3 @@ if __name__ == "__main__":
 
     # Mark completion of deployment
     now = time.strftime("%c")
-    comment("End of release process on " + now)
