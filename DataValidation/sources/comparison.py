@@ -310,6 +310,8 @@ class Cascade:
                                     sim=None, source=None, force_picker=None, manual_path=None):
 
         async with self.sem:
+            print(source)
+            kill()
             if report_name is None:
                 report_name = self.report_name
             else:
@@ -472,6 +474,8 @@ class Cascade:
 
     def insert_source(self, source, request_object=None):
         request = request_object or self.edw3_request_object
+        print(request)
+        kill()
         for report_id in request:
             for col in request[report_id]["cols"]:
                 if "prepared_id" in col:
