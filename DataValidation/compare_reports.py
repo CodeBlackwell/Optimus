@@ -82,7 +82,6 @@ class Comparison(KnownDiscrepancies):
             # print("Skipping barf due to no data")
             return False
         else:
-            print(self.reports[0].report_name)
             return True
 
     async def load(self):
