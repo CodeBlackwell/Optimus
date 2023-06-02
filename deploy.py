@@ -318,13 +318,16 @@ if __name__ == "__main__":
                 # Instead, grab results from the log file on disk
                 if args.no_error:
                     json_dicts = []
-                    with open('DataValidation/test_suite_outputs.json') as f:
+                    test_file = 'DataValidation/test_suite_outputs.json'
+                    with open(test_file) as f:
                         for line in f:
                             json_dicts.append(json.loads(line))
 
                     # Post results to Slack
                     for json_dict in json_dicts:
                         post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
+
+                    os.remove(test_file)
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
