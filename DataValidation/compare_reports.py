@@ -5,6 +5,7 @@ import re
 from typing import List
 import sys
 import json
+from args import args
 
 import colorama
 import pandas
@@ -68,18 +69,20 @@ class Comparison(KnownDiscrepancies):
             if report.data is None:
                 # print(f"\n \n Skipping report that returned no data from - {vars(report)['picker_url']}...", json.dumps(vars(report)["request_object"]), "\n")
                 return False
-        self.__validate()
-        self.__make_names_distinct()
-        self.__get_orphans()
-        self.__get_diff()
-        self.__get_known_discrepancies()
+        if args.no_error is False:
+            self.__validate()
+            self.__make_names_distinct()
+            self.__get_orphans()
+            self.__get_diff()
+            self.__get_known_discrepancies()
         return True
 
     async def run_and_barf(self):
         if not await self.run():
             # print("Skipping barf due to no data")
-            return
-        self.output_to_excel()
+            return False
+        else:
+            return True
 
     async def load(self):
         # TODO: Futures pattern
