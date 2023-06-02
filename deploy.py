@@ -30,7 +30,7 @@ from slack_sdk.errors import SlackApiError
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 
-def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
+def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
     '''
     Posts a message to the chosen Slack channel
 
@@ -41,7 +41,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
         merchant: str, the merchant name tied to this data result
         source: str, data source we're loading from- displays in title
         timeout: boolean (optional), indicates if a timeout happened
-        js: json object, contains a set of metadata required for reporting on the test suite (only usage)
+        js: json object (optional), contains a set of metadata required for reporting on the test suite (only usage)
+        fail_channel: str, if given will route the failures to a separate channel
 
     Returns:
         None
@@ -50,6 +51,11 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
     config = configparser.ConfigParser()
     config.read('avantlinkpy2.conf')
     slack_key = config.get('slack', 'api_key')
+
+    # Check if a separate fail channel was given
+    # If not, pipe all outputs to the same place
+    if fail_channel is None:
+        fail_channel = channel
 
     # If a timeout happend, go ahead and post that and carry on
     if timeout is True:
@@ -78,7 +84,9 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
             cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         else:
             title += ' FAILED!'
-            cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
+            # FIXME: Right now, the error channel is hardcoded
+            # I suppose it would be nice to be able to chose the pass and fail channel separately
+            cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
@@ -116,7 +124,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
-        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
+        cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
     proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
     result = json.loads(proc.stdout)
 
@@ -302,6 +310,7 @@ if __name__ == "__main__":
             # Give the option to bypass Slack posting
             if args.skip_slack is False:
                 channel = args.channel
+                fail_channel = args.fail_channel
                 msg = f'''Regression test results ({now} run)'''
                 logging.info(msg)
 
@@ -315,11 +324,11 @@ if __name__ == "__main__":
 
                     # Post results to Slack
                     for json_dict in json_dicts:
-                        post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict)
+                        post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
-                        post_to_slack(channel, msg, fid, merchant, source, timeout=timeout)
+                        post_to_slack(channel, msg, fid, merchant, source, timeout=timeout, fail_channel=fail_channel)
                         # Only post 1 timeout message
                         if timeout is True:
                             break
