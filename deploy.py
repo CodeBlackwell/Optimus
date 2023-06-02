@@ -64,8 +64,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
     if fid is None:
         # Unpack json results for Slack
         title = js['test_name']
-        edw2_ro = js['edw2_request_object']
         edw3_ro = js['edw3_request_object']
+        test_result = js['test_result']
 
         # Create temp file
         fid = 'edw3_request_objects.json'
@@ -73,7 +73,12 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
             f.write(json.dumps(edw3_ro))
 
         # Post to Slack and exit
-        cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
+        if test_result is True:
+            title += ' passed'
+            cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+        else:
+            title += ' FAILED!'
+            cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
@@ -106,16 +111,14 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None):
         else:
             title = upload_name.replace('.xlsx', '') + ' passed'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
-        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
-        result = json.loads(proc.stdout)
     else:
         title = upload_name.replace('.xlsx', '') + f'({source})' + ' FAILED!'
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
         cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
-        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
-        result = json.loads(proc.stdout)
+    proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+    result = json.loads(proc.stdout)
 
     # Log result
     # If it failed, log the stdout for debug
