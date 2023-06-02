@@ -147,7 +147,7 @@ class Comparison(KnownDiscrepancies):
         if self.simulation is None:
             return
         for report in self.reports:
-            if report.picker_url == "https://picker-shard.avantlink.com/rpt":
+            if "https://picker-shard.avantlink.com/rpt" in report.picker_url:
                 for x in report.request_object:
                     for col in report.request_object[x]["cols"]:
                         try:
@@ -175,6 +175,7 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
+        print(vars(self.reports[0]).keys(), "compare reports -- 178")
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)

@@ -1,6 +1,6 @@
 class PickerConstants(object):
     picker_url = 'http://picker-dev.avantlink.com/rpt'
-    sharded_picker_url = 'http://picker-shard.avantlink.com/rpt'
+    sharded_picker_url = 'http://picker-shard.avantlink.com/rpt?timeout=2900000'
     tunneled_picker_url = 'http://localhost:3001/rpt'
     classic_url = 'https://classic.avantlink.com/api.php?'
     auth = "d9b81c2f873a3ae4fbe7064e167be3ce"
