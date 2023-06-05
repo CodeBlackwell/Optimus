@@ -149,3 +149,4 @@ bin
 DataValidation/token.json
 DataValidation/credentials.json
 DataValidation/test_suite_outputs.json
+*.swp
