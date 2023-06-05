@@ -35,6 +35,8 @@ The following arguments are available for the deploy script:
 --merchants: Allows for a list of merchants specified to run for (no spaces). Can be by name or uuid (see DataValidation/json_sources/merchant_map.json)
 --skip-slack: If toggled to True, will suppress output to Slack. Mainly for debugging.
 --tag: For Docker. Unused right now.
+--fail-channel: If given, will redirect failures to a different place than the passes
+--source: Will specify a specific source to test the data on (e.g. if you want to test Redshift data)
 
 The idea is to have the deploy script run under default settings (or with args) on a cron job until it is integrated into the avant cli
 
@@ -43,7 +45,8 @@ The idea is to have the deploy script run under default settings (or with args) 
 This is currently deployed and set to run on the dev etl server. Any updates done to the system should be deployed to there. It observes the following cron schedule:
 
 - Everyday at 00:00 UTC the Picker Test Suite is run (see details on what the Picker Test Suite runs)
-- Everyday at 12:00 UTC the full regression libary is run without any arguments (top 5 merchants)
+- Everyday at 01:00 UTC the regression is run with source specified as Redshift to test that data source (top 5 merchants)
+- Everyday at 14:00 UTC the full regression libary is run without any arguments (top 5 merchants)
 
 ## Logging
 
@@ -55,6 +58,10 @@ The Picker Test Suite is a variation of the regression library intended to retur
 or not for a collection of request object.
 
 To run this, pass the argument -ne to the deploy.py wrapper script.
+
+We test the picker test suite by attempting to run every Performance and AVM report in edw3 (Performance Reports are a good proxy for the sales metrics we view in top accounts/ trend widget. TYhis is a simple pass/fail, so we only check if any failure occurred while fetching it or not, NOT if the data matched edw2. By default, this is also run daily (see above) and defaults passes to data_validation and fails to edw3_data_errors (note than these can be toggled with command line args).
+
+In the future, this will also include more debugging information and will be integrated into the deployment workflow. For now, the fails come with an embedded request object for you to manually test.
 
 ## Versioning and Issues
 
