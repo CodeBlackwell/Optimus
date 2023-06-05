@@ -1,5 +1,5 @@
 {
-   "fVGRBkqgiTLn7YRJ":{
+   "pCx3cIvHUnN9Z53Y":{
       "cols":[
          {
             "prepared_id":"f8017c89-c326-48a9-a3cd-7362ab43eb95"
@@ -38,13 +38,12 @@
       "report_name":"Performance Summary By Affiliate",
       "filters":[
          {
-            "op":"relative_date",
             "field":"dim_date-mm_dd_yyyy",
-            "period":"day",
-            "start":0,
-            "count":1,
-            "allow_empty":false,
-            "to_date":false
+            "op":"between",
+            "values":[
+               "04/01/2023",
+               "04/01/2023"
+            ]
          },
          {
             "field":"dim_merchant-merchant_uuid",
