@@ -110,15 +110,18 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # The components here govern how the data is displayed- note the display file name != system file name
     # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
+    source = source.replace('fact_', '')
     if matches is True:
         if source != '':
-             source = source.replace('fact_', '')
              title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed'
         else:
             title = upload_name.replace('.xlsx', '') + ' passed'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
     else:
-        title = upload_name.replace('.xlsx', '') + f'({source})' + ' FAILED!'
+        if source != '':
+            title = upload_name.replace('.xlsx', '') + f' ({source})' + ' FAILED!'
+        else:
+            title = upload_name.replace('.xlsx', '') + ' FAILED!'
         # Simplify summary name
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
