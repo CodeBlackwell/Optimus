@@ -363,17 +363,6 @@ class Comparison(KnownDiscrepancies):
                     finally:
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
-            # noinspection PyUnboundLocalVariable
-
-            # print("outputting " + filepath)
-            # self.validate_calculations()
-            # if self.reports[0].sql_query is not None:
-            #     # print(f"This report sent a Query {filepath}")
-            #     for validation in self.validate_sql(self.reports[0].sql_query):
-            #         merge[validation] = self.validate_sql(self.reports[0].sql_query)[validation]
-            # else:
-            #     for validation in self.validate_sql():
-            #         merge[validation] = "N/A"
             merge["SQL_source"] = data_source
             merge['edw2_request_object'] = edw2_ro
             merge['edw3_request_object'] = edw3_ro
