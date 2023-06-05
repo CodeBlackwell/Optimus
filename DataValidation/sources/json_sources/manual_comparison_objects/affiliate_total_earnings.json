@@ -82,7 +82,7 @@
 	}
 	},
   "edw3_request_object": {
-	"kHaD0hPI2ilHAWB3a": {
+	"kmPQBMcRAdxecd2XB": {
 		"cols": [{
 			"id": "dim_affiliate_default_website-affiliate_website_url_stripped",
 			"alias": "dim_affiliate_default_website-affiliate_website_url_stripped",
@@ -129,5 +129,5 @@
 		"limit": 10,
 		"format": "json"
 	}
-  }
+} 
 }
