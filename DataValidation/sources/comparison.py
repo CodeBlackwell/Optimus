@@ -360,7 +360,7 @@ class Cascade:
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
             try:
-                await asyncio.wait_for(comparison.run_and_barf(), timeout=75)
+                await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
             except asyncio.TimeoutError as e:
                 self.errors.append({
                     "error": "timeout",

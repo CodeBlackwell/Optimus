@@ -165,6 +165,16 @@ class Comparison(KnownDiscrepancies):
                             print(e, 'was not specified to be True in', col["id"])
                             pass
 
+    @staticmethod
+    def sql_validation(sql_query):
+        keywords = ["postgres", "redshift", "olap", "tracking"]
+        for keyword in keywords:
+            if keyword in sql_query.lower():
+                return keyword
+            else:
+                return "error"
+
+
     def remove_spaces(self, string_val):
         cleaned_string = string_val.replace(" ", "")
         return cleaned_string
@@ -175,7 +185,8 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
-        print(vars(self.reports[0]).keys(), "compare reports -- 178")
+        edw3_sql = self.reports[1].report["_queries"]
+        data_source = self.validate_sql(edw3_sql)
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
@@ -363,6 +374,7 @@ class Comparison(KnownDiscrepancies):
             # else:
             #     for validation in self.validate_sql():
             #         merge[validation] = "N/A"
+            merge["SQL_source"] = data_source
             merge['edw2_request_object'] = edw2_ro
             merge['edw3_request_object'] = edw3_ro
             self.merge = merge
