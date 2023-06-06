@@ -167,13 +167,12 @@ class Comparison(KnownDiscrepancies):
 
     @staticmethod
     def sql_validation(sql_query):
+        datasource = None
         keywords = ["postgres", "redshift", "olap", "tracking"]
         for keyword in keywords:
-            if keyword in sql_query.lower():
-                return keyword
-            else:
-                return "error"
-
+            if keyword in sql_query[0]:
+                datasource = keyword
+        return datasource
 
     def remove_spaces(self, string_val):
         cleaned_string = string_val.replace(" ", "")
@@ -185,8 +184,11 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
-        edw3_sql = self.reports[1].report["_queries"]
-        data_source = self.validate_sql(edw3_sql)
+        # edw3_sql = self.reports[0].report["_queries"]
+        # data_source = self.sql_validation(edw3_sql)
+        # print(edw3_sql)
+        # print(data_source)
+        # print("\n*****************\n")
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
@@ -209,7 +211,7 @@ class Comparison(KnownDiscrepancies):
             if difference < 0:
                 print(edw2_df)
                 print(edw3_df)
-                raise Exception('EDW2 found more results than edw3. Need to add this to discrepency in future realse')
+                raise Exception('EDW2 found more results than edw3. Need to add this to discrepancy in future release')
             else:
                 print('WARNING: Results did not match. Adjusting by dropping extra rows from edw3 result')
                 print('Initial results:')
@@ -363,7 +365,7 @@ class Comparison(KnownDiscrepancies):
                     finally:
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
-            merge["SQL_source"] = data_source
+            # merge["SQL_source"] = data_source
             merge['edw2_request_object'] = edw2_ro
             merge['edw3_request_object'] = edw3_ro
             self.merge = merge

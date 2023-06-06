@@ -1242,11 +1242,11 @@ def main():
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
                       "Sales",
-                      "Combined Commission",
-                      "Network Commission",
-                      "Clicks % Impressions",
-                      "Adjustments",
-                      "Affiliate Commission"
+                      # "Combined Commission",
+                      # "Network Commission",
+                      # "Clicks % Impressions",
+                      # "Adjustments",
+                      # "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,
