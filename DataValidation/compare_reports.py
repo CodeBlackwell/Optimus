@@ -186,9 +186,6 @@ class Comparison(KnownDiscrepancies):
         edw2_df = self.reports[1].data
         edw3_sql = self.reports[0].report["_queries"]
         data_source = self.sql_validation(edw3_sql)
-        # print(edw3_sql)
-        # print(data_source)
-        # print("\n*****************\n")
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
