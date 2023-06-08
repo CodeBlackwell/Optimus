@@ -96,10 +96,17 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # Only send those that do not match to Slack
     df = pd.read_excel(fid)
     columns = df.columns.to_list()
+    source_error = False
+    data_source = None
+    edw3_request_object = None
     for column in columns:
         if "edw2" in column and "request_object" not in column:
             edw2_column = column
         elif "edw3" in column and "request_object" not in column:
+            if column == 'SQL_source' and df[column][0] != args.source:
+                data_source = df[column][0]
+                _source_error = True
+                edw3_request_object = df['edw3_request_object'][0]
             edw3_column = column
     if df[edw2_column].equals(df[edw3_column]) is True:
         matches = True
@@ -111,14 +118,28 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # NOTE: If we match, just post the test passed
     upload_name = merchant + '_' + fid.split('/')[-1]
     source = source.replace('fact_', '')
-    if matches is True:
-        if source != '':
+    temp_file = None
+    if matches is True and source_error is False:
+        if args.source != '':
              title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed'
         else:
             title = upload_name.replace('.xlsx', '') + ' passed'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
+    # Cover the case where we requested a particular source, but got something else back instead
+    # Here we want to post request object and mention the requested source but what we got instead
+    elif source_error is True:
+        title = upload_name.replace('.xlsx', '') + f' ({source})' + f'exepected to be sourced from {{args.source}} but returned from {{data_source}}'
+
+        # Write request object to file
+        temp_file = 'edw3_request_object.json'
+        with open('edw3_request_object.json', 'w+') as f:
+            f.write(json.dumps(edw3_request_object))
+
+        # Log the fail to slack
+        cmd = f"curl -F title='{title}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{temp_file} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
+
     else:
-        if source != '':
+        if args.source != '':
             title = upload_name.replace('.xlsx', '') + f' ({source})' + ' FAILED!'
         else:
             title = upload_name.replace('.xlsx', '') + ' FAILED!'
@@ -136,6 +157,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     else:
         print('Error posting to slack')
         print(result)
+
+    # Remove temp file (if used)
+    if temp_file is not None:
+        os.remove(temp_file)
 
 def build_file_list():
     '''
@@ -231,7 +256,7 @@ if __name__ == "__main__":
         else:
             source = args.source
     else:
-        source = ''
+        source = 'olap' # This is the default data flow
 
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
