@@ -184,8 +184,8 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
-        # edw3_sql = self.reports[0].report["_queries"]
-        # data_source = self.sql_validation(edw3_sql)
+        edw3_sql = self.reports[0].report["_queries"]
+        data_source = self.sql_validation(edw3_sql)
         # print(edw3_sql)
         # print(data_source)
         # print("\n*****************\n")
@@ -365,7 +365,7 @@ class Comparison(KnownDiscrepancies):
                     finally:
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
                                + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
-            # merge["SQL_source"] = data_source
+            merge["SQL_source"] = data_source
             merge['edw2_request_object'] = edw2_ro
             merge['edw3_request_object'] = edw3_ro
             self.merge = merge
