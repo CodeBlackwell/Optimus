@@ -371,19 +371,6 @@ class Comparison(KnownDiscrepancies):
             self.merge = merge
             merge.to_excel(filepath, encoding='utf-8')
 
-    def validate_sql(self, raw_query=""):
-        self.validations["OLAP"] = None
-        if raw_query == "":
-            for val in self.validations:
-                self.validations[val] = "N/A"
-            return self.validations
-        # Validate The query is or is not using Olap
-        if "olap" in raw_query:
-            self.validations["OLAP"] = True
-        else:
-            self.validations["OLAP"] = False
-        return self.validations
-
     def validate_calculations(self):
         # edw3_ro = json.dumps(self.reports[0].request_object)
         # edw2_ro = json.dumps(self.reports[1].request_object)
