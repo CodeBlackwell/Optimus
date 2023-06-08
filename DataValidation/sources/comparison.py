@@ -60,8 +60,8 @@ class Cascade:
     }
     sem = None
     semaphore_count = 3
-    edw2_url = 'https://picker-dev.avantlink.com/rpt?timeout=2900000'
-    edw3_url = 'https://picker-shard.avantlink.com/rpt?timeout=2900000'
+    edw2_url = 'https://picker-dev.avantlink.com/rpt?timeout=2800000'
+    edw3_url = 'https://picker-shard.avantlink.com/rpt?timeout=2800000'
     arrow_formats = {
         "mm_dd_yyyy": "%m/%d/%Y",
         "yyyymmdd": "%Y%m%d"
@@ -382,7 +382,7 @@ class Cascade:
                                    simple_difference=simple_difference_options,
                                    dashboard_regression=dashboard_regression)
             try:
-                await asyncio.wait_for(comparison.run_and_barf(), timeout=75)
+                await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
             except asyncio.TimeoutError as e:
                 self.errors.append({
                     "error": "timeout",

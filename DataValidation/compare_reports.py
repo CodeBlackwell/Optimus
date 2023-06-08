@@ -126,6 +126,7 @@ class Comparison(KnownDiscrepancies):
         self.simple_report_name = simple_report_name
         self.comparison_start_date = comparison_start_date
         self.comparison_end_date = comparison_end_date
+
     """
         Ensure that both of these reports can be validated. If not raise an exception so
     """
@@ -150,7 +151,7 @@ class Comparison(KnownDiscrepancies):
         if self.simulation is None:
             return
         for report in self.reports:
-            if report.picker_url == "https://picker-shard.avantlink.com/rpt":
+            if "https://picker-shard.avantlink.com/rpt" in report.picker_url:
                 for x in report.request_object:
                     for col in report.request_object[x]["cols"]:
                         try:
@@ -168,9 +169,24 @@ class Comparison(KnownDiscrepancies):
                             print(e, 'was not specified to be True in', col["id"])
                             pass
 
+    @staticmethod
+    def sql_validation(sql_query):
+        datasource = None
+        keywords = {
+            "tracking": "fact_postgres",
+            "redshift": "fact_redshift",
+            "olap": "olap",
+            "cube": "cube_postgres"
+        }
+        for keyword in keywords:
+            if keyword in sql_query[0]:
+                datasource = keywords[keyword]
+        return datasource
+
     def remove_spaces(self, string_val):
         cleaned_string = string_val.replace(" ", "")
         return cleaned_string
+
     def __get_diff(self):
         # Create a new dataframe filled with false values that matches the size of the first report.
         # This is just a simple way of accomplishing this:
@@ -178,6 +194,8 @@ class Comparison(KnownDiscrepancies):
                                      index=range((~self.reports[0].orphans['is_orphan']).sum())).fillna(False)
         edw3_df = self.reports[0].data
         edw2_df = self.reports[1].data
+        edw3_sql = self.reports[0].report["_queries"]
+        data_source = self.sql_validation(edw3_sql)
 
         edw3_ro = json.dumps(self.reports[0].request_object)
         edw2_ro = json.dumps(self.reports[1].request_object)
@@ -200,7 +218,7 @@ class Comparison(KnownDiscrepancies):
             if difference < 0:
                 print(edw2_df)
                 print(edw3_df)
-                raise Exception('EDW2 found more results than edw3. Need to add this to discrepency in future realse')
+                raise Exception('EDW2 found more results than edw3. Need to add this to discrepancy in future release')
             else:
                 print('WARNING: Results did not match. Adjusting by dropping extra rows from edw3 result')
                 print('Initial results:')
@@ -261,7 +279,7 @@ class Comparison(KnownDiscrepancies):
                     suffixes=["_edw2", "_edw3"]
                 )
             except:
-                    mismatches = self.edw2_mismatches.merge(
+                mismatches = self.edw2_mismatches.merge(
                     self.edw3_mismatches,
                     on=["Date Range"],
                     how="outer",
@@ -339,7 +357,7 @@ class Comparison(KnownDiscrepancies):
                 # noinspection PyTypeChecker
                 category_dir = self.dashboard_regression["category"].replace(' ', '_')
                 filepath = os.path.join(self.dashboard_regression["path"], self.dashboard_regression["widget"],
-                                        category_dir,  xlsx_name) + ".xlsx"
+                                        category_dir, xlsx_name) + ".xlsx"
             else:
 
                 if self.simple_difference["manual_path"]:
@@ -353,35 +371,12 @@ class Comparison(KnownDiscrepancies):
                         pass
                     finally:
                         filepath = "./validation_outputs/xlsx/simple_difference/" + \
-                               + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
-            # noinspection PyUnboundLocalVariable
-
-            # print("outputting " + filepath)
-            # self.validate_calculations()
-            # if self.reports[0].sql_query is not None:
-            #     # print(f"This report sent a Query {filepath}")
-            #     for validation in self.validate_sql(self.reports[0].sql_query):
-            #         merge[validation] = self.validate_sql(self.reports[0].sql_query)[validation]
-            # else:
-            #     for validation in self.validate_sql():
-            #         merge[validation] = "N/A"
+                                   + self.merchant + '_' + self.simple_difference["comparison_col_name"] + '.xlsx'
+            merge["SQL_source"] = data_source
             merge['edw2_request_object'] = edw2_ro
             merge['edw3_request_object'] = edw3_ro
             self.merge = merge
             merge.to_excel(filepath, encoding='utf-8')
-
-    def validate_sql(self, raw_query=""):
-        self.validations["OLAP"] = None
-        if raw_query == "":
-            for val in self.validations:
-                self.validations[val] = "N/A"
-            return self.validations
-        # Validate The query is or is not using Olap
-        if "olap" in raw_query:
-            self.validations["OLAP"] = True
-        else:
-            self.validations["OLAP"] = False
-        return self.validations
 
     def validate_calculations(self):
         # edw3_ro = json.dumps(self.reports[0].request_object)
