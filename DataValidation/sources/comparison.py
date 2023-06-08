@@ -1,6 +1,5 @@
 # !#/bin/python3 -> this is just to indicate to the user this script is executable
 
-import argparse
 import asyncio
 import copy
 import json
@@ -180,17 +179,48 @@ class Cascade:
         return requests.get(f'http://manifest.avantlink.com/api/v1/prepared_ids/display_groups/{group}',
                             headers=headers, data=data).json()
 
-    async def loop_reports(self, dates_hash, interval="day", force_picker_address=None):
+    async def async_comparison_wrapper(self, request_object, name):
+        comparison = Comparison(
+            sources.PickerReport(picker_url=self.edw3_url,
+                                 report_name=name,
+                                 request_object=request_object)
+        )
+
+        test_result = await comparison.run_and_barf()
+        return test_result
+
+    async def loop_reports(self, dates_hash, interval="day", force_picker_address=None, no_error_validation=False):
         futures = []
-        for date_idx, date in enumerate(dates_hash["dates"]):
-            print('running date idx : ', dates_hash)
-            if date_idx == len(dates_hash["dates"]) - 1 and interval != 'day':
-                break
-            edw2_request_copy = copy.deepcopy(self.edw2_request_object)
-            edw3_request_copy = copy.deepcopy(self.edw3_request_object)
-            futures.append(
-                self.run_comparison(dates_hash, date_idx, edw2_request_copy, edw3_request_copy,
-                                    interval=interval, force_picker_address=force_picker_address))
+        request_objects = []
+
+        if no_error_validation is True:
+            dir_name = './sources/json_sources/no_error_validation'
+            for filename in os.listdir(dir_name):
+                filepath = os.path.join(dir_name, filename)
+                report_name = filename[:-5]
+                f = open(filepath, "r")
+                request_object = json.loads(f.read())
+                # print(request_object, "--204")
+                result = await self.async_comparison_wrapper(request_object, report_name)
+                # Store needed information in log file
+                log_dict = {}
+                log_dict['test_name'] = report_name
+                log_dict['edw3_request_object'] = request_object
+                log_dict['test_result'] = result
+                with open(self.log_file, 'a+') as f:
+                    f.write(json.dumps(log_dict))
+                    f.write('\n')
+                # futures.append(results)
+        else:
+            for date_idx, date in enumerate(dates_hash["dates"]):
+                print('running date idx : ', dates_hash)
+                if date_idx == len(dates_hash["dates"]) - 1 and interval != 'day':
+                    break
+                edw2_request_copy = copy.deepcopy(self.edw2_request_object)
+                edw3_request_copy = copy.deepcopy(self.edw3_request_object)
+                futures.append(
+                    self.run_comparison(dates_hash, date_idx, edw2_request_copy, edw3_request_copy,
+                                        interval=interval, force_picker_address=force_picker_address))
 
         result = await asyncio.gather(*futures)
         self.comparisons[interval].append(result)
@@ -339,14 +369,6 @@ class Cascade:
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
 
-            # Store needed information in log file
-            log_dict = {}
-            log_dict['test_name'] = report_name
-            log_dict['edw2_request_object'] = edw2_request_object
-            log_dict['edw3_request_object'] = edw3_request_object
-            with open(self.log_file, 'a+') as f:
-                f.write(json.dumps(log_dict))
-                f.write('\n')
 
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
                                                          report_name=report_name,
@@ -471,11 +493,12 @@ class Cascade:
                     col["sim"] = sim_name
 
     def insert_source(self, source, request_object=None):
+        '''
+        Given a specified source type, force that into the request object here
+        '''
         request = request_object or self.edw3_request_object
         for report_id in request:
-            for col in request[report_id]["cols"]:
-                if "prepared_id" in col:
-                    col["source"] = source
+            request[report_id]["source"] = source
 
     def replace_relative_dates(self, interval, request_object=None):
         intervals = {
@@ -1163,7 +1186,21 @@ def main():
         should_update_logs = False
 
     if args.no_error:
-        pass
+
+        loop = asyncio.new_event_loop()
+        try:
+            start = datetime.now()
+            # code ...
+            loop.run_until_complete(
+                cascade.loop_reports({}, no_error_validation=True)
+            )
+            print("Total runtime: ", datetime.now() - start)
+        except KeyboardInterrupt:
+            sys.exit()
+        except asyncio.TimeoutError as e:
+            print(e)
+        finally:
+            sys.exit()
 
     if args.manual:
         try:
@@ -1252,6 +1289,18 @@ def main():
             "trending_widget": False,
             "top_affiliates_widget": False
         }
+
+        # Add source if specified
+        if args.source:
+            source = args.source
+        else:
+            source = None
+
+        # If source is Redshift, remove data stored on Silo
+        if source == 'fact_redshift':
+            removal_list = ['Combined Commission', 'Network Commission', 'Affiliate Commission']
+            categories = [item for item in categories if item not in removal_list]
+
         minimum_flag = False
         if args.run_all:
             for widget in run_categories:
@@ -1269,18 +1318,13 @@ def main():
             if args.merchant:
                 merchant_name = args.merchant
 
-            # Add source if specified
-            if args.source:
-                source = args.source
-            else:
-                source = None
-
             try:
                 start = datetime.now()
                 # code ...
                 loop.run_until_complete(
                     cascade.dashboard_regression(categories=run_categories, interval="last month",
-                                                 sem_count=3, sim=sim, merchants=merchants, merchant_name=merchant_name,
+                                                 sem_count=3, sim=sim, source=source, merchants=merchants,
+                                                 merchant_name=merchant_name,
                                                  should_update_logs=should_update_logs)
                 )
             except KeyboardInterrupt:
