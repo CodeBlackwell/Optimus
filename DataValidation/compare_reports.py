@@ -171,10 +171,14 @@ class Comparison(KnownDiscrepancies):
     @staticmethod
     def sql_validation(sql_query):
         datasource = None
-        keywords = ["postgres", "redshift", "olap", "tracking"]
+        keywords = {"postgres": "fact_postgres",
+                    "redshift": "fact_redshift",
+                    "olap": "olap",
+                    "tracking": "cube_postgres"
+        }
         for keyword in keywords:
             if keyword in sql_query[0]:
-                datasource = keyword
+                datasource = keywords[keyword]
         return datasource
 
     def remove_spaces(self, string_val):
