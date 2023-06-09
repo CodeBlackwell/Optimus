@@ -263,7 +263,6 @@ edw2_dashboard_objects = {
 
                     ],
                     "sort": [
-
                     ],
                     "totals": false,
                     "widths": false,
@@ -486,7 +485,10 @@ edw2_dashboard_objects = {
 
                     ],
                     "sort": [
-
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
+                        }
                     ],
                     "totals": false,
                     "widths": false,
