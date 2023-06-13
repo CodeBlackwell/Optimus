@@ -80,9 +80,10 @@ class Comparison(KnownDiscrepancies):
     async def run_and_barf(self):
         if not await self.run():
             # print("Skipping barf due to no data")
-            return False
+            return {"error": True,
+                    "error_status": self.reports[0].error}
         else:
-            return True
+            return {"error": False, "error_status": "N/A"}
 
     async def load(self):
         # TODO: Futures pattern
