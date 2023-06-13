@@ -87,8 +87,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             title += ' passed'
             cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         else:
-            title += ' FAILED!'
-            cmd = f"curl -F title='{fid}' -F initial_comment='{title} {error_msg}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
+            title += f' FAILED! {error_msg}'
+            cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
