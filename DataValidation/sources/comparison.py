@@ -205,7 +205,7 @@ class Cascade:
                 log_dict = {}
                 log_dict['test_name'] = report_name
                 log_dict['edw3_request_object'] = request_object
-                log_dict['test_result'] = result["error"]
+                log_dict['errors'] = result["error"]
                 log_dict['error_status'] = result["error_status"]
                 with open(self.log_file, 'a+') as f:
                     f.write(json.dumps(log_dict))
