@@ -99,9 +99,7 @@ class PickerReport(SourceBase):
                 self.picker_url[:-3] + 'nag/' + self.report[self.report_key]['request_id'],
                 headers=self.__get_headers(), verify=False)
             res = data_request.json()
-            print(res)
             if "_queries" in res:
-                print(res["_queries"], self.picker_url, '103 - source_picker_report')
                 self.sql_query = res["_queries"]
                 pass
             else:
@@ -117,7 +115,7 @@ class PickerReport(SourceBase):
             self.__gather_headers()
             for header in self.gathered_headers:
                 col_data.append('No Data Was Found')
-            print('** No Data Error', self.report_key, self.picker_url) #TODO: Print this output to a log
+            print('** No Data Error', self.report_key, self.picker_url)
             # print(json.dumps(self.request_object), '\n')
             self.error = self.report[self.report_key]
             self.report_name = self.report_name + '_EMPTY_'
