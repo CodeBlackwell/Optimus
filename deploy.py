@@ -72,9 +72,12 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         title = js['test_name']
         edw3_ro = js['edw3_request_object']
         errors = js['errors']
-        error_msg = str(js['error_status'])
-        # Use could not be prepared if the status is N/A
-        if js['error_status'] == 'N/A':
+
+        # Try to build an error message
+        # If it isn't there, use the default
+        try:
+            error_msg = js['error_status'][0]['error']
+        except(IndexError, KeyError):
             error_msg = 'Error: Report could not be prepared at this time.'
 
         # Create temp file
