@@ -72,6 +72,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         title = js['test_name']
         edw3_ro = js['edw3_request_object']
         test_result = js['test_result']
+        if js['error'] is True:
+            error_msg = 'Error: ' + js['error_status']
+        else:
+            error_msg = 'Error: Report could not be prepared at this time.'
 
         # Create temp file
         fid = 'edw3_request_objects.json'
@@ -84,7 +88,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         else:
             title += ' FAILED!'
-            cmd = f"curl -F title='{fid}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
+            cmd = f"curl -F title='{fid}' -F initial_comment='{title} + {error_msg}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={fid} -F token={slack_key} https://slack.com/api/files.upload -k"
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
 
