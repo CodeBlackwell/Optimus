@@ -71,7 +71,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         # Unpack json results for Slack
         title = js['test_name']
         edw3_ro = js['edw3_request_object']
-        test_result = js['test_result']
+        errors = js['errors']
         error_msg = str(js['error_status'])
         # Use could not be prepared if the status is N/A
         if js['error_status'] == 'N/A':
@@ -83,7 +83,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             f.write(json.dumps(edw3_ro))
 
         # Post to Slack and exit
-        if test_result is True:
+        if errors is False:
             title += ' passed'
             cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         else:
