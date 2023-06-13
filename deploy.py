@@ -75,13 +75,16 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
 
         # Try to build an error message
         # If it isn't there, use the default
-        try:
-            error_dict = json.loads(js['error_status'][0])
-            error_msg = js['error_status'][0]['error']
-        except(IndexError, KeyError):
-            error_msg = 'Error: Report could not be prepared at this time.'
-        except TypeError:
-            error_msg = 'Request returned no data' # This may be expected
+        if js['error_status'] == 'N/A':
+            pass
+        else:
+            try:
+                error_dict = json.loads(js['error_status'][0])
+                error_msg = error_dict['error']
+            except(IndexError, KeyError):
+                error_msg = 'Error: Report could not be prepared at this time.'
+            except TypeError:
+                error_msg = 'Request returned no data' # This may be expected
 
         # Create temp file
         fid = 'edw3_request_objects.json'
