@@ -105,7 +105,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         elif "edw3" in column and "request_object" not in column:
             if column == 'SQL_source' and df[column][0] != args.source:
                 data_source = df[column][0]
-                _source_error = True
+                source_error = True
                 edw3_request_object = df['edw3_request_object'][0]
             edw3_column = column
     if df[edw2_column].equals(df[edw3_column]) is True:
@@ -256,7 +256,7 @@ if __name__ == "__main__":
         else:
             source = args.source
     else:
-        source = 'olap' # This is the default data flow
+        source = '' # This is the default data flow
 
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
