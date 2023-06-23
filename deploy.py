@@ -29,6 +29,7 @@ from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
+from data_sources import DataSource, RedshiftDataSource
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
     '''
@@ -39,7 +40,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         msg: str, contents to post to the Slack channel
         fid: str, gives the name of the file to post to Slack as an attachment
         merchant: str, the merchant name tied to this data result
-        source: str, data source we're loading from- displays in title
+        source: str, describes data source we're loading from (displays in title)
         timeout: boolean (optional), indicates if a timeout happened
         js: json object (optional), contains a set of metadata required for reporting on the test suite (only usage)
         fail_channel: str, if given will route the failures to a separate channel
@@ -241,9 +242,6 @@ def calculate_times(now):
     return start_times, end_times
 
 if __name__ == "__main__":
-    # Init
-    now = time.strftime("%c")
-
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
     if args.merchants == 'default':
@@ -261,15 +259,10 @@ if __name__ == "__main__":
         merchants = args.merchants.split(',')
 
     # Check is source was specified. If it was, confirm we can use it
-    if args.source != '':
-        valid_sources = ['fact_redshift', 'fact_postgres', 'olap', 'cube_postgres', 'athena']
-        if args.source not in valid_sources:
-            valid_string = ', '.join(valid_sources)
-            raise TypeError(f'The given source is not valid. Must be in {valid_string} but got {args.source}')
-        else:
-            source = args.source
+    if args.source == 'fact_redshift':
+        source = RedshiftDataSource()
     else:
-        source = '' # This is the default data flow
+        source = DataSource(source=args.source)
 
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
@@ -316,15 +309,15 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                run_command = NoErrorCommand(merchants=merchant, source=source)
+                run_command = NoErrorCommand(merchants=merchant, source=source.source)
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
                 # It can be skipped however (see args)
                 if args.skip_logging is False:
-                    run_command = RunCommand(merchants=merchant, source=source)
+                    run_command = RunCommand(merchants=merchant, source=source.source)
                 else:
-                    run_command = NoLoggingCommand(merchants=merchant, source=source)
+                    run_command = NoLoggingCommand(merchants=merchant, source=source.source)
             cmd = run_command.command
 
             # Print the command and run it
@@ -362,23 +355,29 @@ if __name__ == "__main__":
                         for line in f:
                             json_dicts.append(json.loads(line))
 
-                    # Post results to Slack
+                    # Post results to Slack and cleanup
                     for json_dict in json_dicts:
-                        post_to_slack(channel, msg, None, merchant, source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
-
+                        post_to_slack(channel, msg, None, merchant, source.source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
                     os.remove(test_file)
+
+                # Routine data validation
+                # Post each result to Slack with a pass/fail message
                 else:
                     file_list = build_file_list()
                     for fid in file_list:
-                        post_to_slack(channel, msg, fid, merchant, source, timeout=timeout, fail_channel=fail_channel)
-                        # Only post 1 timeout message
-                        if timeout is True:
-                            break
+                        # If blacklisted, let us know that and skip
+                        for item in source.blacklist:
+                            if item in fid:
+                                print(f'Skipped blacklisted entry {fid}')
+                        else:
+                            post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                            # Only post 1 timeout message
+                            if timeout is True:
+                                break
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
             for fid in files:
-                ctime = os.stat(fid).st_ctime
                 shutil.rmtree(fid)
             print(f'Cleanup done for merchant {merchant}')
 
@@ -389,6 +388,3 @@ if __name__ == "__main__":
                 time.sleep(30)
 
         break # This is to skip the extra time ranges for now
-
-    # Mark completion of deployment
-    now = time.strftime("%c")

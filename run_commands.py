@@ -64,7 +64,10 @@ class NoErrorCommand(RunCommand):
     logging = False
     no_error = True
 
-    def __init__(self, merchants=None, source=None):
+    def __init__(self,
+                 merchants=None,
+                 source=None
+        ):
         self.merchants = merchants
         self.source = source
 
