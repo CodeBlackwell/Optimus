@@ -366,10 +366,12 @@ if __name__ == "__main__":
                     file_list = build_file_list()
                     for fid in file_list:
                         # If blacklisted, let us know that and skip
+                        skipped = False
                         for item in source.blacklist:
                             if item in fid:
                                 print(f'Skipped blacklisted entry {fid}')
-                        else:
+                                skipped = True
+                        if skipped is False:
                             post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                             # Only post 1 timeout message
                             if timeout is True:
