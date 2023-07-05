@@ -1,54 +1,37 @@
 {
-   "vpDPub63kqbGU5bL":{
-      "cols":[
-         {
-            "prepared_id":"1afbc775-cdd5-4a9b-bf48-c15629e5fae2"
-         },
-         {
-            "prepared_id":"ac35e36c-41c9-4682-a269-98c71b8f2196"
-         },
-         {
-            "prepared_id":"6e8a104b-9c73-453c-b38d-06ba6a7ce6c2"
-         },
-         {
-            "prepared_id":"190e5ac1-620d-449f-99c3-01f2afd6aa71"
-         },
-         {
-            "prepared_id":"c37cc7f0-4070-4534-affc-ee0a593e58eb"
-         }
-      ],
-      "report_name":"AvantMetrics Deduplication Summary",
-      "filters":[
-         {
-            "field":"dim_date-mm_dd_yyyy",
-            "op":"between",
-            "values":[
-               "04/01/2023",
-               "04/01/2023"
-            ]
-         },
-         {
-            "field":"fact_conversion-deduped_pixel_names",
-            "op":"ne",
-            "values":[
-               null
-            ]
-         },
-         {
-            "field":"dim_merchant-merchant_uuid",
-            "op":"eq",
-            "values":[
-               "e295c418-295a-447c-b265-734e25f82503"
-            ]
-         }
-      ],
-      "totals":true,
-      "offset":0,
-      "widths":true,
-      "counts":true,
-      "currency":"USD",
-      "limit":30,
-      "partitionLimit":42,
-      "partitionOffset":0
-   }
+	"KF0WBlFGR7ilseW2": {
+		"cols": [{
+			"prepared_id": "1afbc775-cdd5-4a9b-bf48-c15629e5fae2"
+		}, {
+			"prepared_id": "ac35e36c-41c9-4682-a269-98c71b8f2196"
+		}, {
+			"prepared_id": "6e8a104b-9c73-453c-b38d-06ba6a7ce6c2"
+		}, {
+			"prepared_id": "190e5ac1-620d-449f-99c3-01f2afd6aa71"
+		}, {
+			"prepared_id": "c37cc7f0-4070-4534-affc-ee0a593e58eb"
+		}],
+		"report_name": "AvantMetrics Deduplication Summary",
+		"filters": [{
+			"field": "dim_date-mm_dd_yyyy",
+			"op": "between",
+			"values": ["04/01/2023", "04/15/2023"]
+		}, {
+			"field": "fact_conversion-deduped_pixel_names",
+			"op": "ne",
+			"values": [null]
+		}, {
+			"field": "dim_merchant-merchant_uuid",
+			"op": "eq",
+			"values": ["e295c418-295a-447c-b265-734e25f82503"]
+		}],
+		"totals": true,
+		"offset": 0,
+		"widths": true,
+		"counts": true,
+		"currency": "USD",
+		"limit": 30,
+		"partitionLimit": 24,
+		"partitionOffset": 0
+	}
 }
