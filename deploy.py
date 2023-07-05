@@ -60,7 +60,13 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
 
     # If a timeout happend, go ahead and post that and carry on
     if timeout is True:
-        title = f'{merchant} timed out'
+        # API Timeout failures
+        if "API" in msg:
+            title = msg
+            channel = fail_channel
+        # Generic timeout
+        else:
+            title = f'{merchant} timed out'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
@@ -82,7 +88,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             try:
                 error_dict = json.loads(js['error_status'][0])
                 error_msg = error_dict['error']
-            except(IndexError, KeyError):
+            except(IndexError, KeyError, json.decoder.JSONDecodeError):
                 error_msg = 'Error: Report could not be prepared at this time.'
             except TypeError:
                 error_msg = 'Request returned no data' # This may be expected
@@ -323,11 +329,15 @@ if __name__ == "__main__":
             # Print the command and run it
             # If it should fail, make note of that here as well so we can print that out to slack
             try:
-                print(cmd)
-                subprocess.run(cmd, shell=True, timeout=args.timeout)
+                result = subprocess.run(cmd, shell=True, timeout=args.timeout)
+                return_code = result.returncode
                 timeout = False
             except subprocess.TimeoutExpired:
                 timeout = True # Log the timeout and then continue
+
+            # If returned 1 (error), set timeout
+            if return_code == 1:
+                timeout = True
 
             # Slack configurations
             # Note the file tree here:
@@ -355,27 +365,34 @@ if __name__ == "__main__":
                         for line in f:
                             json_dicts.append(json.loads(line))
 
-                    # Post results to Slack and cleanup
-                    for json_dict in json_dicts:
-                        post_to_slack(channel, msg, None, merchant, source.source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
+                    # Post results to Slack and cleanup if we get no results, post an API timesout
+                    if not json_dicts:
+                        post_to_slack(fail_channel, 'The API appears to have timed out', None, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                    else:
+                        for json_dict in json_dicts:
+                            post_to_slack(channel, msg, None, merchant, source.source, timeout=timeout, js=json_dict, fail_channel=fail_channel)
                     os.remove(test_file)
 
                 # Routine data validation
                 # Post each result to Slack with a pass/fail message
                 else:
                     file_list = build_file_list()
-                    for fid in file_list:
-                        # If blacklisted, let us know that and skip
-                        skipped = False
-                        for item in source.blacklist:
-                            if item in fid:
-                                print(f'Skipped blacklisted entry {fid}')
-                                skipped = True
-                        if skipped is False:
-                            post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
-                            # Only post 1 timeout message
-                            if timeout is True:
-                                break
+                    # If no files, post a special message to Slack
+                    if not file_list:
+                        post_to_slack(fail_channel, 'The API appears to have timed out', None, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                    else:
+                        for fid in file_list:
+                            # If blacklisted, let us know that and skip
+                            skipped = False
+                            for item in source.blacklist:
+                                if item in fid:
+                                    print(f'Skipped blacklisted entry {fid}')
+                                    skipped = True
+                            if skipped is False:
+                                post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                # Only post 1 timeout message
+                                if timeout is True:
+                                    break
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')

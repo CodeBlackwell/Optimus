@@ -3,18 +3,21 @@
 import asyncio
 import copy
 import json
+import subprocess
 import os
 import re
 import sys
-from datetime import datetime
-
+import time
 import arrow
 import gspread
 import http3
 import pandas as pd
-from openpyxl import Workbook
 import requests
 import sources
+
+from openpyxl import Workbook
+from datetime import datetime
+#from http3.exceptions import ReadTimeout
 from compare_reports import Comparison
 from args import args
 from oauth2client.service_account import ServiceAccountCredentials
@@ -31,6 +34,7 @@ class Cascade:
     cascade = False
     change_logs = []
     loop = None
+    timeout = False
     errors = []
     totals = {"count": {}, "difference": {}}
     cascade_start_date = None
@@ -131,17 +135,26 @@ class Cascade:
             pass
         finally:
             loop.close()
-            self.process_map(self.prepared_col_map)
+            try:
+                self.process_map(self.prepared_col_map)
+            except http3.exceptions.ReadTimeout:
+                print('Timeout occured getting the Prepared Columns from the API')
+            except TypeError:
+                print("The API returned no data for prepared columns")
 
     def process_map(self, prepared_cols_map):
         new_map = {}
-        for fact_dim in prepared_cols_map:
-            for prepared_col in prepared_cols_map[fact_dim]:
-                try:
-                    new_map[prepared_col["prepared_column_id"]] = prepared_col
-                except KeyError as e:
-                    print(f"This Prepared id was not found === {e}")
-        self.prepared_col_map = new_map
+        # If a timeout happened, raise that
+        if self.timeout is True:
+            raise http3.exceptions.ReadTimeout
+        else:
+            for fact_dim in prepared_cols_map:
+                for prepared_col in prepared_cols_map[fact_dim]:
+                    try:
+                        new_map[prepared_col["prepared_column_id"]] = prepared_col
+                    except KeyError as e:
+                        print(f"This Prepared id was not found === {e}")
+            self.prepared_col_map = new_map
 
     async def get_prepared_cols(self):
         client = http3.AsyncClient()
@@ -155,12 +168,12 @@ class Cascade:
             'default_currency': 'USD',
         }
 
-        # Catch timeouts here
+        # Catch timeouts from the API here
         try:
-            response = await client.get('https://picker-shard.avantlink.com/prepared_cols', headers=headers, timeout=30)
-        except requests.exceptions.Timeout:
-            print('Timeout happened grabbing prepared columnns')
-            raise
+            response = await client.get('https://picker-shard.avantlink.com/prepared_cols', headers=headers, timeout=3)
+        except http3.exceptions.ReadTimeout:
+            self.timeout = True
+            return
         self.prepared_col_map = response.json()
         return response
 
@@ -1182,6 +1195,13 @@ def main():
 
     # Instantiate the class
     cascade = Cascade()
+
+    # If a timeout happened, raise the Timeout Exception
+    # There's no specific convention for this, so use the exit code 1 (catch all generic error)
+    if cascade.timeout is True:
+        sys.exit(1)
+
+    # Otherwise, update the attributes and run as normal
     cascade.semaphore_count = 3
     cascade.get_prepared_cols()
     cascade.get_display_groups()
