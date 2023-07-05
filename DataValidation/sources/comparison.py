@@ -155,7 +155,12 @@ class Cascade:
             'default_currency': 'USD',
         }
 
-        response = await client.get('https://picker-shard.avantlink.com/prepared_cols', headers=headers)
+        # Catch timeouts here
+        try:
+            response = await client.get('https://picker-shard.avantlink.com/prepared_cols', headers=headers, timeout=30)
+        except requests.exceptions.Timeout:
+            print('Timeout happened grabbing prepared columnns')
+            raise
         self.prepared_col_map = response.json()
         return response
 
