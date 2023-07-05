@@ -12,6 +12,7 @@ from googleapiclient.errors import HttpError
 
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
 
+#Retrieve values from Google Spreadsheets
 def get_values(spreadsheet_id, range_name):
     """
     Creates the batch_update the user has access to.
@@ -52,6 +53,7 @@ def get_values(spreadsheet_id, range_name):
 def fix_json(broken_json):
     return broken_json.replace("'", '"').replace("True", "true").replace("False", "false")
 
+#Process the Gspread return value into a list of unique request object (One for each Report Name)
 def process_rows(rows):
     cache = []
     request_objects = {}
