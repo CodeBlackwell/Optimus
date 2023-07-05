@@ -48,15 +48,13 @@ def get_values(spreadsheet_id, range_name):
         print(f"An error occurred: {error}")
         return error
 
+# Needed to convert python literal strings into parsable JSON
 def fix_json(broken_json):
-    broken_json["Query"].replace("'", '"').replace("True", "true").replace("False", "false")
+    return broken_json.replace("'", '"').replace("True", "true").replace("False", "false")
+
 def process_rows(rows):
     cache = []
-    unique_most_recent = {"EDW2": {}, "EDW3": {}}
-
-    def mysort(e):
-        return e['Date']
-
+    request_objects = {}
     for row in rows['values']:
         cache.append({
             'Report/Graph': row[0],
@@ -64,47 +62,15 @@ def process_rows(rows):
             'Date': row[2],
             'Query': row[3]
         })
-
-
-    for idx, item in enumerate(cache):
-        report_id = None
-        if idx == 0:
-            continue
-        print()
-        # for report_idz in item["Query"]:
-        #     report_id = report_idz
-
-        sys.exit()
-        report_name = None
-        if item["Version"] == "EDW2":
-            if not unique_most_recent["EDW2"][item["Report/Graph"]]:
-                # If the report has not been found, create entry
-                unique_most_recent["EDW2"][item["Report/Graph"]] = {"request_object": item["Query"], "date": item["Date"]}
-            if unique_most_recent["EDW2"][item["Report/Graph"]]:
-                compare_date = [
-                    unique_most_recent["EDW2"][item["Report/Graph"]],
-                    {"request_object": item["Query"], "date": item["Date"]}
-                ].sort(key=mysort)
-                unique_most_recent["EDW2"][item["Report/Graph"]] = compare_date[0]
-            if not unique_most_recent["EDW3"][item["Report/Graph"]]:
-                # If the report has not been found, create entry
-                unique_most_recent["EDW3"][item["Report/Graph"]] = {"request_object": item["Query"],
-                                                                    "date": item["Date"]}
-            if unique_most_recent["EDW3"][item["Report/Graph"]]:
-                compare_date = [
-                    unique_most_recent["EDW3"][item["Report/Graph"]],
-                    {"request_object": item["Query"], "date": item["Date"]}
-                ].sort(key=mysort)
-                unique_most_recent["EDW3"][item["Report/Graph"]] = compare_date[0]
-
-                #Standing bug - ALl dates that are 'Last Quarter', 'Last Year' etc. - Write exception
-
-            #Write fix_Json function
-
-    return cache
+    for item in cache:
+        if item["Version"] == "EDW3":
+            request_objects[item["Report/Graph"]] = item["Query"]
+    return request_objects
 
 if __name__ == '__main__':
-    # Pass: spreadsheet_id, and range_name
-    rows = get_values("1sA8anBPSorLyLiYwf0oTOZ7FSRkvE9nDK16Wm83Cc-Y", "A1:ZZ")
-    cached = process_rows(rows)
-    # print(cached[1])
+    rows = get_values("1sA8anBPSorLyLiYwf0oTOZ7FSRkvE9nDK16Wm83Cc-Y", "A1:ZZZ")
+    request_objects = process_rows(rows)
+    print(request_objects.keys())
+    for key, request_object in request_objects.items():
+        with open(f"./sources/json_sources/no_error_validation/{key}.json", "w+") as f:
+            f.write(fix_json(request_objects[key]))
