@@ -24,18 +24,18 @@ def get_values(spreadsheet_id, range_name):
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+    if os.path.exists('../token.json'):
+        creds = Credentials.from_authorized_user_file('../token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
     if not creds or not creds.valid:
         if creds and creds.expired and creds.refresh_token:
             creds.refresh(Request())
         else:
             flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
+                '../credentials.json', SCOPES)
             creds = flow.run_local_server(port=0)
         # Save the credentials for the next run
-        with open('token.json', 'w') as token:
+        with open('../token.json', 'w') as token:
             token.write(creds.to_json())    # pylint: disable=maybe-no-member
     try:
         service = build('sheets', 'v4', credentials=creds)
@@ -74,5 +74,5 @@ if __name__ == '__main__':
     request_objects = process_rows(rows)
     print(request_objects.keys())
     for key, request_object in request_objects.items():
-        with open(f"./sources/json_sources/no_error_validation/{key}.json", "w+") as f:
+        with open(f"./json_sources/no_error_validation/{key}.json", "w+") as f:
             f.write(fix_json(request_objects[key]))
