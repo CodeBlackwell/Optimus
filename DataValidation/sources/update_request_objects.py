@@ -51,7 +51,7 @@ def get_values(spreadsheet_id, range_name):
 
 # Needed to convert python literal strings into parsable JSON
 def fix_json(broken_json):
-    return broken_json.replace("'", '"').replace("True", "true").replace("False", "false")
+    return broken_json.replace("'", '"').replace("True", "true").replace("False", "false").replace("None", "null")
 
 #Process the Gspread return value into a list of unique request object (One for each Report Name)
 def process_rows(rows):
@@ -74,5 +74,6 @@ if __name__ == '__main__':
     request_objects = process_rows(rows)
     print(request_objects.keys())
     for key, request_object in request_objects.items():
-        with open(f"./json_sources/no_error_validation/{key}.json", "w+") as f:
+        fname = key.replace(' ', '_') #replace spaces with _
+        with open(f"./json_sources/no_error_validation/{fname}.json", "w+") as f:
             f.write(fix_json(request_objects[key]))
