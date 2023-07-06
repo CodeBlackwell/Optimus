@@ -3156,6 +3156,10 @@ edw2_dashboard_objects = {
                         {
                             "field": "avg_order_amount",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "totals": true,
@@ -3258,7 +3262,12 @@ edw2_dashboard_objects = {
                         {
                             "field": "net_sales",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
                     "totals": true,
                     "widths": true,
@@ -3453,9 +3462,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "return_on_ad_spend_percent",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -3622,9 +3636,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "return_on_ad_spend",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -3710,7 +3729,7 @@ edw2_dashboard_objects = {
                             "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -3790,9 +3809,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "gross_sales",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -3886,9 +3910,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "conversion_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4033,9 +4061,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "total_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4124,9 +4157,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "sale_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4215,9 +4252,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "combined_ppb",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4296,9 +4338,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "incentive_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4387,9 +4434,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "combined_cpc",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4478,9 +4529,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "combined_bonus",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4561,9 +4616,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_bonus",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4642,9 +4702,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_cpc",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4723,9 +4788,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_incentive_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4804,9 +4873,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_ppb",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -4889,9 +4962,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_sale_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5023,9 +5100,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_total_commission_average_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5138,9 +5219,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_total_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5293,9 +5378,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "affiliate_total_earnings_average_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5414,9 +5503,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "earnings_per_click",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5497,9 +5591,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_cpc",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5578,9 +5677,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_ppb",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5659,9 +5763,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_bonus",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5744,9 +5853,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_sale_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5875,9 +5988,14 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_total_commission_average_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
+
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -5984,9 +6102,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_total_commission",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6124,9 +6246,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "network_total_earnings_average_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6221,9 +6347,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "click_through_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6297,9 +6427,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "number_of_clicks",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6373,9 +6507,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "number_of_impressions",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6458,9 +6596,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "adjusted_affiliate_earnings",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6567,9 +6709,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "adjusted_cost",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6650,9 +6796,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "adjusted_network_earnings",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6733,9 +6883,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "adjustments_sum",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6815,9 +6969,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "adjustments_count",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -6912,9 +7070,13 @@ edw2_dashboard_objects = {
                         {
                             "field": "reversal_rate",
                             "direction": "desc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
-                   "totals": true,
+                    "totals": true,
                     "widths": true,
                     "counts": true,
                     "partitionLimit": 1,
@@ -8592,6 +8754,10 @@ edw3_dashboard_objects = {
                             "field": "avg_order_amount",
                             "direction": "desc",
                             "alias": "avg_order_amount"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -8659,6 +8825,10 @@ edw3_dashboard_objects = {
                             "field": "net_sales",
                             "direction": "desc",
                             "alias": "net_sales"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -8726,6 +8896,10 @@ edw3_dashboard_objects = {
                             "field": "return_on_ad_spend_percent",
                             "direction": "desc",
                             "alias": "return_on_ad_spend_percent"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -8793,6 +8967,10 @@ edw3_dashboard_objects = {
                             "field": "return_on_ad_spend",
                             "direction": "desc",
                             "alias": "return_on_ad_spend"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -8930,6 +9108,10 @@ edw3_dashboard_objects = {
                             "field": "gross_sales",
                             "direction": "desc",
                             "alias": "gross_sales"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -8997,6 +9179,10 @@ edw3_dashboard_objects = {
                             "field": "conversion_rate",
                             "direction": "desc",
                             "alias": "conversion_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9066,6 +9252,10 @@ edw3_dashboard_objects = {
                             "field": "total_commission",
                             "direction": "desc",
                             "alias": "total_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9133,6 +9323,10 @@ edw3_dashboard_objects = {
                             "field": "sale_commission",
                             "direction": "desc",
                             "alias": "sale_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9200,6 +9394,10 @@ edw3_dashboard_objects = {
                             "field": "combined_ppb",
                             "direction": "desc",
                             "alias": "combined_ppb"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9267,6 +9465,10 @@ edw3_dashboard_objects = {
                             "field": "incentive_commission",
                             "direction": "desc",
                             "alias": "incentive_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9334,6 +9536,10 @@ edw3_dashboard_objects = {
                             "field": "combined_cpc",
                             "direction": "desc",
                             "alias": "combined_cpc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9401,6 +9607,10 @@ edw3_dashboard_objects = {
                             "field": "combined_bonus",
                             "direction": "desc",
                             "alias": "combined_bonus"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9470,6 +9680,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_bonus",
                             "direction": "desc",
                             "alias": "affiliate_bonus"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9537,6 +9751,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_cpc",
                             "direction": "desc",
                             "alias": "affiliate_cpc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9604,6 +9822,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_incentive_commission",
                             "direction": "desc",
                             "alias": "affiliate_incentive_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9671,6 +9893,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_ppb",
                             "direction": "desc",
                             "alias": "affiliate_ppb"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9738,6 +9964,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_sale_commission",
                             "direction": "desc",
                             "alias": "affiliate_sale_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9805,6 +10035,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_total_commission_average_rate",
                             "direction": "desc",
                             "alias": "affiliate_total_commission_average_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9872,6 +10106,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_total_earnings",
                             "direction": "desc",
                             "alias": "affiliate_total_earnings"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -9939,6 +10177,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_total_earnings_average_rate",
                             "direction": "desc",
                             "alias": "affiliate_total_earnings_average_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10006,6 +10248,10 @@ edw3_dashboard_objects = {
                             "field": "earnings_per_click",
                             "direction": "desc",
                             "alias": "earnings_per_click"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10075,6 +10321,10 @@ edw3_dashboard_objects = {
                             "field": "network_cpc",
                             "direction": "desc",
                             "alias": "network_cpc"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10142,6 +10392,10 @@ edw3_dashboard_objects = {
                             "field": "network_ppb",
                             "direction": "desc",
                             "alias": "network_ppb"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10209,6 +10463,10 @@ edw3_dashboard_objects = {
                             "field": "network_bonus",
                             "direction": "desc",
                             "alias": "network_bonus"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10276,6 +10534,10 @@ edw3_dashboard_objects = {
                             "field": "network_sale_commission",
                             "direction": "desc",
                             "alias": "network_sale_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10343,6 +10605,10 @@ edw3_dashboard_objects = {
                             "field": "network_total_commission_average_rate",
                             "direction": "desc",
                             "alias": "network_total_commission_average_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10410,6 +10676,10 @@ edw3_dashboard_objects = {
                             "field": "network_total_commission",
                             "direction": "desc",
                             "alias": "network_total_commission"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10477,6 +10747,10 @@ edw3_dashboard_objects = {
                             "field": "network_total_earnings_average_rate",
                             "direction": "desc",
                             "alias": "network_total_earnings_average_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10546,6 +10820,10 @@ edw3_dashboard_objects = {
                             "field": "click_through_rate",
                             "direction": "desc",
                             "alias": "click_through_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10613,6 +10891,10 @@ edw3_dashboard_objects = {
                             "field": "affiliate_clicks",
                             "direction": "desc",
                             "alias": "affiliate_clicks"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10680,6 +10962,10 @@ edw3_dashboard_objects = {
                             "field": "number_of_impressions",
                             "direction": "desc",
                             "alias": "number_of_impressions"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10749,6 +11035,10 @@ edw3_dashboard_objects = {
                             "field": "adjusted_affiliate_earnings",
                             "direction": "desc",
                             "alias": "adjusted_affiliate_earnings"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10816,6 +11106,10 @@ edw3_dashboard_objects = {
                             "field": "adjusted_cost",
                             "direction": "desc",
                             "alias": "adjusted_cost"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10883,6 +11177,10 @@ edw3_dashboard_objects = {
                             "field": "adjusted_network_earnings",
                             "direction": "desc",
                             "alias": "adjusted_network_earnings"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -10950,6 +11248,10 @@ edw3_dashboard_objects = {
                             "field": "event_action_amount",
                             "direction": "desc",
                             "alias": "event_action_amount"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -11017,6 +11319,10 @@ edw3_dashboard_objects = {
                             "field": "adjustments_count",
                             "direction": "desc",
                             "alias": "adjustments_count"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
@@ -11084,6 +11390,10 @@ edw3_dashboard_objects = {
                             "field": "reversal_rate",
                             "direction": "desc",
                             "alias": "reversal_rate"
+                        },
+                        {
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
                         }
                     ],
                     "offset": 0,
