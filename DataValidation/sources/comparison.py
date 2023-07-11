@@ -214,21 +214,25 @@ class Cascade:
         if no_error_validation is True:
             dir_name = './sources/json_sources/no_error_validation'
             for filename in os.listdir(dir_name):
-                filepath = os.path.join(dir_name, filename)
-                report_name = filename[:-5]
-                f = open(filepath, "r")
-                request_object = json.loads(f.read())
-                result = await self.async_comparison_wrapper(request_object, report_name)
-                # Store needed information in log file
-                log_dict = {}
-                log_dict['test_name'] = report_name
-                log_dict['edw3_request_object'] = request_object
-                log_dict['errors'] = result["error"]
-                log_dict['error_status'] = result["error_status"]
-                with open(self.log_file, 'a+') as f:
-                    f.write(json.dumps(log_dict))
-                    f.write('\n')
-                # futures.append(results)
+                try:
+                    filepath = os.path.join(dir_name, filename)
+                    report_name = filename[:-5]
+                    f = open(filepath, "r")
+                    request_object = json.loads(f.read())
+                    result = await self.async_comparison_wrapper(request_object, report_name)
+                    # Store needed information in log file
+                    log_dict = {}
+                    log_dict['test_name'] = report_name
+                    log_dict['edw3_request_object'] = request_object
+                    log_dict['errors'] = result["error"]
+                    log_dict['error_status'] = result["error_status"]
+                    with open(self.log_file, 'a+') as f:
+                        f.write(json.dumps(log_dict))
+                        f.write('\n')
+                    # futures.append(results)
+                except Exception as e:
+                    print(f'Exception {e} occured while processing file {filename}. Check the json file')
+                    continue
         else:
             for date_idx, date in enumerate(dates_hash["dates"]):
                 print('running date idx : ', dates_hash)
