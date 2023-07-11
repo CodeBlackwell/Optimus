@@ -7,10 +7,8 @@ import json
 from datetime import datetime
 from pprint import pprint
 import sys
+import copy
 import os
-
-
-
 
 false = False
 true = True
@@ -28,7 +26,6 @@ def extract_words(messy_string):
 
 def breakdown_calculations(calc_request_object: object) -> object:
     report_id = None
-    calculation = None
     calculation_variables = None
     for id in calc_request_object:
         report_id = id
@@ -40,8 +37,12 @@ def breakdown_calculations(calc_request_object: object) -> object:
 
 
 def build_single_var_request_object(calc_request_object, col_name):
+    edw2_new_report_id = f"edw2_{col_name}"
+    edw3_new_report_id = f"edw3_{col_name}"
+    new_request_object = {}
     report_id = None
-    calc_object = calc_request_object.copy()
+    calc_object = copy.deepcopy(calc_request_object)
+
     for id in calc_request_object:
         report_id = id
     for col in calc_object[report_id]["cols"]:
@@ -49,7 +50,12 @@ def build_single_var_request_object(calc_request_object, col_name):
             col["calc"] = col_name
             col["name"] = col_name
             col["alias"] = col_name
-    return {"ro": calc_object, "var_name": col_name}
+
+    if "edw2" in report_id:
+        new_request_object[edw2_new_report_id] = calc_object[report_id]
+    if "edw3" in report_id:
+        new_request_object[edw3_new_report_id] = calc_object[report_id]
+    return {"ro": new_request_object, "var_name": col_name}
 
 
 def build_var_separated_request_objects(calc_request_object):
@@ -79,31 +85,21 @@ def run_reports(request_object_pairs_list):
     os.mkdir(calc_breakdown_report_dir_path)
     # futures = []
 
-    for key in request_object_pairs_list:
+    for key in request_object_pairs_list.keys():
         comparison = sources.Cascade()
-        comparison_col_name = None
         edw2_request_object = request_object_pairs_list[key][0]
         edw3_request_object = request_object_pairs_list[key][1]
         join_on = define_join_on(edw2_request_object, edw3_request_object)
-        for report_id in edw3_request_object:
-            for col in edw3_request_object[report_id]["cols"]:
-                if "prepared_id" in col:
-                    continue
-                try:
-                    if "dim_date" not in col["id"] and "hidden" not in col \
-                            and "website" not in col["name"].lower():
-                        comparison_col_name = col["name"]
-                except TypeError:
-                    raise
         loop = asyncio.new_event_loop()
-        print(f"Comparison col name is defined as {comparison_col_name}, manpath = {calc_breakdown_report_dir_path}")
+
+        print(f"Comparison col name is defined as {key}")
         try:
             start = datetime.now()
             # code ...
             loop.run_until_complete(
                 comparison.run_simple_difference(
                     {"join_on": join_on,
-                     "comparison_col_name": comparison_col_name},
+                     "comparison_col_name": key},
                     edw2_ro=edw2_request_object, edw3_ro=edw3_request_object, sim=None, source=None,
                     report_name=key, manual_path=calc_breakdown_report_dir_path)
             )
