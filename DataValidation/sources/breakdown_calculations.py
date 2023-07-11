@@ -21,6 +21,14 @@ request_objects = json.load(open('./sources/json_sources/manual_comparison_objec
 
 
 def extract_words(messy_string):
+    """
+    Accepts a calculation string and extracts individual variable names.
+
+    Args:
+        messy_string: str: calculation string i.e. (sale+ppb)/cpc
+
+    Returns: []: extracted variable names i.e. ["sale", "ppb", "cpc"]
+    """
     regex = re.compile('[^a-zA-Z]')
     messy_string = regex.sub(' ', messy_string)
     cleaned_string = " ".join(messy_string.split())
