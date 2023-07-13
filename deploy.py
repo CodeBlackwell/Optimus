@@ -63,7 +63,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         # API Timeout failures
         if "API" in msg:
             title = msg
-            channel = fail_channel
+            channel = 'edw3_data_errors'
         # Generic timeout
         else:
             title = f'{merchant} timed out'
@@ -254,7 +254,7 @@ if __name__ == "__main__":
         if args.no_error:
             merchants = ['REI.com']
         else:
-            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,Patagonia_CA,A_Life_Plus'.split(',')
+            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,A_Life_Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
