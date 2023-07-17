@@ -112,13 +112,14 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         os.remove(fid)
         return
 
-    # Check if file matches between edw and edw3
+    # Check if file matches between edw2 and edw3
     # Only send those that do not match to Slack
     df = pd.read_excel(fid)
     columns = df.columns.to_list()
     source_error = False
     data_source = None
     edw3_request_object = None
+    fault_tolerance = ''
     for column in columns:
         if "edw2" in column and "request_object" not in column:
             edw2_column = column
@@ -131,7 +132,13 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     if df[edw2_column].equals(df[edw3_column]) is True:
         matches = True
     else:
-        matches = False
+        # Check the difference. If it's within 0.01%, pass it
+        tolerance = (df['difference'] / df[edw2_column]) * 100
+        if tolerance < .01:
+            matches = True
+            fault_tolerance = '(within 0.01 percent fault tolerance)'
+        else:
+            matches = False
 
     # Build an upload curl command to post to slack
     # The components here govern how the data is displayed- note the display file name != system file name
@@ -141,9 +148,9 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     temp_file = None
     if matches is True and source_error is False:
         if args.source != '':
-             title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed'
+             title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed {fault_tolerance}'
         else:
-            title = upload_name.replace('.xlsx', '') + ' passed'
+            title = upload_name.replace('.xlsx', '') + ' passed {fault_tolerance}'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
     # Cover the case where we requested a particular source, but got something else back instead
     # Here we want to post request object and mention the requested source but what we got instead
