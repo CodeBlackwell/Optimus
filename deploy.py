@@ -134,7 +134,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     else:
         # Check the difference. If it's within 0.01%, pass it
         tolerance = (df['difference'] / df[edw2_column]) * 100
-        if tolerance < .01:
+        if all(abs(x) < .01 for x in tolerance):
             matches = True
             fault_tolerance = '(within 0.01 percent fault tolerance)'
         else:
@@ -148,9 +148,9 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     temp_file = None
     if matches is True and source_error is False:
         if args.source != '':
-             title = upload_name.replace('.xlsx', '') + f' ({source})' + ' passed {fault_tolerance}'
+             title = upload_name.replace('.xlsx', '') + f' ({source}) passed {fault_tolerance}'
         else:
-            title = upload_name.replace('.xlsx', '') + ' passed {fault_tolerance}'
+            title = upload_name.replace('.xlsx', '') + f' passed {fault_tolerance}'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
     # Cover the case where we requested a particular source, but got something else back instead
     # Here we want to post request object and mention the requested source but what we got instead
