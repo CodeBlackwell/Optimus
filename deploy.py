@@ -393,7 +393,7 @@ if __name__ == "__main__":
                                     skipped = True
                             if skipped is False:
                                 post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
-                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
+                                time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
