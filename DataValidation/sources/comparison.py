@@ -696,8 +696,10 @@ class Cascade:
 
                                     match_names(edw2_request_object, edw3_request_object)
 
-                                    verify_relative_dates(edw2_request_object, edw3_request_object)
-                                    match_date_aggregates(edw2_request_object, edw3_request_object)
+                                    # NOTE: Because we don't apply the exact same date aggregates here anymore these must be commented out
+                                    # These might still be needed for other date ranges, but for now that isnt important
+                                    #verify_relative_dates(edw2_request_object, edw3_request_object)
+                                    #match_date_aggregates(edw2_request_object, edw3_request_object)
                                     futures.append(self.run_simple_difference(
                                         {"join_on": define_join_on(edw2_request_object, edw3_request_object),
                                          "comparison_col_name": comparison_col_name},

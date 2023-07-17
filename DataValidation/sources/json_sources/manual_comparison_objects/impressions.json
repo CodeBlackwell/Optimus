@@ -63,7 +63,10 @@
 						"func": "band",
 						"bands": null,
 						"dim": "dim_date-last_thirty_days"
-					}],
+					},
+                                        {
+                                            "func": "all"
+                                        }],
 					"name": "Mm Dd Yyyy"
 				},
 				{

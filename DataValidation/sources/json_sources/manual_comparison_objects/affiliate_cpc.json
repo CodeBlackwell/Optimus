@@ -77,7 +77,10 @@
 				"func": "band",
 				"bands": null,
 				"dim": "dim_date-last_thirty_days"
-			}],
+			},
+                        {
+                            "func": "all"
+                        }],
 			"name": "Mm Dd Yyyy"
 		}, {
 			"prepared_id": "c57ca314-145b-4131-bdaf-87beef851324"
