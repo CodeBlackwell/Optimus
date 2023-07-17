@@ -7104,6 +7104,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7148,7 +7151,11 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
+
                             ],
                             "name": "Day"
                         },
@@ -7192,7 +7199,11 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
+
                             ],
                             "name": "Day"
                         },
@@ -7236,6 +7247,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7284,6 +7298,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Mm Dd Yyyy"
@@ -7328,6 +7345,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7372,6 +7392,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Mm Dd Yyyy"
@@ -7418,6 +7441,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7462,6 +7488,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7506,6 +7535,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7550,6 +7582,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7594,6 +7629,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7638,6 +7676,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7684,6 +7725,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7728,6 +7772,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7772,6 +7819,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7816,6 +7866,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7860,6 +7913,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7904,6 +7960,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7948,6 +8007,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -7994,6 +8056,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8038,6 +8103,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8082,6 +8150,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8128,6 +8199,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8172,6 +8246,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8216,6 +8293,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8260,6 +8340,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8306,6 +8389,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8350,6 +8436,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8394,6 +8483,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8438,6 +8530,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8482,6 +8577,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8526,6 +8624,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8570,6 +8671,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8614,6 +8718,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8658,6 +8765,9 @@ edw3_dashboard_objects = {
                                     "func": "range",
                                     "upper_bound": null,
                                     "lower_bound": null
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Day"
@@ -8723,6 +8833,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -8794,6 +8907,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -8865,6 +8981,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -8936,6 +9055,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9007,6 +9129,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9077,6 +9202,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9148,6 +9276,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9221,6 +9352,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9292,6 +9426,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9363,6 +9500,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9434,6 +9574,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9505,6 +9648,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9576,6 +9722,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9649,6 +9798,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9720,6 +9872,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9791,6 +9946,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9862,6 +10020,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -9933,6 +10094,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10004,6 +10168,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10075,6 +10242,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10146,6 +10316,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10217,6 +10390,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10290,6 +10466,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10361,6 +10540,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10432,6 +10614,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10503,6 +10688,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10574,6 +10762,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10645,6 +10836,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10716,6 +10910,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10789,6 +10986,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10860,6 +11060,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -10931,6 +11134,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11004,6 +11210,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11075,6 +11284,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11146,6 +11358,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11217,6 +11432,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11288,6 +11506,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
@@ -11359,6 +11580,9 @@ edw3_dashboard_objects = {
                                     "func": "band",
                                     "bands": null,
                                     "dim": "dim_date-last_thirty_days"
+                                },
+                                {
+                                    "func": "all"
                                 }
                             ],
                             "name": "Date Range"
