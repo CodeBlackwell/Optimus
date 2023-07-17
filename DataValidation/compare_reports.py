@@ -219,7 +219,12 @@ class Comparison(KnownDiscrepancies):
             if difference < 0:
                 print(edw2_df)
                 print(edw3_df)
-                raise Exception('EDW2 found more results than edw3. Need to add this to discrepancy in future release')
+                print('WARNING: EDW2 found more results than edw3.')
+                print('Trying to drop 0s from edw2. If that does not solve this a discrepency will be posted')
+                column_name = edw2_df.columns[1]
+                print('New edw2 df:')
+                edw2_df = edw2_df.loc[edw2_df[column_name] != '$0.00']
+                print(edw2_df)
             else:
                 print('WARNING: Results did not match. Adjusting by dropping extra rows from edw3 result')
                 print('Initial results:')
