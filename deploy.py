@@ -361,9 +361,12 @@ if __name__ == "__main__":
                 if args.no_error:
                     json_dicts = []
                     test_file = 'DataValidation/test_suite_outputs.json'
-                    with open(test_file) as f:
-                        for line in f:
-                            json_dicts.append(json.loads(line))
+                    try:
+                        with open(test_file) as f:
+                            for line in f:
+                                json_dicts.append(json.loads(line))
+                    except:
+                        json_dicts = []
 
                     # Post results to Slack and cleanup if we get no results, post an API timesout
                     if not json_dicts:
@@ -390,6 +393,7 @@ if __name__ == "__main__":
                                     skipped = True
                             if skipped is False:
                                 post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
