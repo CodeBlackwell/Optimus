@@ -362,61 +362,57 @@ class Cascade:
                                     sim=None, source=None, force_picker=None, manual_path=None):
 
         async with self.sem:
+            if report_name is None:
+                report_name = self.report_name
+            else:
+                report_name = report_name
+
+            if force_picker:
+                picker_url_1 = force_picker
+                picker_url_2 = force_picker
+            else:
+                picker_url_1 = self.edw3_url
+                picker_url_2 = self.edw2_url
+            if edw2_ro:
+                edw2_request_object = edw2_ro
+            else:
+                edw2_request_object = self.edw2_request_object
+            if edw3_ro:
+                edw3_request_object = edw3_ro
+            else:
+                edw3_request_object = self.edw3_request_object
+            # if interval:
+            #     self.replace_relative_dates(interval, request_object=edw2_ro)
+            #     self.replace_relative_dates(interval, request_object=edw3_ro)
+            if sim and edw3_ro:
+                self.insert_simulation(sim, request_object=edw3_request_object)
+            if source and edw3_ro:
+                self.insert_source(source, request_object=edw3_request_object)
+            if manual_path:
+                simple_difference_options["manual_path"] = manual_path
+
+
+            comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
+                                                        report_name=report_name,
+                                                        request_object=edw3_request_object),
+                                    sources.PickerReport(picker_url=picker_url_2,
+                                                        report_name=report_name,
+                                                        request_object=edw2_request_object)
+                                    )
+
+            comparison.set_outputs(simple_report_name=self.report_name,
+                                simple_difference=simple_difference_options,
+                                dashboard_regression=dashboard_regression)
             try:
-                if report_name is None:
-                    report_name = self.report_name
-                else:
-                    report_name = report_name
+                await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
+            except asyncio.TimeoutError as e:
+                self.errors.append({
+                    "error": "timeout",
+                    "technical_print": e
+                })
+            self.comparisons["simple"].append(comparison.simple_difference_comparison)
 
-                if force_picker:
-                    picker_url_1 = force_picker
-                    picker_url_2 = force_picker
-                else:
-                    picker_url_1 = self.edw3_url
-                    picker_url_2 = self.edw2_url
-                if edw2_ro:
-                    edw2_request_object = edw2_ro
-                else:
-                    edw2_request_object = self.edw2_request_object
-                if edw3_ro:
-                    edw3_request_object = edw3_ro
-                else:
-                    edw3_request_object = self.edw3_request_object
-                # if interval:
-                #     self.replace_relative_dates(interval, request_object=edw2_ro)
-                #     self.replace_relative_dates(interval, request_object=edw3_ro)
-                if sim and edw3_ro:
-                    self.insert_simulation(sim, request_object=edw3_request_object)
-                if source and edw3_ro:
-                    self.insert_source(source, request_object=edw3_request_object)
-                if manual_path:
-                    simple_difference_options["manual_path"] = manual_path
-
-
-                comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
-                                                            report_name=report_name,
-                                                            request_object=edw3_request_object),
-                                        sources.PickerReport(picker_url=picker_url_2,
-                                                            report_name=report_name,
-                                                            request_object=edw2_request_object)
-                                        )
-
-                comparison.set_outputs(simple_report_name=self.report_name,
-                                    simple_difference=simple_difference_options,
-                                    dashboard_regression=dashboard_regression)
-                try:
-                    await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
-                except asyncio.TimeoutError as e:
-                    self.errors.append({
-                        "error": "timeout",
-                        "technical_print": e
-                    })
-                self.comparisons["simple"].append(comparison.simple_difference_comparison)
-
-                return comparison
-            except Exception as e:
-                print(e)
-                raise
+            return comparison
 
     async def run_comparison(self, dates_hash, date_idx, edw2_request_object, edw3_request_object,
                              interval="day", force_picker_address=None):
