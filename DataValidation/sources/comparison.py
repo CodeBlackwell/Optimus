@@ -21,9 +21,7 @@ from datetime import datetime
 from compare_reports import Comparison
 from args import args
 from oauth2client.service_account import ServiceAccountCredentials
-
 configs = json.load(open('../config.json'))
-
 
 class Cascade:
     edw2_request_object = None
@@ -629,6 +627,8 @@ class Cascade:
         self.dashboard_regression_path = dashboard_regression_report_dir_path
         os.mkdir(dashboard_regression_report_dir_path)
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
+
+
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
         else:
@@ -650,10 +650,17 @@ class Cascade:
                 os.mkdir(dir_basepath)
             except FileExistsError:
                 pass
+            try:
+                source_name = source or 'default'
+                source_dir_path = os.path.join(dir_basepath, source_name)
+                # print(source_dir_path)
+                os.mkdir(source_dir_path)
+            except FileExistsError:
+                pass
 
             for widget in categories:
                 if categories[widget]:
-                    os.mkdir(os.path.join(dir_basepath, widget))
+                    os.mkdir(os.path.join(source_dir_path, widget))
                 if not categories[widget]:
                     continue
                 for category in categories[widget]:
@@ -661,7 +668,7 @@ class Cascade:
                         continue
                     try:
                         category_dir = category.replace(' ', '_')
-                        os.mkdir(os.path.join(dir_basepath, widget, category_dir))
+                        os.mkdir(os.path.join(source_dir_path, widget, category_dir))
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
@@ -676,7 +683,7 @@ class Cascade:
                                     if merchant_id:
                                         replace_merchant(edw2_request_object, merchant_id)
                                         replace_merchant(edw3_request_object, merchant_id)
-                                        # merchant_path = os.path.join(dir_basepath, merchant)
+                                        # merchant_path = os.path.join(source_dir_path, merchant)
                                         # try:
                                         # #     os.mkdir(merchant_path)
                                         # except FileExistsError:
@@ -685,7 +692,7 @@ class Cascade:
                                     comparison_col_name = col["name"]
                                     merch_id = get_merchant_id(edw3_request_object)
                                     lookup_merchant_name = search_merchant(merch_id=merch_id)
-                                    dashboard_regression = {"path": dir_basepath,
+                                    dashboard_regression = {"path": source_dir_path,
                                                             "category": category,
                                                             "dashboard report name": request_object_name,
                                                             "merchant": lookup_merchant_name,
@@ -709,10 +716,15 @@ class Cascade:
                                     )
 
             result = await asyncio.gather(*futures)
-            self.create_change_log(result, sim_name)
+            pretty_tables = sources.PrettyTableMaker()
+            pretty_tables.dir_path = dashboard_regression_report_dir_path
+            pretty_tables.retrieve_tables()
+            # print(dashboard_regression["path"])
             if dashboard_regression is not None:
+                print("combining summaries")
                 self.simple_combine_summaries(dashboard_regression["path"])
             # print(self.change_logs)
+            self.create_change_log(result, sim_name)
             return result
 
         if sim:
@@ -840,28 +852,30 @@ class Cascade:
             "trending_widget": [],
             "top_affiliates_widget": []
         }
-        for root, dirs, files in os.walk(regression_dir_path):
-            for name in files:
-                fid = os.path.join(root, name)
-                if name.endswith('.xlsx'):
-                    report_dataframe = pd.read_excel(fid, engine="openpyxl")
-                    report_dataframe.drop(["Unnamed: 0"], axis=1, inplace=True)
-                    if report_dataframe['widget'][0] == "trending_widget":
-                        column_change_index_1 = 1
-                        column_change_index_2 = 2
-                    if report_dataframe['widget'][0] == "top_affiliates_widget":
-                        column_change_index_1 = 2
-                        column_change_index_2 = 3
-                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_1])
-                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_2])
-                    # print(edw2_comparison_col_name, edw3_comparison_col_name)
-                    report_dataframe.rename({
-                        edw2_comparison_col_name: "edw2_result",
-                        edw3_comparison_col_name: "edw3_result"
-                    }, axis=1, inplace=True)
+        print(f"HERE****\n\n {regression_dir_path}")
+        for widget_name in summary_df:
+            for root, dirs, files in os.walk(os.path.join(regression_dir_path, widget_name)):
+                for name in files:
+                    fid = os.path.join(root, name)
+                    if name.endswith('.xlsx'):
+                        report_dataframe = pd.read_excel(fid, engine="openpyxl")
+                        report_dataframe.drop(["Unnamed: 0"], axis=1, inplace=True)
+                        if report_dataframe['widget'][0] == "trending_widget":
+                            column_change_index_1 = 1
+                            column_change_index_2 = 2
+                        if report_dataframe['widget'][0] == "top_affiliates_widget":
+                            column_change_index_1 = 2
+                            column_change_index_2 = 3
+                        edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_1])
+                        edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_2])
+                        # print(edw2_comparison_col_name, edw3_comparison_col_name)
+                        report_dataframe.rename({
+                            edw2_comparison_col_name: "edw2_result",
+                            edw3_comparison_col_name: "edw3_result"
+                        }, axis=1, inplace=True)
 
-                    report_dataframe.dropna(axis="columns", how="all", inplace=True)
-                    summary_df[report_dataframe['widget'][0]].append(report_dataframe)
+                        report_dataframe.dropna(axis="columns", how="all", inplace=True)
+                        summary_df[report_dataframe['widget'][0]].append(report_dataframe)
         for widget in summary_df:
             if widget == "trending_widget":
                 widget_prefix = "TW"

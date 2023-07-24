@@ -9,3 +9,4 @@ from .semaphore_methods import simple_comparison
 from .comparison import Cascade
 from .dashboard_objects import dashboard_objects
 from .logs import update_log
+from .pretty_tables import PrettyTableMaker
