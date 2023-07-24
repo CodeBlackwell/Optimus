@@ -319,11 +319,11 @@ class Comparison(KnownDiscrepancies):
             merge[col_x] = merge[col_x].replace(regex_query_selector, '', regex=True).astype(float)
             merge[col_y] = merge[col_y].replace(regex_query_selector, '', regex=True).astype(float)
             merge['difference'] = merge[col_x] - merge[col_y]
-            total_difference = sum(merge['difference'].values)
-            if total_difference == 0:
-                merge['pass/fail'] = 'pass'
-            else:
-                merge['pass/fail'] = 'fail'
+            flag = 'pass'
+            for num in merge['difference'].values:
+                if num != 0:
+                    flag = 'fail'
+            merge['pass/fail'] = flag
             self.simple_difference_comparison = merge
 
             if self.dashboard_regression:
