@@ -847,12 +847,12 @@ class Cascade:
             summary.swapaxes("index", "columns").to_excel(writer, sheet_name="Summary_inverted",
                                                           engine='openpyxl', encoding='utf-8')
 
-    def simple_combine_summaries(self, regression_dir_path):
+    @staticmethod
+    def simple_combine_summaries(regression_dir_path):
         summary_df = {
             "trending_widget": [],
             "top_affiliates_widget": []
         }
-        print(f"HERE****\n\n {regression_dir_path}")
         for widget_name in summary_df:
             for root, dirs, files in os.walk(os.path.join(regression_dir_path, widget_name)):
                 for name in files:
