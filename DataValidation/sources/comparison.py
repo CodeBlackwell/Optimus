@@ -716,15 +716,16 @@ class Cascade:
                                     )
 
             result = await asyncio.gather(*futures)
+            # print(dashboard_regression["path"])
+            if dashboard_regression is not None:
+                self.simple_combine_summaries(dashboard_regression["path"])
+            # print(self.change_logs)
+            # self.create_change_log(result, sim_name)
             pretty_tables = sources.PrettyTableMaker()
             pretty_tables.dir_path = dashboard_regression_report_dir_path
             pretty_tables.retrieve_tables()
-            # print(dashboard_regression["path"])
-            if dashboard_regression is not None:
-                print("combining summaries")
-                self.simple_combine_summaries(dashboard_regression["path"])
-            # print(self.change_logs)
-            self.create_change_log(result, sim_name)
+            # print(pretty_tables.tables_list)
+
             return result
 
         if sim:

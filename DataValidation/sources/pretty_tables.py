@@ -6,6 +6,10 @@ import pandas as pd
 class PrettyTableMaker:
     tables_list = []
     summary_tables = []
+    test_results = {
+        "source": None,
+
+                    }
     dir_path = None
 
     def retrieve_tables(self):
