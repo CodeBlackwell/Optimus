@@ -723,8 +723,7 @@ class Cascade:
             # self.create_change_log(result, sim_name)
             pretty_tables = sources.PrettyTableMaker()
             pretty_tables.dir_path = dashboard_regression_report_dir_path
-            pretty_tables.retrieve_tables()
-            # print(pretty_tables.tables_list)
+            pretty_tables.run()
 
             return result
 
@@ -1325,11 +1324,11 @@ def main():
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
                       "Sales",
-                      "Combined Commission",
-                      "Network Commission",
+                      # "Combined Commission",
+                      # "Network Commission",
                       "Clicks % Impressions",
-                      "Adjustments",
-                      "Affiliate Commission"
+                      # "Adjustments",
+                      # "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,
