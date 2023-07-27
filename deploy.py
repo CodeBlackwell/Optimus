@@ -277,6 +277,12 @@ if __name__ == "__main__":
     else:
         source = DataSource(source=args.source)
 
+    # Check for simulation
+    if args.simulation != "":
+        sim = args.simulation
+    else:
+        sim = None
+
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
     if args.start == '' and args.end == '':
@@ -341,6 +347,7 @@ if __name__ == "__main__":
                 timeout = False
             except subprocess.TimeoutExpired:
                 timeout = True # Log the timeout and then continue
+                return_code = 1
 
             # If returned 1 (error), set timeout
             if return_code == 1:
