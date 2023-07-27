@@ -6,6 +6,7 @@ class RunCommand():
             args='',
             merchants='',
             source='',
+            sim='',
             logging=True,
             no_error=False
         ):
@@ -20,12 +21,13 @@ class RunCommand():
         self.args = args
         self.merchants = merchants
         self.source = source
+        self.sim = sim
         self.logging = logging
         self.no_error = no_error
 
         # Test suite command
         if self.no_error is True:
-            self.command = 'python3.8 -m sources.comparison -ne'
+            _base_command = 'python3.8 -m sources.comparison -ne'
 
         else:
             # Start with base command we always use
@@ -47,8 +49,12 @@ class RunCommand():
             if self.logging is True:
                 _base_command += ' -ul'
 
-            # Final command to run
-            self.command = _base_command
+        # Sim argument
+        if self.sim != '':
+            _base_command += f' --sim {self.sim}'
+
+        # Final command to run
+        self.command = _base_command
 
 class NoLoggingCommand(RunCommand):
     '''
@@ -66,16 +72,19 @@ class NoErrorCommand(RunCommand):
 
     def __init__(self,
                  merchants=None,
-                 source=None
+                 source=None,
+                 sim=None
         ):
         self.merchants = merchants
         self.source = source
+        self.sim = sim
 
         # Init base run command with Picker Test Suite attributes
         super().__init__(
             args=self.args,
             merchants=self.merchants,
             source=self.source,
+            sim=self.sim,
             logging=self.logging,
             no_error=self.no_error
         )

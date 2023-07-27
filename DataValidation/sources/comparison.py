@@ -207,7 +207,7 @@ class Cascade:
         test_result = await comparison.run_and_barf()
         return test_result
 
-    async def loop_reports(self, dates_hash, interval="day", force_picker_address=None, no_error_validation=False):
+    async def loop_reports(self, dates_hash, interval="day", force_picker_address=None, no_error_validation=False, sim=None):
         futures = []
         request_objects = []
 
@@ -219,7 +219,15 @@ class Cascade:
                     report_name = filename[:-5]
                     f = open(filepath, "r")
                     request_object = json.loads(f.read())
+
+                    # For testing via simulation
+                    if sim is not None:
+                        request_object = self.insert_simulation(sim, request_object=request_object)
+
+                    print(filename)
+                    print(json.dumps(request_object))
                     result = await self.async_comparison_wrapper(request_object, report_name)
+
                     # Store needed information in log file
                     log_dict = {}
                     log_dict['test_name'] = report_name
@@ -510,9 +518,11 @@ class Cascade:
     def insert_simulation(self, sim_name, request_object=None):
         request = request_object or self.edw3_request_object
         for report_id in request:
-            for col in request[report_id]["cols"]:
-                if "prepared_id" in col:
-                    col["sim"] = sim_name
+            request[report_id]["simulation"] = {
+                    "meta": sim_name,
+                    "prepared": sim_name
+                }
+        return request
 
     def insert_source(self, source, request_object=None):
         '''
@@ -1215,6 +1225,7 @@ def main():
         should_update_logs = True
     else:
         should_update_logs = False
+    sim = args.sim or None
 
     if args.no_error:
 
@@ -1223,7 +1234,7 @@ def main():
             start = datetime.now()
             # code ...
             loop.run_until_complete(
-                cascade.loop_reports({}, no_error_validation=True)
+                cascade.loop_reports({}, no_error_validation=True, sim=sim)
             )
             print("Total runtime: ", datetime.now() - start)
         except KeyboardInterrupt:
@@ -1246,7 +1257,6 @@ def main():
         edw2_ro = request_objects["edw2_request_object"]
         edw3_ro = request_objects["edw3_request_object"]
 
-        sim = args.sim or None
         source = args.source or None
         if args.join:
             join_on = args.join.split(',')
