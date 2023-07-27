@@ -67,6 +67,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         # Generic timeout
         else:
             title = f'{merchant} timed out'
+
+        # Append sim name to test if valid
+        if args.sim != '':
+            title += f' ({args.sim})'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
@@ -79,6 +83,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         title = js['test_name']
         edw3_ro = js['edw3_request_object']
         errors = js['errors']
+
+        # Append sim name to test if valid
+        if args.sim != '':
+            title += f' ({args.sim})'
 
         # Try to build an error message
         # If it isn't there, use the default
@@ -328,7 +336,7 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                run_command = NoErrorCommand(merchants=merchant, source=source.source)
+                run_command = NoErrorCommand(merchants=merchant, source=source.source, sim=sim)
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0

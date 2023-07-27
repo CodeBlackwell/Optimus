@@ -224,8 +224,6 @@ class Cascade:
                     if sim is not None:
                         request_object = self.insert_simulation(sim, request_object=request_object)
 
-                    print(filename)
-                    print(json.dumps(request_object))
                     result = await self.async_comparison_wrapper(request_object, report_name)
 
                     # Store needed information in log file
