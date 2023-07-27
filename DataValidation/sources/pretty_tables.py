@@ -1,4 +1,5 @@
 import os
+import json
 
 import pandas as pd
 
@@ -13,8 +14,7 @@ class PrettyTableMaker:
             "merchant_name": None,
             "widget_name": None,
             "category": None,
-            "report_name": None,
-            "pass/fail": None,
+            "report_name": None
         }
     }
     merchant_result_overview = {
@@ -27,7 +27,7 @@ class PrettyTableMaker:
         "Network Commission": None,
         "Clicks & Impressions": None,
         "Adjustments": None,
-        "Affiliate Commission": None,
+        "Affiliate Commission": None
     }
     dir_path = None
 
@@ -65,29 +65,40 @@ class PrettyTableMaker:
             None  - Side effect = set self.merchant_result_overview (see class definition self.merchant_result_overview)
         """
 
-        result = {}
-        for summary in self.summary_tables:
-            for index, row in summary.iterrows():
-                widget_name = widget_name
-                category_name = category_name
-                # Check if the widget is in the result already, if not - create entry
-                if widget_name not in result:
-                    result[widget_name] = {}
-                # Check if the category is in the widget result already, if not - create entry
-                if category_name not in result[widget_name]:
-                    result[widget_name][category_name] = []
-                # If the test result was a failure,
-                if row["pass/fail"] == "fail":
-                    if row["Dashboard Report Name"] not in result[widget_name][category_name]:
-                        # append report name to the corresponding report category list
-                        result[category_name].append(row["Dashboard Report Name"])
+        result = {
+            "pass": {},
+            "fail": {}
+        }
+        if len(self.summary_tables) > 1:
+            for summary in self.summary_tables:
+                for index, row in summary.iterrows():
+                    widget_name = row["widget"]
+                    category_name = row["Dashboard Category"]
+                    for boolean in result:
+                        # Check if the widget is in the result already, if not - create entry
+                        if widget_name not in result[boolean]:
+                            result[boolean][widget_name] = {}
+                        # Check if the category is in the widget result already, if not - create entry
+                        if category_name not in result[boolean][widget_name]:
+                            result[boolean][widget_name][category_name] = []
+            for boolean_val in result:
+                for summary in self.summary_tables:
+                    for index, row in summary.iterrows():
+                        widget_name = row["widget"]
+                        category_name = row["Dashboard Category"]
+                        if row["pass/fail"] == boolean_val:
+                            if row["Dashboard Report Name"] not in result[boolean_val][widget_name][category_name]:
+                                result[boolean_val][widget_name][category_name].append(row["Dashboard Report Name"])
 
-        result["Last Test"] = self.dir_path
+        result["Last Test"] = self.dir_path.split("/").pop()
         result["Merchant"] = self.get_merchant()
+
         result["Currency"] = self.get_currency()
-        # @TODO: figure out how to know which network the test was run for - consult Zach.
-        result["Network"] = None
-        self.merchant_result_overview = None
+        print(result)
+        # return result
+        # # @TODO: figure out how to know which network the test was run for - consult Zach.
+        # result["Network"] = None
+        # self.merchant_result_overview = None
 
     def generate(self):
         pass
@@ -98,18 +109,16 @@ class PrettyTableMaker:
             string - Currency listed in the request Object for the comparison
         """
         report = None
-        for report_id in self.summary_tables[0]["edw3_request_object"]:
-            report = report_id
-
-        return self.summary_tables[0][0]["edw3_request_object"][report]["currency"]
+        for report in self.tables_list[0]["edw3_request_object"]:
+            ro = json.loads(report)
+            for ro_key in ro:
+                for key in ro[ro_key]:
+                    if key == "currency":
+                        return ro[ro_key][key]
 
     def get_merchant(self):
         """
         Returns:
-           string - Currency listed in the request Object for the comparison
+           string - Merchant listed for the comparison
         """
-        report = None
-        for report_id in self.summary_tables[0]["edw3_request_object"]:
-            report = report_id
-
-        return self.summary_tables[0][0]["edw3_request_object"][report]["merchant"]
+        return self.tables_list[0]["merchant"][0]
