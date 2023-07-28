@@ -222,7 +222,12 @@ class Cascade:
 
                     # For testing via simulation
                     if sim is not None:
-                        request_object = self.insert_simulation(sim, request_object=request_object)
+                        # This is here because I think simulations don't work with partitioned reports
+                        # FIXME: Tell Adam about this bug
+                        if filename in ['Referral_Group_Summary_By_Affiliate.json', 'deduplication.json']:
+                            continue
+                        else:
+                            request_object = self.insert_simulation(sim, request_object=request_object)
 
                     result = await self.async_comparison_wrapper(request_object, report_name)
 

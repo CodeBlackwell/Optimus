@@ -69,8 +69,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             title = f'{merchant} timed out'
 
         # Append sim name to test if valid
-        if args.sim != '':
-            title += f' ({args.sim})'
+        if args.simulation != '':
+            title += f' ({args.simulation})'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
@@ -85,8 +85,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         errors = js['errors']
 
         # Append sim name to test if valid
-        if args.sim != '':
-            title += f' ({args.sim})'
+        if args.simulation != '':
+            title += f' ({args.simulation})'
 
         # Try to build an error message
         # If it isn't there, use the default
@@ -324,7 +324,7 @@ if __name__ == "__main__":
             end = now
 
         # Move to working directory (for cron)
-        os.chdir('/home/ubuntu/ds-data_validation/')
+        #os.chdir('/home/ubuntu/ds-data_validation/')
 
         # Trigger script
         for merchant in merchants:
