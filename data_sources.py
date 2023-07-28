@@ -20,8 +20,8 @@ class DataSource():
             in the data source. A good example of this is ROAS in Redshift because Redshift
             does not have silo data
         '''
-        self.source = source
         self.blacklist = blacklist
+        self.source = source
 
         # Check the source for being valid
         if self.source not in valid_sources:
