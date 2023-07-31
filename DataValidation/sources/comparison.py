@@ -17,11 +17,13 @@ import sources
 
 from openpyxl import Workbook
 from datetime import datetime
-#from http3.exceptions import ReadTimeout
+# from http3.exceptions import ReadTimeout
 from compare_reports import Comparison
 from args import args
 from oauth2client.service_account import ServiceAccountCredentials
+
 configs = json.load(open('../config.json'))
+
 
 class Cascade:
     edw2_request_object = None
@@ -389,18 +391,17 @@ class Cascade:
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
 
-
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
-                                                        report_name=report_name,
-                                                        request_object=edw3_request_object),
+                                                         report_name=report_name,
+                                                         request_object=edw3_request_object),
                                     sources.PickerReport(picker_url=picker_url_2,
-                                                        report_name=report_name,
-                                                        request_object=edw2_request_object)
+                                                         report_name=report_name,
+                                                         request_object=edw2_request_object)
                                     )
 
             comparison.set_outputs(simple_report_name=self.report_name,
-                                simple_difference=simple_difference_options,
-                                dashboard_regression=dashboard_regression)
+                                   simple_difference=simple_difference_options,
+                                   dashboard_regression=dashboard_regression)
             try:
                 await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
             except asyncio.TimeoutError as e:
@@ -628,7 +629,6 @@ class Cascade:
         os.mkdir(dashboard_regression_report_dir_path)
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
 
-
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
         else:
@@ -705,8 +705,8 @@ class Cascade:
 
                                     # NOTE: Because we don't apply the exact same date aggregates here anymore these must be commented out
                                     # These might still be needed for other date ranges, but for now that isnt important
-                                    #verify_relative_dates(edw2_request_object, edw3_request_object)
-                                    #match_date_aggregates(edw2_request_object, edw3_request_object)
+                                    # verify_relative_dates(edw2_request_object, edw3_request_object)
+                                    # match_date_aggregates(edw2_request_object, edw3_request_object)
                                     futures.append(self.run_simple_difference(
                                         {"join_on": define_join_on(edw2_request_object, edw3_request_object),
                                          "comparison_col_name": comparison_col_name},
@@ -721,9 +721,6 @@ class Cascade:
                 self.simple_combine_summaries(dashboard_regression["path"])
             # print(self.change_logs)
             # self.create_change_log(result, sim_name)
-            pretty_tables = sources.PrettyTableMaker()
-            pretty_tables.dir_path = dashboard_regression_report_dir_path
-            pretty_tables.run()
 
             return result
 
@@ -749,8 +746,8 @@ class Cascade:
         pass
 
     def upload_change_log(self):
-
-        print(self.change_logs)
+        pass
+        # print(self.change_logs)
 
     def create_change_log(self, comparisons, sim_name):
         if sim_name is None:
@@ -866,8 +863,10 @@ class Cascade:
                         if report_dataframe['widget'][0] == "top_affiliates_widget":
                             column_change_index_1 = 2
                             column_change_index_2 = 3
-                        edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_1])
-                        edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_2])
+                        edw2_comparison_col_name = '{col_name}'.format(
+                            col_name=report_dataframe.columns[column_change_index_1])
+                        edw3_comparison_col_name = '{col_name}'.format(
+                            col_name=report_dataframe.columns[column_change_index_2])
                         # print(edw2_comparison_col_name, edw3_comparison_col_name)
                         report_dataframe.rename({
                             edw2_comparison_col_name: "edw2_result",
@@ -1210,12 +1209,20 @@ def define_join_on(ro1, ro2):
     return join_on
 
 
+def test_pretty_tables():
+    pretty_tables = sources.PrettyTableMaker()
+    pretty_tables.dir_path = os.path.join(os.getcwd(), "validation_outputs/xlsx/07_31_23_07:35:52")
+    test_accounts_overview_report, categorical_report = pretty_tables.run()
+    sources.update_dashboard_log(test_accounts_overview_report, categorical_report)
+
+
 def main():
     # Define comparison column name and join_on vars here
 
     # Instantiate the class
     cascade = Cascade()
-
+    test_pretty_tables()
+    sys.exit()
     # If a timeout happened, raise the Timeout Exception
     # There's no specific convention for this, so use the exit code 1 (catch all generic error)
     if cascade.timeout is True:
@@ -1323,12 +1330,12 @@ def main():
     else:
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
-                      "Sales",
-                      # "Combined Commission",
-                      # "Network Commission",
-                      "Clicks % Impressions",
-                      # "Adjustments",
-                      # "Affiliate Commission"
+            "Sales",
+            "Combined Commission",
+            "Network Commission",
+            "Clicks % Impressions",
+            "Adjustments",
+            "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,
