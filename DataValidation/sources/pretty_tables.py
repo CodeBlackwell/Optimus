@@ -385,9 +385,9 @@ class PrettyTableMaker:
                     category_name = row["Dashboard Category"]
                     if row["Dashboard Report Name"] not in result[widget_name][category_name]:
                         # @TODO: remove this. Debug code
-                        result[widget_name][category_name][row["Dashboard Report Name"]] = f"{row['Dashboard Report Name']} == {row['pass/fail']}"
+                        result[widget_name][category_name][
+                            row["Dashboard Report Name"]] = f"{row['Dashboard Report Name']} == {row['pass/fail']}"
                         # result[widget_name][category_name][row["Dashboard Report Name"]] = row["Dashboard Report Name"]
-
 
         result["Last Test"] = self.convert_run_time()
         result["Merchant"] = self.get_merchant()
@@ -414,7 +414,8 @@ class PrettyTableMaker:
                         category = list(category_literal.keys()).pop()
                         report_name = category_literal[category]
                         try:
-                            result[widget_key].append([self.merchant_result_overview[widget_key][category][report_name]])
+                            result[widget_key].append(
+                                [self.merchant_result_overview[widget_key][category][report_name]])
                         except KeyError:
                             result[widget_key].append([f"{category} - {report_name} - N/A"])
 

@@ -33,7 +33,6 @@ def update_dashboard_log(account_overview_report, categorical_report):
     # The file token.json stores the user's access and refresh tokens, and is
     # created automatically when the authorization flow completes for the first
     # time.
-    # print(account_overview_report, categorical_report)
     if os.path.exists('token.json'):
         creds = Credentials.from_authorized_user_file('token.json', SCOPES)
     # If there are no (valid) credentials available, let the user log in.
@@ -65,36 +64,37 @@ def update_dashboard_log(account_overview_report, categorical_report):
         top_accounts_categorical_report_body = {
             'values': categorical_report_values["top_affiliates_widget"]
         }
-        print(len(trending_widget_categorical_report_body["values"]), "trending widget length")
-        print(len(top_accounts_categorical_report_body["values"]), "top accounts length")
+        # print(len(trending_widget_categorical_report_body["values"]), "trending widget length")
+        # print(len(top_accounts_categorical_report_body["values"]), "top accounts length")
 
         # @TODO: Dynamically Generate Ranges - Tab name and rows
         overview_report_RANGE = "Test Accounts Overview!B1:Z"
-        merchant_report_RANGE = "REI.com!D1:Z"
+        merchant_report_RANGE = "REI.com!E1:Z"
 
         # @TODO: Dynamically Generate spreadsheet id
-        google_spreadsheet_id = "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
+        # google_spreadsheet_id = "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
 
         # upload Test Accounts Overview Report
-        # result = sheet.append(
+        # merchant_account_overview = sheet.append(
         #     spreadsheetId=google_spreadsheet_id, range=overview_report_RANGE,
         #     valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
         # print(categorical_report_body)
-
+        # runtime_string = f"{account_overview_report['']}"
         # upload Categorical Report for each Widget -- Top Accounts / Top Affiliates
-        # top_accounts_result = sheet.append(
-        #     spreadsheetId=google_spreadsheet_id, range=merchant_report_RANGE,
-        #     valueInputOption=VALUE_INPUT_OPTION, body=categorical_report_body).execute()
+        top_accounts_result = sheet.append(
+            spreadsheetId=avantlog_spreadsheet_ids["ta"]["cube_postgres"], range=merchant_report_RANGE,
+            valueInputOption=VALUE_INPUT_OPTION, body=top_accounts_categorical_report_body).execute()
 
         # upload Categorical Report for each Widget -- Trending
         trending_result = sheet.append(
-            spreadsheetId=google_spreadsheet_id, range=merchant_report_RANGE,
+            spreadsheetId=avantlog_spreadsheet_ids["tw"]["cube_postgres"], range=merchant_report_RANGE,
             valueInputOption=VALUE_INPUT_OPTION, body=trending_widget_categorical_report_body).execute()
-        # print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended.")
-        print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended.")
 
-        return trending_result
-    # trending_result,
+        print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended.")
+        print(f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended.")
+
+        return trending_result, top_accounts_result
+
     except HttpError as err:
         print(err)
 
