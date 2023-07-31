@@ -122,10 +122,9 @@ class PrettyTableMaker:
                 "Sales": 3,
                 "ROAS %": 4,
                 "ROAS": 5,
-                "Orders": 6,
-                "Gross Sales": 7,
-                "Conversion Rate": 8,
-                "Average Order Amount": 9
+                "Gross Sales": 6,
+                "Conversion Rate": 7,
+                "Average Order Amount": 8
             },
             "Combined Commission": {
                 "Total Cost": 10,
@@ -162,8 +161,8 @@ class PrettyTableMaker:
                 "Affiliate Paid Placement": 37,
                 "Affiliate Sale Commission": 38,
                 "Affiliate Total Commission Average Rate": 39,
-                "Affiliate Total Earnings": 40,
-                "Affiliate Total Earnings Average Rate": 41,
+                "Affiliate Total Earnings Average Rate": 40,
+                "Affiliate Total Earnings": 41,
                 "EPC": 42
             }
         },
@@ -185,17 +184,6 @@ class PrettyTableMaker:
                 "CPC": 15,
                 "Bonus": 16
             },
-            # "Affiliate Commission": {
-            #     "Affiliate Bonus": 37,
-            #     "Affiliate CPC": 38,
-            #     "Affiliate Incentive Commission": 39,
-            #     "Affiliate Paid Placement": 40,
-            #     "Affiliate Sale Commission": 41,
-            #     "Affiliate Total Commission Average Rate": 42,
-            #     "Affiliate Total Earnings": 43,
-            #     "Affiliate Total Earnings Average Rate": 44,
-            #     "EPC": 45
-            # },
             "Network Commission": {
                 "Network CPC": 18,
                 "Network Paid Placement": 19,
@@ -217,6 +205,17 @@ class PrettyTableMaker:
                 "Reversal Rate": 33,
                 "Adjusted Cost": 34,
                 "Adjusted Network Earnings": 35
+            },
+            "Affiliate Commission": {
+                "Affiliate Bonus": 37,
+                "Affiliate CPC": 38,
+                "Affiliate Incentive Commission": 39,
+                "Affiliate Paid Placement": 40,
+                "Affiliate Sale Commission": 41,
+                "Affiliate Total Commission Average Rate": 42,
+                "Affiliate Total Earnings Average Rate": 43,
+                "Affiliate Total Earnings": 44,
+                "EPC": 45
             }
         }
     }
@@ -327,7 +326,7 @@ class PrettyTableMaker:
         self.retrieve_tables()
         self.generate_test_account_overview_update_literal()
         self.build_reverse_index_map()
-        pprint(self.reversed_report_index_map)
+        # pprint(self.reversed_report_index_map)
         self.generate_merchant_reports()
         return self.merchant_result_overview, self.categorical_report
 
@@ -351,7 +350,7 @@ class PrettyTableMaker:
                         if self.end_date is None:
                             self.end_date = new_df["Day"].values[-1]
                         if self.start_date is not None and self.end_date is not None:
-                            self.date_range = [self.start_date, self.end_date]
+                            self.date_range = f"{self.start_date} - {self.end_date}]"
                         self.tables_list.append(new_df)
             else:
                 summary_name = os.path.join(source_path, widget)
@@ -385,8 +384,9 @@ class PrettyTableMaker:
                     widget_name = row["widget"]
                     category_name = row["Dashboard Category"]
                     if row["Dashboard Report Name"] not in result[widget_name][category_name]:
-                        # result[widget_name][category_name][row["Dashboard Report Name"]] = row["pass/fail"]
-                        result[widget_name][category_name][row["Dashboard Report Name"]] = row["Dashboard Report Name"]
+                        # @TODO: remove this. Debug code
+                        result[widget_name][category_name][row["Dashboard Report Name"]] = f"{row['Dashboard Report Name']} == {row['pass/fail']}"
+                        # result[widget_name][category_name][row["Dashboard Report Name"]] = row["Dashboard Report Name"]
 
 
         result["Last Test"] = self.convert_run_time()
@@ -399,8 +399,6 @@ class PrettyTableMaker:
         self.merchant_result_overview = result
 
     def generate_merchant_reports(self):
-        date_range = f"{self.start_date} - {self.end_date}"
-        run_time = self.dir_path
         overview = copy.deepcopy(self.merchant_result_overview)
         result = {
             "top_affiliates_widget": [],
@@ -408,21 +406,21 @@ class PrettyTableMaker:
         }
         for widget_key in overview:
             if "widget" in widget_key:
-                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop()):
+                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
                     if cell not in self.reversed_report_index_map[widget_key]:
                         result[widget_key].append([])
-                        # print(f"cell {cell} not found in {widget_key}")
                     else:
                         category_literal = self.reversed_report_index_map[widget_key][cell]
                         category = list(category_literal.keys()).pop()
                         report_name = category_literal[category]
                         try:
-                            # Assigning the value passed to the spreadsheet based on merchant overview - by report
-                            result[widget_key].append(
-                                [self.merchant_result_overview[widget_key][category][report_name]])
+                            result[widget_key].append([self.merchant_result_overview[widget_key][category][report_name]])
                         except KeyError:
-                            result[widget_key].append(["N/A"])
-        # pprint(result)
+                            result[widget_key].append([f"{category} - {report_name} - N/A"])
+
+        for widget_key in result:
+            result[widget_key].pop(0)
+            result[widget_key].insert(0, [self.convert_run_time()])
         self.categorical_report = result
 
     # def upload_test_account_overview(self):
@@ -454,7 +452,7 @@ class PrettyTableMaker:
         ugly_runtime = self.dir_path.split("/").pop()
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
-        return f"{clean_date}\n@\n{clean_runtime}"
+        return f"{clean_date}\n@\n{clean_runtime}\n{self.date_range}"
 
     def get_merchant(self):
         """
