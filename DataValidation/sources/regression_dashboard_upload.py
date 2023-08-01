@@ -1,8 +1,11 @@
 from __future__ import print_function
 
+import copy
 import os.path
-import sys
+from pprint import pprint
 
+import sys
+from pprint import pprint
 from google.auth.transport.requests import Request
 from google.oauth2.credentials import Credentials
 from google_auth_oauthlib.flow import InstalledAppFlow
@@ -11,93 +14,159 @@ from googleapiclient.errors import HttpError
 
 # If modifying these scopes, delete the file token.json.
 SCOPES = ['https://www.googleapis.com/auth/spreadsheets']
-
-avantlog_spreadsheet_ids = {
-    "ta": {
-        "fact_postgres": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
-        "fact_redshift": "1y7zHDaod2cjhqm8lqJIMGl2KViSnRR_FWhbpUcHrgjY",
-        "cube_postgres": "15FjO9ubVNNJkd_RL8l1qtErhfFaJWEcr17tzAo5Os4E"
-    },
-    "tw": {
-        "fact_postgres": "1KCMR8viLCLerUPJXyV3Fc2f3v8lZFnuyFSnQ1FSjsFw",
-        "fact_redshift": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
-        "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
-    },
-    "historic_logs": ""
-}
 VALUE_INPUT_OPTION = "USER_ENTERED"
 
 
-def update_dashboard_log(account_overview_report, categorical_report):
-    creds = None
-    # The file token.json stores the user's access and refresh tokens, and is
-    # created automatically when the authorization flow completes for the first
-    # time.
-    if os.path.exists('token.json'):
-        creds = Credentials.from_authorized_user_file('token.json', SCOPES)
-    # If there are no (valid) credentials available, let the user log in.
-    if not creds or not creds.valid:
-        if creds and creds.expired and creds.refresh_token:
-            creds.refresh(Request())
-        else:
-            flow = InstalledAppFlow.from_client_secrets_file(
-                'credentials.json', SCOPES)
-            creds = flow.run_local_server(port=0)
-        # Save the credentials for the next run
-        with open('token.json', 'w') as token:
-            token.write(creds.to_json())
+class UpdateDashboardLog:
+    categorical_report = None
+    account_overview_report = None
+    account_overview_report_values = {
+        "top_affiliates_widget": "",
+        "top_trending_widget": ""
+    }
+    sheet = None
+    merchant_name = None
+    ta_account_overview_report_values = []
+    tw_account_overview_report_values = []
+    avantlog_spreadsheet_ids = {
+        "ta": {
+            "fact_postgres": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
+            "fact_redshift": "1y7zHDaod2cjhqm8lqJIMGl2KViSnRR_FWhbpUcHrgjY",
+            "cube_postgres": "15FjO9ubVNNJkd_RL8l1qtErhfFaJWEcr17tzAo5Os4E"
+        },
+        "tw": {
+            "fact_postgres": "1KCMR8viLCLerUPJXyV3Fc2f3v8lZFnuyFSnQ1FSjsFw",
+            "fact_redshift": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
+            "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
+        },
+        "historic_logs": "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
+    }
+    overview_report_RANGE = "Test Accounts Overview!C1:Z"
+    merchant_report_RANGE = {"REI.com!E1:Z"}
+    test_accounts_overview_index_map = {}
 
-    try:
-        service = build('sheets', 'v4', credentials=creds)
-
+    def __init__(self, account_overview_report, categorical_report):
+        creds = None
+        # The file token.json stores the user's access and refresh tokens, and is
+        # created automatically when the authorization flow completes for the first
+        # time.
+        if os.path.exists('token.json'):
+            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        # If there are no (valid) credentials available, let the user log in.
+        if not creds or not creds.valid:
+            if creds and creds.expired and creds.refresh_token:
+                creds.refresh(Request())
+            else:
+                flow = InstalledAppFlow.from_client_secrets_file(
+                    'credentials.json', SCOPES)
+                creds = flow.run_local_server(port=0)
+            # Save the credentials for the next run
+            with open('token.json', 'w') as token:
+                token.write(creds.to_json())
         # Call the Sheets API
-        sheet = service.spreadsheets().values()
-        categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
-        account_overview_report_values = None
+        service = build('sheets', 'v4', credentials=creds)
+        self.sheet = service.spreadsheets().values()
+        self.categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
+        self.account_overview_report = account_overview_report
+        self.sql_source = account_overview_report["SQL_source"]
+        self.merchant_name = self.account_overview_report["Merchant"]
 
-        account_overview_body = {
-            'values': account_overview_report_values
-        }
-        trending_widget_categorical_report_body = {
-            'values': categorical_report_values["trending_widget"]
-        }
-        top_accounts_categorical_report_body = {
-            'values': categorical_report_values["top_affiliates_widget"]
-        }
-        # print(len(trending_widget_categorical_report_body["values"]), "trending widget length")
-        # print(len(top_accounts_categorical_report_body["values"]), "top accounts length")
+        self.run()
 
-        # @TODO: Dynamically Generate Ranges - Tab name and rows
-        overview_report_RANGE = "Test Accounts Overview!B1:Z"
-        merchant_report_RANGE = "REI.com!E1:Z"
+    def run(self):
+        self.process_account_overview_report_for_google()
+        # self.update_categorical_reports()
+        self.update_test_accounts_overview()
 
-        # @TODO: Dynamically Generate spreadsheet id
-        # google_spreadsheet_id = "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
+    def update_test_accounts_overview(self):
+        self.update_ta_test_accounts_overview()
+        self.update_tw_test_accounts_overview()
 
-        # upload Test Accounts Overview Report
-        # merchant_account_overview = sheet.append(
-        #     spreadsheetId=google_spreadsheet_id, range=overview_report_RANGE,
-        #     valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
-        # print(categorical_report_body)
-        # runtime_string = f"{account_overview_report['']}"
+    def update_categorical_reports(self):
+        self.update_ta_merchant_categorical_report()
+        self.update_tw_merchant_categorical_report()
+
+    def update_ta_test_accounts_overview(self):
+        account_overview_body = {'values': self.ta_account_overview_report_values}
+        try:
+            # upload Test Accounts Overview Report - Top Accounts
+            self.sheet.request({
+
+            })
+            merchant_account_overview = self.sheet.append(
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.overview_report_RANGE,
+                valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
+            print(
+                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Top accounts - Overview")
+        except HttpError as err:
+            print(err)
+
+    def update_tw_test_accounts_overview(self):
+        account_overview_body = {'values': self.tw_account_overview_report_values}
+        try:
+            # upload Test Accounts Overview Report - Trending Widget
+            merchant_account_overview = self.sheet.append(
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.overview_report_RANGE,
+                valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
+            print(
+                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Overview")
+        except HttpError as err:
+            print(err)
+
+    def update_ta_merchant_categorical_report(self):
+        top_accounts_categorical_report_body = {'values': self.categorical_report_values["top_affiliates_widget"]}
         # upload Categorical Report for each Widget -- Top Accounts / Top Affiliates
-        top_accounts_result = sheet.append(
-            spreadsheetId=avantlog_spreadsheet_ids["ta"]["cube_postgres"], range=merchant_report_RANGE,
-            valueInputOption=VALUE_INPUT_OPTION, body=top_accounts_categorical_report_body).execute()
+        try:
+            top_accounts_result = self.sheet.append(
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.merchant_report_RANGE,
+                valueInputOption=VALUE_INPUT_OPTION, body=top_accounts_categorical_report_body).execute()
+            print(
+                f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - Top Accounts - Categorical")
+        except HttpError as err:
+            print(err)
 
-        # upload Categorical Report for each Widget -- Trending
-        trending_result = sheet.append(
-            spreadsheetId=avantlog_spreadsheet_ids["tw"]["cube_postgres"], range=merchant_report_RANGE,
-            valueInputOption=VALUE_INPUT_OPTION, body=trending_widget_categorical_report_body).execute()
+    def update_tw_merchant_categorical_report(self):
+        trending_widget_categorical_report_body = {'values': self.categorical_report_values["trending_widget"]}
+        try:
+            # upload Categorical Report for each Widget -- Trending Widget
+            trending_result = self.sheet.append(
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.merchant_report_RANGE,
+                valueInputOption=VALUE_INPUT_OPTION, body=trending_widget_categorical_report_body).execute()
+            print(
+                f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
+        except HttpError as err:
+            print(err)
 
-        print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended.")
-        print(f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended.")
+    def process_account_overview_report_for_google(self):
+        result = []
+        category_order = ["Sales", "Combined Commission", "Network Commission",
+                          "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
 
-        return trending_result, top_accounts_result
+        result.append([self.account_overview_report["Last Test"]])
+        result.append([self.account_overview_report["Date Range"]])
+        result.append([self.account_overview_report["Merchant"]])
+        result.append([self.account_overview_report["Currency"]])
+        result.append([self.account_overview_report["Network"]])
+        ta_result = copy.deepcopy(result)
+        tw_result = copy.deepcopy(result)
+        for category in category_order:
+            ta_result.append([self.account_overview_report["top_affiliates_widget"][category]])
+        for category in category_order:
+            tw_result.append([self.account_overview_report["trending_widget"][category]])
+        for sublist in ta_result:
+            for val in sublist:
+                new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
+            sublist.pop()
+            sublist.append(new_val)
+        for sublist in tw_result:
+            for val in sublist:
+                new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
+            sublist.pop()
+            sublist.append(new_val)
+        self.ta_account_overview_report_values = ta_result
+        self.tw_account_overview_report_values = tw_result
+        return tw_result, ta_result
 
-    except HttpError as err:
-        print(err)
 
-
-def process_account_overview_report_for_google(account_overview_update_literal):
+def detect_range(spreadsheet_id):
     pass

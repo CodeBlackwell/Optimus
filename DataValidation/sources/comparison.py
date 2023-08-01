@@ -1213,7 +1213,7 @@ def test_pretty_tables():
     pretty_tables = sources.PrettyTableMaker()
     pretty_tables.dir_path = os.path.join(os.getcwd(), "validation_outputs/xlsx/07_31_23_14:08:51")
     test_accounts_overview_report, categorical_report = pretty_tables.run()
-    sources.update_dashboard_log(test_accounts_overview_report, categorical_report)
+    sources.UpdateDashboardLog(test_accounts_overview_report, categorical_report)
 
 
 def main():

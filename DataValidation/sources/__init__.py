@@ -10,4 +10,4 @@ from .comparison import Cascade
 from .dashboard_objects import dashboard_objects
 from .logs import update_log
 from .pretty_tables import PrettyTableMaker
-from .regression_dashboard_upload import update_dashboard_log
+from .regression_dashboard_upload import UpdateDashboardLog

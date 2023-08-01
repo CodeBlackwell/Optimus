@@ -326,7 +326,6 @@ class PrettyTableMaker:
         self.retrieve_tables()
         self.generate_test_account_overview_update_literal()
         self.build_reverse_index_map()
-        # pprint(self.reversed_report_index_map)
         self.generate_merchant_reports()
         return self.merchant_result_overview, self.categorical_report
 
@@ -384,18 +383,15 @@ class PrettyTableMaker:
                     widget_name = row["widget"]
                     category_name = row["Dashboard Category"]
                     if row["Dashboard Report Name"] not in result[widget_name][category_name]:
-                        # @TODO: remove this. Debug code
-                        result[widget_name][category_name][
-                            row["Dashboard Report Name"]] = f"{row['Dashboard Report Name']} == {row['pass/fail']}"
-                        # result[widget_name][category_name][row["Dashboard Report Name"]] = row["Dashboard Report Name"]
+                        result[widget_name][category_name][row["Dashboard Report Name"]] = row['pass/fail']
 
-        result["Last Test"] = self.convert_run_time()
+        result["Last Test"] = self.dir_path.split("/").pop()
         result["Merchant"] = self.get_merchant()
         result["Currency"] = self.get_currency()
         result["SQL_source"] = self.get_sql_source()
         result["Date Range"] = self.date_range
-        result["Network"] = None
         # # @TODO: figure out how to know which network the test was run for - consult Zach.
+        result["Network"] = None
         self.merchant_result_overview = result
 
     def generate_merchant_reports(self):
@@ -417,7 +413,7 @@ class PrettyTableMaker:
                             result[widget_key].append(
                                 [self.merchant_result_overview[widget_key][category][report_name]])
                         except KeyError:
-                            result[widget_key].append([f"{category} - {report_name} - N/A"])
+                            result[widget_key].append([f"N/A"])
 
         for widget_key in result:
             result[widget_key].pop(0)
