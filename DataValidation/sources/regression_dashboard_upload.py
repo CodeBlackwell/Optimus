@@ -21,13 +21,11 @@ class UpdateDashboardLog:
     categorical_report = None
     account_overview_report = None
     account_overview_report_values = {
-        "top_affiliates_widget": "",
-        "top_trending_widget": ""
+        "ta": [],
+        "tw": []
     }
     sheet = None
     merchant_name = None
-    ta_account_overview_report_values = []
-    tw_account_overview_report_values = []
     avantlog_spreadsheet_ids = {
         "ta": {
             "fact_postgres": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
@@ -41,9 +39,12 @@ class UpdateDashboardLog:
         },
         "historic_logs": "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
     }
-    overview_report_RANGE = "Test Accounts Overview!C1:Z"
-    merchant_report_RANGE = {"REI.com!E1:Z"}
-    test_accounts_overview_index_map = {}
+    overview_report_RANGE = {
+        "rei.com": "Test Accounts Overview!C1:Z12"
+    }
+    merchant_report_RANGE = {
+        "rei.com": "REI.com!E1:Z"
+    }
 
     def __init__(self, account_overview_report, categorical_report):
         creds = None
@@ -65,6 +66,7 @@ class UpdateDashboardLog:
                 token.write(creds.to_json())
         # Call the Sheets API
         service = build('sheets', 'v4', credentials=creds)
+        self.service = service
         self.sheet = service.spreadsheets().values()
         self.categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
         self.account_overview_report = account_overview_report
@@ -75,7 +77,7 @@ class UpdateDashboardLog:
 
     def run(self):
         self.process_account_overview_report_for_google()
-        # self.update_categorical_reports()
+        self.update_categorical_reports()
         self.update_test_accounts_overview()
 
     def update_test_accounts_overview(self):
@@ -87,29 +89,23 @@ class UpdateDashboardLog:
         self.update_tw_merchant_categorical_report()
 
     def update_ta_test_accounts_overview(self):
-        account_overview_body = {'values': self.ta_account_overview_report_values}
+        account_overview_body = {'values': self.account_overview_report_values["ta"]}
         try:
-            # upload Test Accounts Overview Report - Top Accounts
-            self.sheet.request({
-
-            })
             merchant_account_overview = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.overview_report_RANGE,
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.overview_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
-            print(
-                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Top accounts - Overview")
+            print(f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Top accounts - Overview")
         except HttpError as err:
             print(err)
 
     def update_tw_test_accounts_overview(self):
-        account_overview_body = {'values': self.tw_account_overview_report_values}
+        account_overview_body = {'values': self.account_overview_report_values["tw"]}
         try:
             # upload Test Accounts Overview Report - Trending Widget
             merchant_account_overview = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.overview_report_RANGE,
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.overview_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
-            print(
-                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Overview")
+            print(f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Overview")
         except HttpError as err:
             print(err)
 
@@ -118,10 +114,9 @@ class UpdateDashboardLog:
         # upload Categorical Report for each Widget -- Top Accounts / Top Affiliates
         try:
             top_accounts_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.merchant_report_RANGE,
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.merchant_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION, body=top_accounts_categorical_report_body).execute()
-            print(
-                f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - Top Accounts - Categorical")
+            print(f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - Top Accounts - Categorical")
         except HttpError as err:
             print(err)
 
@@ -130,10 +125,9 @@ class UpdateDashboardLog:
         try:
             # upload Categorical Report for each Widget -- Trending Widget
             trending_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.merchant_report_RANGE,
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.merchant_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION, body=trending_widget_categorical_report_body).execute()
-            print(
-                f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
+            print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
         except HttpError as err:
             print(err)
 
@@ -163,8 +157,8 @@ class UpdateDashboardLog:
                 new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
             sublist.pop()
             sublist.append(new_val)
-        self.ta_account_overview_report_values = ta_result
-        self.tw_account_overview_report_values = tw_result
+        self.account_overview_report_values["ta"] = ta_result
+        self.account_overview_report_values["tw"] = tw_result
         return tw_result, ta_result
 
 
