@@ -50,7 +50,7 @@ class RunCommand():
                 _base_command += ' -ul'
 
         # Sim argument
-        if self.sim != '':
+        if self.sim not in ('', None):
             _base_command += f' --sim {self.sim}'
 
         # Final command to run

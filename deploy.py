@@ -324,7 +324,7 @@ if __name__ == "__main__":
             end = now
 
         # Move to working directory (for cron)
-        #os.chdir('/home/ubuntu/ds-data_validation/')
+        os.chdir('/home/ubuntu/ds-data_validation/')
 
         # Trigger script
         for merchant in merchants:

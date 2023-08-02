@@ -51,7 +51,7 @@
       "offset":0,
       "widths":true,
       "counts":true,
-      "currency":"USD",
+      "currency":"NATIVE",
       "limit":30,
       "partitionLimit":42,
       "partitionOffset":0

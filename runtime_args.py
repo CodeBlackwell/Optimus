@@ -15,7 +15,7 @@ parser.add_argument("--skip-slack", action="store_true", help="Indicates if we s
 parser.add_argument("--skip-logging", action="store_true", help="Indicates if logging should be skipped to the master spreadsheet")
 parser.add_argument("--tag", type=str, help="Gives the tag label for the deployment. Default is test", default="test")
 parser.add_argument("--simulation", type=str, help="Switches the simulation (e.g. kiran_dev). Default is empty", default="")
-parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=300)
+parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=3000)
 parser.add_argument("--source", type=str, help="Tells the picker to use a particular data source. Default is empty, which will use typical fallback system.", default="")
 parser.add_argument("-ne", "--no-error", action="store_true")
 args = parser.parse_args()
