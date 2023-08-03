@@ -127,6 +127,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     columns = df.columns.to_list()
     source_error = False
     data_source = None
+    passed = False
     edw3_request_object = None
     fault_tolerance = ''
     for column in columns:
@@ -160,6 +161,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
              title = upload_name.replace('.xlsx', '') + f' ({source}) passed {fault_tolerance}'
         else:
             title = upload_name.replace('.xlsx', '') + f' passed {fault_tolerance}'
+            passed = True
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
     # Cover the case where we requested a particular source, but got something else back instead
     # Here we want to post request object and mention the requested source but what we got instead
@@ -199,7 +201,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # Remove temp file (if used)
     if temp_file is not None:
         os.remove(temp_file)
-    return result, errors
+    return result, errors, passed
 
 def build_file_list():
     '''
@@ -267,13 +269,24 @@ def calculate_times(now):
     return start_times, end_times
 
 
-def post_to_dashboard(result, fid, merchant, source, channel='C04HP5S5YNB'):
+def post_to_dashboard(result, fid, merchant, source, passed, channel='C04HP5S5YNB'):
     '''
-    Doctstring
+    This function compiles a json dictionary of metadata and sends that to the regression library dashboard
+    Link:https://drive.google.com/drive/u/0/folders/1Pr0FWGKWu1Ji2tTkRlcsOCD2dMp2G3X6
+
+    Parameters
+        result: json object returned from Slack giving all of the parameters used to identify the post
+        fid: str, full file path of the file posted, used to break apart into identifiers
+        merchant: str, merchant used in this regression run
+        source: str, location data came from (e.g. Redshift)
+        passed: boolean, indicates pass/fail of regression test
+        channel: str, channel used to find the message. Default is ds_data_validation in string form
+
+    Returns:
+       None
     '''
     # Grab the identifier for the message
     message_ts = result['message']['ts']
-    print(message_ts)
 
     # Get url
     client = WebClient(token=slack_key)
@@ -300,9 +313,9 @@ def post_to_dashboard(result, fid, merchant, source, channel='C04HP5S5YNB'):
         "report": report,
         "merchant": merchant,
         "data_source": source,
-        "link": url
+        "link": url,
+        "passed": passed
     }
-    print(json.dumps(metadata))
 
     # TODO: Send metadata to Le's dashboard script
 
@@ -458,9 +471,9 @@ if __name__ == "__main__":
                                     print(f'Skipped blacklisted entry {fid}')
                                     skipped = True
                             if skipped is False:
-                                result, errors = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                result, errors, passed = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                                 if not errors:
-                                    post_to_dashboard(result, fid, merchant, source.source)
+                                    post_to_dashboard(result, fid, merchant, source.source, passed)
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
