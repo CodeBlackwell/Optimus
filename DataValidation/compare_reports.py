@@ -312,10 +312,12 @@ class Comparison(KnownDiscrepancies):
             merge[col_x] = merge[col_x].replace(regex_query_selector, '', regex=True).astype(float)
             merge[col_y] = merge[col_y].replace(regex_query_selector, '', regex=True).astype(float)
             merge['difference'] = merge[col_x] - merge[col_y]
-            flag = 'Pass'
+            flag = 'PASS!'
+            if sum(merge[col_x].values) == 0 and sum(merge[col_y].values) == 0:
+                flag = 'PASS! ALL ZEROS!'
             for num in merge['difference'].values:
                 if num != 0:
-                    flag = 'Fail'
+                    flag = 'FAIL!'
             merge['pass/fail'] = flag
             self.simple_difference_comparison = merge
 
