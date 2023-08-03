@@ -30,14 +30,16 @@ class UpdateDashboardLog:
     }
     avantlog_spreadsheet_ids = {
         "ta": {
-            "fact_postgres": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
-            "fact_redshift": "1y7zHDaod2cjhqm8lqJIMGl2KViSnRR_FWhbpUcHrgjY",
-            "cube_postgres": "15FjO9ubVNNJkd_RL8l1qtErhfFaJWEcr17tzAo5Os4E"
+            "fact_postgres": "1jvLwUWylyoU4moSJSuVZ8Nq1IkIqGnRtGa0OHWAgmcQ",
+            "fact_redshift": "16AGoYobiSKieJpTl9bwl1bo6l58QNqxM5Iwiq5AJ24U",
+            "cube_postgres": "1HieLzmnLKY-T1Siz4Gn_k0_lKNcJDwY_1sMV2gNwi64",
+            "cube_olap": "15G0xYyQNdhDcqFvBqq3S1M3cFAaJHx8SwZyDtBLG_h8"
         },
         "tw": {
-            "fact_postgres": "1KCMR8viLCLerUPJXyV3Fc2f3v8lZFnuyFSnQ1FSjsFw",
-            "fact_redshift": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
-            "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
+            "fact_postgres": "1ZXk4QlTjDE3mkH6SOKqFMouAdHMEDf7xbRXALPQkLAs",
+            "fact_redshift": "12K1sdP8ezk1e8OkvPFoSgiDhdqD0uYIHSJBRMB6LEmU",
+            "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE",
+            "cube_olap": "1z-Z1owl_beB3niVnhUXN51ciWicLUhRttP_KOgRPJ8A"
         },
         "all_sources": "1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk",
         "historic_logs": "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
@@ -131,6 +133,7 @@ class UpdateDashboardLog:
             }
         }
     }
+    all_sources_test_account_overview_RANGE = {}
 
     def __init__(self, merchant_summary, categorical_report, test_account_overview):
         creds = None
@@ -164,10 +167,12 @@ class UpdateDashboardLog:
 
     def run(self):
         self.process_account_overview_report_for_google()
-        # self.update_categorical_reports()
+        self.update_categorical_reports()
         self.simplify_merchant_summary()
         self.update_merchant_summaries()
-        # self.update_test_account_overviews()
+        self.update_test_account_overviews()
+        # self.update_all_sources_merchant_summary()
+        # self.update_all_sources_test_account_overview()
 
     def update_all_sources_merchant_summary(self):
         tw_merchant_account_overview_body = {'values': self.merchant_summary_report_values["tw"]}
@@ -181,7 +186,7 @@ class UpdateDashboardLog:
             ).execute()
             # print(tw_merchant_account_overview)
         except HttpError as err:
-            print(tw_merchant_account_overview, err)
+            print(err)
 
         ta_merchant_account_overview_body = {'values': self.merchant_summary_report_values["ta"]}
         try:
@@ -195,7 +200,7 @@ class UpdateDashboardLog:
             ).execute()
             # print(ta_merchant_account_overview)
         except HttpError as err:
-            print(ta_merchant_account_overview, err)
+            print(err)
 
     def update_merchant_summaries(self):
         self.update_merchant_summary("trending_widget")
@@ -253,21 +258,6 @@ class UpdateDashboardLog:
             ).execute()
             print(
                 f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - {widget} - Categorical")
-        except HttpError as err:
-            print(err)
-
-    def update_tw_merchant_categorical_report(self):
-        trending_widget_categorical_report_body = {'values': self.categorical_report_values["trending_widget"]}
-        try:
-            # upload Categorical Report for each Widget -- Trending Widget
-            trending_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source],
-                range=self.categorical_report_RANGE[self.merchant_name.lower()],
-                valueInputOption=VALUE_INPUT_OPTION,
-                body=trending_widget_categorical_report_body
-            ).execute()
-            print(
-                f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
         except HttpError as err:
             print(err)
 
