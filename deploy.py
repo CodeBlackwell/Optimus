@@ -27,9 +27,15 @@ import pandas as pd
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+import requests
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 from data_sources import DataSource, RedshiftDataSource
+
+# Get API key for file attachment
+config = configparser.ConfigParser()
+config.read('avantlinkpy2.conf')
+slack_key = config.get('slack', 'api_key')
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
     '''
@@ -48,11 +54,6 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     Returns:
         None
     '''
-    # Get API key for file attachment
-    config = configparser.ConfigParser()
-    config.read('avantlinkpy2.conf')
-    slack_key = config.get('slack', 'api_key')
-
     # Check if a separate fail channel was given
     # If not, pipe all outputs to the same place
     if fail_channel is None:
@@ -189,13 +190,16 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # If it failed, log the stdout for debug
     if result["ok"] is True:
         print('Posted to Slack')
+        errors = False
     else:
         print('Error posting to slack')
         print(result)
+        errors = True
 
     # Remove temp file (if used)
     if temp_file is not None:
         os.remove(temp_file)
+    return result, errors
 
 def build_file_list():
     '''
@@ -262,6 +266,46 @@ def calculate_times(now):
     end_times = [mtd_end, lm_end, ly_end]
     return start_times, end_times
 
+
+def post_to_dashboard(result, fid, merchant, source, channel='C04HP5S5YNB'):
+    '''
+    Doctstring
+    '''
+    # Grab the identifier for the message
+    message_ts = result['message']['ts']
+    print(message_ts)
+
+    # Get url
+    client = WebClient(token=slack_key)
+    result = client.chat_getPermalink(
+        channel=channel,
+        message_ts=message_ts
+    )
+    url = result['permalink']
+
+    # If the source is an empty string, replace that with olap
+    if source == '':
+        source = 'olap'
+
+    # Build the json dictionary we need for the dashboard
+    # {Widget, category, report name, merchant name, slack link}
+    # Split fid into metadat pieces
+    metadata_string = fid.split('/')
+    report = metadata_string[-1].replace('.xlsx', '')
+    category = metadata_string[-2]
+    widget = metadata_string[-3]
+    metadata = {
+        "widget": widget,
+        "category": category,
+        "report": report,
+        "merchant": merchant,
+        "data_source": source,
+        "link": url
+    }
+    print(json.dumps(metadata))
+
+    # TODO: Send metadata to Le's dashboard script
+
 if __name__ == "__main__":
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
@@ -324,7 +368,7 @@ if __name__ == "__main__":
             end = now
 
         # Move to working directory (for cron)
-        os.chdir('/home/ubuntu/ds-data_validation/')
+        #os.chdir('/home/ubuntu/ds-data_validation/')
 
         # Trigger script
         for merchant in merchants:
@@ -414,7 +458,9 @@ if __name__ == "__main__":
                                     print(f'Skipped blacklisted entry {fid}')
                                     skipped = True
                             if skipped is False:
-                                post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                result, errors = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                if not errors:
+                                    post_to_dashboard(result, fid, merchant, source.source)
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
