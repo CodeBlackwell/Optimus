@@ -1211,13 +1211,14 @@ def define_join_on(ro1, ro2):
 
 def test_pretty_tables():
     pretty_tables = sources.PrettyTableMaker()
-    pretty_tables.dir_path = os.path.join(os.getcwd(), "validation_outputs/xlsx/07_31_23_14:08:51")
-    test_accounts_overview_report, categorical_report = pretty_tables.run()
-    sources.UpdateDashboardLog(test_accounts_overview_report, categorical_report)
+    pretty_tables.dir_path = os.path.join(os.getcwd(), "validation_outputs/xlsx/08_02_23_17:29:53")
+    merchant_summary_report, categorical_report, test_account_overview = pretty_tables.run()
+    sources.UpdateDashboardLog(merchant_summary_report, categorical_report, test_account_overview)
 
 
 def main():
     # Define comparison column name and join_on vars here
+
 
     # Instantiate the class
     cascade = Cascade()
@@ -1287,7 +1288,7 @@ def main():
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
         match_names(edw2_ro, edw3_ro)
-        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
+        lookup_name = search_merchant(merch_id=get_merchant_id(edw3_ro))
         verify_relative_dates(edw2_ro, edw3_ro)
         match_date_aggregates(edw2_ro, edw3_ro)
         timestamp = datetime.now().strftime("%x %X")

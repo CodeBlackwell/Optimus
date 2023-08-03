@@ -327,8 +327,7 @@ class PrettyTableMaker:
         self.retrieve_tables()
         self.generate_merchant_summary_update_literal()
         self.build_reverse_index_map()
-        self.generate_merchant_reports()
-        self.generate_merchant_summary_update_literal()
+        self.generate_categorical_reports()
         self.generate_test_account_overview_update()
         return self.merchant_summary, self.categorical_report, self.test_account_overview_update
 
@@ -359,12 +358,21 @@ class PrettyTableMaker:
                 self.summary_tables.append(pd.read_excel(summary_name))
 
     def generate_test_account_overview_update(self):
-        flag = "Pass"
-        if "Fail" in str(self.merchant_summary):
-            flag = "Fail"
-        result = {"Last Test": self.merchant_summary["Last Test"],
-                  "Merchant": self.merchant_summary["Merchant"],
-                  "pass/fail": flag}
+        ta_flag = "PASS!"
+        tw_flag = "PASS!"
+        if "Fail" in str(self.merchant_summary["trending_widget"]):
+            tw_flag = "FAIL!"
+        if "Fail" in str(self.merchant_summary["top_affiliates_widget"]):
+            ta_flag = "FAIL!"
+        result = {
+            "Last Test": self.merchant_summary["Last Test"],
+            "Merchant": self.merchant_summary["Merchant"],
+
+            "pass/fail": {
+                "trending_widget": tw_flag,
+                "top_affiliates_widget": ta_flag
+            }
+        }
         self.test_account_overview_update = result
 
     def generate_merchant_summary_update_literal(self):
@@ -396,7 +404,6 @@ class PrettyTableMaker:
                     category_name = row["Dashboard Category"]
                     if row["Dashboard Report Name"] not in result[widget_name][category_name]:
                         result[widget_name][category_name][row["Dashboard Report Name"]] = row['pass/fail']
-
         result["Last Test"] = self.convert_run_time()
         result["Merchant"] = self.get_merchant()
         result["Currency"] = self.get_currency()
@@ -406,7 +413,7 @@ class PrettyTableMaker:
         result["Network"] = None
         self.merchant_summary = result
 
-    def generate_merchant_reports(self):
+    def generate_categorical_reports(self):
         overview = copy.deepcopy(self.merchant_summary)
         result = {
             "top_affiliates_widget": [],
@@ -444,6 +451,14 @@ class PrettyTableMaker:
                     if key == "currency":
                         return ro[ro_key][key]
 
+    def simplify_merchant_summary(self):
+        for widget_name in self.merchant_summary:
+            for category_name in self.merchant_summary[widget_name]:
+                if "Fail" in str(self.merchant_summary[widget_name][category_name]):
+                    self.merchant_summary[widget_name][category_name] = "FAIL!"
+                else:
+                    self.merchant_summary[widget_name][category_name] = "PASS!"
+
     def get_sql_source(self):
         """
                 Returns:
@@ -455,7 +470,7 @@ class PrettyTableMaker:
         ugly_runtime = self.dir_path.split("/").pop()
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
-        return f"{clean_date}\n@\n{clean_runtime}"
+        return f"{clean_date} @ {clean_runtime}\n{self.date_range}"
 
     def get_merchant(self):
         """

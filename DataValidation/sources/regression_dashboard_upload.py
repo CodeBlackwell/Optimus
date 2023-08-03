@@ -18,14 +18,17 @@ VALUE_INPUT_OPTION = "USER_ENTERED"
 
 
 class UpdateDashboardLog:
+    service = None
     categorical_report = None
-    account_overview_report = None
-    account_overview_report_values = {
+    merchant_summary = None
+    sheet = None
+    merchant_name = None
+    test_account_overview = None
+    merchant_summary_report_values = {
         "ta": [],
         "tw": []
     }
-    sheet = None
-    merchant_name = None
+
     avantlog_spreadsheet_ids = {
         "ta": {
             "fact_postgres": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
@@ -37,16 +40,45 @@ class UpdateDashboardLog:
             "fact_redshift": "1VJkxttwbiVLfip04xICyDlFoBQy5Mf_HizP9hzvjtss",
             "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE"
         },
+        "all_sources": "1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk",
         "historic_logs": "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
     }
-    overview_report_RANGE = {
-        "rei.com": "Test Accounts Overview!C1:Z12"
+    merchant_summary_RANGE = {
+        "rei.com": "Merchant Summary!C2:C12",
+        "Black Diamond": "Merchant Summary!A3",
+        "Carousel Checks": "Merchant Summary!A4",
+        "Palmetto State Armory": "Merchant Summary!A5",
+        "RTIC Outdoors": "Merchant Summary!A6",
+        "A_Life_Plus": "Merchant Summary!A7"
     }
-    merchant_report_RANGE = {
+    categorical_report_RANGE = {
         "rei.com": "REI.com!E1:Z"
     }
+    test_account_overview_range = {
+        "REI.com": "Test Accounts Overview!A2",
+        "Black Diamond": "Test Accounts Overview!A3",
+        "Carousel Checks": "Test Accounts Overview!A4",
+        "Palmetto State Armory": "Test Accounts Overview!A5",
+        "RTIC Outdoors": "Test Accounts Overview!A6",
+        "A_Life_Plus": "Test Accounts Overview!A7"
+    }
 
-    def __init__(self, account_overview_report, categorical_report):
+    all_sources_test_account_range = {
+        "trending_widget": {
+            "cube_postgres": {},
+            "fact_postgres": {},
+            "fact_redshift": {},
+            "cube_olap": {}
+        },
+        "top_affiliates_widget": {
+            "cube_postgres": {},
+            "fact_postgres": {},
+            "fact_redshift": {},
+            "cube_olap": {}
+        }
+    }
+
+    def __init__(self, merchant_summary, categorical_report, test_account_overview):
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -69,43 +101,90 @@ class UpdateDashboardLog:
         self.service = service
         self.sheet = service.spreadsheets().values()
         self.categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
-        self.account_overview_report = account_overview_report
-        self.sql_source = account_overview_report["SQL_source"]
-        self.merchant_name = self.account_overview_report["Merchant"]
+        self.merchant_summary = merchant_summary
+        self.test_account_overview = test_account_overview
+        self.sql_source = merchant_summary["SQL_source"]
+        self.merchant_name = self.merchant_summary["Merchant"]
 
         self.run()
 
     def run(self):
         self.process_account_overview_report_for_google()
-        self.update_categorical_reports()
-        self.update_test_accounts_overview()
+        # self.update_categorical_reports()
+        self.simplify_merchant_summary()
 
-    def update_test_accounts_overview(self):
-        self.update_ta_test_accounts_overview()
-        self.update_tw_test_accounts_overview()
+        self.update_merchant_summaries()
+        # self.update_test_account_overviews()
+
+    def update_all_sources_merchant_summary(self):
+        pass
+
+    def update_merchant_summaries(self):
+        # self.update_ta_merchant_summary()
+        self.update_tw_merchant_summary()
 
     def update_categorical_reports(self):
         self.update_ta_merchant_categorical_report()
         self.update_tw_merchant_categorical_report()
 
-    def update_ta_test_accounts_overview(self):
-        account_overview_body = {'values': self.account_overview_report_values["ta"]}
+    def update_test_account_overviews(self):
+        # self.update_ta_test_account_overview()
+        self.update_tw_test_account_overview()
+
+    def update_ta_test_account_overview(self):
+        value_range_body = {
+            "values": [self.test_account_overview["Last Test"]]
+        }
+        request = self.sheet.update(
+            spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source],
+            range=self.test_account_overview_range[self.merchant_name],
+            valueInputOption=VALUE_INPUT_OPTION,
+            body=value_range_body
+        )
+        response = request.execute()
+        pprint(response)
+
+    def update_tw_test_account_overview(self):
+
+        account_overview_body = {'values': [[
+            f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail']['trending_widget']}"]]}
         try:
-            merchant_account_overview = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.overview_report_RANGE[self.merchant_name.lower()],
-                valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
-            print(f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Top accounts - Overview")
+            test_account_overview = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source],
+                range=self.test_account_overview_range[self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=account_overview_body
+            ).execute()
+            pprint(test_account_overview)
         except HttpError as err:
             print(err)
 
-    def update_tw_test_accounts_overview(self):
-        account_overview_body = {'values': self.account_overview_report_values["tw"]}
+    def update_ta_merchant_summary(self):
+        account_overview_body = {'values': self.merchant_summary_report_values["ta"]}
+        try:
+            merchant_account_overview = self.sheet.append(
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source],
+                range=self.merchant_summary_RANGE[self.merchant_name.lower()],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=account_overview_body
+            ).execute()
+            print(
+                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Top accounts - Overview")
+        except HttpError as err:
+            print(err)
+
+    def update_tw_merchant_summary(self):
+        account_overview_body = {'values': self.merchant_summary_report_values["tw"]}
         try:
             # upload Test Accounts Overview Report - Trending Widget
             merchant_account_overview = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.overview_report_RANGE[self.merchant_name.lower()],
-                valueInputOption=VALUE_INPUT_OPTION, body=account_overview_body).execute()
-            print(f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Overview")
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source],
+                range=self.merchant_summary_RANGE[self.merchant_name.lower()],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=account_overview_body
+            ).execute()
+            print(
+                f"{(merchant_account_overview.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Overview")
         except HttpError as err:
             print(err)
 
@@ -114,9 +193,13 @@ class UpdateDashboardLog:
         # upload Categorical Report for each Widget -- Top Accounts / Top Affiliates
         try:
             top_accounts_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source], range=self.merchant_report_RANGE[self.merchant_name.lower()],
-                valueInputOption=VALUE_INPUT_OPTION, body=top_accounts_categorical_report_body).execute()
-            print(f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - Top Accounts - Categorical")
+                spreadsheetId=self.avantlog_spreadsheet_ids["ta"][self.sql_source],
+                range=self.categorical_report_RANGE[self.merchant_name.lower()],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=top_accounts_categorical_report_body
+            ).execute()
+            print(
+                f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - Top Accounts - Categorical")
         except HttpError as err:
             print(err)
 
@@ -125,28 +208,32 @@ class UpdateDashboardLog:
         try:
             # upload Categorical Report for each Widget -- Trending Widget
             trending_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source], range=self.merchant_report_RANGE[self.merchant_name.lower()],
-                valueInputOption=VALUE_INPUT_OPTION, body=trending_widget_categorical_report_body).execute()
-            print(f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
+                spreadsheetId=self.avantlog_spreadsheet_ids["tw"][self.sql_source],
+                range=self.categorical_report_RANGE[self.merchant_name.lower()],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=trending_widget_categorical_report_body
+            ).execute()
+            print(
+                f"{(trending_result.get('updates').get('updatedCells'))} cells appended. - Trending Widget - Categorical")
         except HttpError as err:
             print(err)
 
-    def process_account_overview_report_for_google(self):
+    def process_account_overview_report_for_google(self, subject=None):
         result = []
         category_order = ["Sales", "Combined Commission", "Network Commission",
                           "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
-
-        result.append([self.account_overview_report["Last Test"]])
-        result.append([self.account_overview_report["Date Range"]])
-        result.append([self.account_overview_report["Merchant"]])
-        result.append([self.account_overview_report["Currency"]])
-        result.append([self.account_overview_report["Network"]])
+        subject = subject or self.merchant_summary
+        result.append([subject["Last Test"]])
+        result.append([subject["Date Range"]])
+        result.append([subject["Merchant"]])
+        result.append([subject["Currency"]])
+        result.append([subject["Network"]])
         ta_result = copy.deepcopy(result)
         tw_result = copy.deepcopy(result)
         for category in category_order:
-            ta_result.append([self.account_overview_report["top_affiliates_widget"][category]])
+            ta_result.append([subject["top_affiliates_widget"][category]])
         for category in category_order:
-            tw_result.append([self.account_overview_report["trending_widget"][category]])
+            tw_result.append([subject["trending_widget"][category]])
         for sublist in ta_result:
             for val in sublist:
                 new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
@@ -157,10 +244,22 @@ class UpdateDashboardLog:
                 new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
             sublist.pop()
             sublist.append(new_val)
-        self.account_overview_report_values["ta"] = ta_result
-        self.account_overview_report_values["tw"] = tw_result
+        self.merchant_summary_report_values["ta"] = ta_result
+        self.merchant_summary_report_values["tw"] = tw_result
         return tw_result, ta_result
 
-
-def detect_range(spreadsheet_id):
-    pass
+    def simplify_merchant_summary(self, subject=None):
+        subject = subject or self.merchant_summary
+        new_summary = copy.deepcopy(subject)
+        for widget_name in new_summary:
+            if "widget" in widget_name:
+                for category_name in new_summary[widget_name]:
+                    if "Fail" in str(new_summary[widget_name][category_name]):
+                        new_summary[widget_name][category_name] = "FAIL!"
+                        pass
+                        # print(new_summary[widget_name][category_name], 1, "\n\n")
+                    else:
+                        # print(new_summary[widget_name][category_name], 2, "\n\n")
+                        pass
+                        new_summary[widget_name][category_name] = "PASS!"
+        return new_summary
