@@ -219,6 +219,7 @@ class PrettyTableMaker:
             }
         }
     }
+    test_account_overview_update = {}
     reversed_report_index_map = {
         'top_affiliates_widget': {},
         'trending_widget': {}
@@ -298,7 +299,7 @@ class PrettyTableMaker:
                                       'ROAS': '',
                                       'ROAS %': '',
                                       'Sales': ''}}}
-    merchant_result_overview = {
+    merchant_summary = {
         "Last Test": None,
         "Merchant": None,
         "Currency": None,
@@ -324,10 +325,12 @@ class PrettyTableMaker:
 
     def run(self):
         self.retrieve_tables()
-        self.generate_test_account_overview_update_literal()
+        self.generate_merchant_summary_update_literal()
         self.build_reverse_index_map()
         self.generate_merchant_reports()
-        return self.merchant_result_overview, self.categorical_report
+        self.generate_merchant_summary_update_literal()
+        self.generate_test_account_overview_update()
+        return self.merchant_summary, self.categorical_report, self.test_account_overview_update
 
     def retrieve_tables(self):
         sim_dir = os.listdir(self.dir_path)
@@ -355,9 +358,18 @@ class PrettyTableMaker:
                 summary_name = os.path.join(source_path, widget)
                 self.summary_tables.append(pd.read_excel(summary_name))
 
-    def generate_test_account_overview_update_literal(self):
+    def generate_test_account_overview_update(self):
+        flag = "Pass"
+        if "Fail" in str(self.merchant_summary):
+            flag = "Fail"
+        result = {"Last Test": self.merchant_summary["Last Test"],
+                  "Merchant": self.merchant_summary["Merchant"],
+                  "pass/fail": flag}
+        self.test_account_overview_update = result
+
+    def generate_merchant_summary_update_literal(self):
         """
-         create the object used to update Test Accounts Overview. This overview shows a compressed view of
+         create the object used to update merchant summary. This overview shows a compressed view of
          each merchant being tested listing the following;
          -1 merchant per row,
          -each category of tests run, if fails are present - the names of the failed reports will be listed in the cell
@@ -385,17 +397,17 @@ class PrettyTableMaker:
                     if row["Dashboard Report Name"] not in result[widget_name][category_name]:
                         result[widget_name][category_name][row["Dashboard Report Name"]] = row['pass/fail']
 
-        result["Last Test"] = self.dir_path.split("/").pop()
+        result["Last Test"] = self.convert_run_time()
         result["Merchant"] = self.get_merchant()
         result["Currency"] = self.get_currency()
         result["SQL_source"] = self.get_sql_source()
         result["Date Range"] = self.date_range
         # # @TODO: figure out how to know which network the test was run for - consult Zach.
         result["Network"] = None
-        self.merchant_result_overview = result
+        self.merchant_summary = result
 
     def generate_merchant_reports(self):
-        overview = copy.deepcopy(self.merchant_result_overview)
+        overview = copy.deepcopy(self.merchant_summary)
         result = {
             "top_affiliates_widget": [],
             "trending_widget": []
@@ -411,7 +423,7 @@ class PrettyTableMaker:
                         report_name = category_literal[category]
                         try:
                             result[widget_key].append(
-                                [self.merchant_result_overview[widget_key][category][report_name]])
+                                [self.merchant_summary[widget_key][category][report_name]])
                         except KeyError:
                             result[widget_key].append([f"N/A"])
 
@@ -419,12 +431,6 @@ class PrettyTableMaker:
             result[widget_key].pop(0)
             result[widget_key].insert(0, [self.convert_run_time()])
         self.categorical_report = result
-
-    # def upload_test_account_overview(self):
-    #     pass
-    #
-    # def upload_merchant_report(self):
-    #     pass
 
     def get_currency(self):
         """
@@ -449,7 +455,7 @@ class PrettyTableMaker:
         ugly_runtime = self.dir_path.split("/").pop()
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
-        return f"{clean_date}\n@\n{clean_runtime}\n{self.date_range}"
+        return f"{clean_date}\n@\n{clean_runtime}"
 
     def get_merchant(self):
         """
