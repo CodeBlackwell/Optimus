@@ -112,7 +112,6 @@ class UpdateDashboardLog:
         self.process_account_overview_report_for_google()
         # self.update_categorical_reports()
         self.simplify_merchant_summary()
-
         self.update_merchant_summaries()
         # self.update_test_account_overviews()
 
@@ -248,18 +247,13 @@ class UpdateDashboardLog:
         self.merchant_summary_report_values["tw"] = tw_result
         return tw_result, ta_result
 
-    def simplify_merchant_summary(self, subject=None):
-        subject = subject or self.merchant_summary
-        new_summary = copy.deepcopy(subject)
-        for widget_name in new_summary:
-            if "widget" in widget_name:
-                for category_name in new_summary[widget_name]:
-                    if "Fail" in str(new_summary[widget_name][category_name]):
-                        new_summary[widget_name][category_name] = "FAIL!"
-                        pass
-                        # print(new_summary[widget_name][category_name], 1, "\n\n")
-                    else:
-                        # print(new_summary[widget_name][category_name], 2, "\n\n")
-                        pass
-                        new_summary[widget_name][category_name] = "PASS!"
-        return new_summary
+    def simplify_merchant_summary(self):
+        new_summary_values = copy.deepcopy(self.merchant_summary_report_values)
+        for widget_name in new_summary_values:
+            for sublist in new_summary_values[widget_name]:
+                if "fail" in str(sublist).lower():
+                    sublist[0] = "FAIL"
+                if "pass" in str(sublist).lower():
+                    sublist[0] = "PASS!"
+        self.merchant_summary_report_values = new_summary_values
+        return new_summary_values
