@@ -678,48 +678,67 @@ class Cascade:
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
-                        edw2_request_object = sources.dashboard_objects["edw2_dashboard_objects"][widget] \
-                            [category][request_object_name]
-                        edw3_request_object = sources.dashboard_objects["edw3_dashboard_objects"][widget] \
-                            [category][request_object_name]
-                        for report_name in edw2_request_object:
-                            for col in edw2_request_object[report_name]["cols"]:
-                                if "dim_date" not in col["id"] and "hidden" not in col \
-                                        and "website" not in col["name"].lower():
-                                    if merchant_id:
-                                        replace_merchant(edw2_request_object, merchant_id)
-                                        replace_merchant(edw3_request_object, merchant_id)
-                                        # merchant_path = os.path.join(dir_basepath, merchant)
-                                        # try:
-                                        # #     os.mkdir(merchant_path)
-                                        # except FileExistsError:
-                                        #     pass
-                                        # print(f"{merchant_path} ----- 596, {merchant}")
-                                    comparison_col_name = col["name"]
-                                    merch_id = get_merchant_id(edw3_request_object)
-                                    lookup_merchant_name = search_merchant(merch_id=merch_id)
-                                    dashboard_regression = {"path": dir_basepath,
-                                                            "category": category,
-                                                            "dashboard report name": request_object_name,
-                                                            "merchant": lookup_merchant_name,
-                                                            "sim_name": sim_name,
-                                                            "source": source,
-                                                            "widget": widget
-                                                            }
+                        # Update: Run only for base metrics. This will make sure we simplify regression
+                        # Comment this out if we want to run calculated values
+                        base_metrics = [
+                            'Gross Sales',
+                            'Orders',
+                            'Adjustments',
+                            'Adjusted Sales',
+                            'Clicks', 'Impressions',
+                            'Affiliate Bonus',
+                            'Affiliate CPC',
+                            'Affiliate Incentive Commission',
+                            'Affiliate Paid Placement',
+                            'Affiliate Sale Commission',
+                            'Network Bonus',
+                            'Network CPC',
+                            'Network Paid Placement',
+                            'Network Sale Commission'
+                        ]
+                        if request_object_name in base_metrics:
+                            edw2_request_object = sources.dashboard_objects["edw2_dashboard_objects"][widget] \
+                                [category][request_object_name]
+                            edw3_request_object = sources.dashboard_objects["edw3_dashboard_objects"][widget] \
+                                [category][request_object_name]
+                            for report_name in edw2_request_object:
+                                for col in edw2_request_object[report_name]["cols"]:
+                                    if "dim_date" not in col["id"] and "hidden" not in col \
+                                            and "website" not in col["name"].lower():
+                                        if merchant_id:
+                                            replace_merchant(edw2_request_object, merchant_id)
+                                            replace_merchant(edw3_request_object, merchant_id)
+                                            # merchant_path = os.path.join(dir_basepath, merchant)
+                                            # try:
+                                            # #     os.mkdir(merchant_path)
+                                            # except FileExistsError:
+                                            #     pass
+                                            # print(f"{merchant_path} ----- 596, {merchant}")
+                                        comparison_col_name = col["name"]
+                                        merch_id = get_merchant_id(edw3_request_object)
+                                        lookup_merchant_name = search_merchant(merch_id=merch_id)
+                                        dashboard_regression = {"path": dir_basepath,
+                                                                "category": category,
+                                                                "dashboard report name": request_object_name,
+                                                                "merchant": lookup_merchant_name,
+                                                                "sim_name": sim_name,
+                                                                "source": source,
+                                                                "widget": widget
+                                                                }
 
-                                    match_names(edw2_request_object, edw3_request_object)
+                                        match_names(edw2_request_object, edw3_request_object)
 
-                                    # NOTE: Because we don't apply the exact same date aggregates here anymore these must be commented out
-                                    # These might still be needed for other date ranges, but for now that isnt important
-                                    #verify_relative_dates(edw2_request_object, edw3_request_object)
-                                    #match_date_aggregates(edw2_request_object, edw3_request_object)
-                                    futures.append(self.run_simple_difference(
-                                        {"join_on": define_join_on(edw2_request_object, edw3_request_object),
-                                         "comparison_col_name": comparison_col_name},
-                                        edw2_ro=edw2_request_object, edw3_ro=edw3_request_object,
-                                        interval=interval, sim=sim_name, source=source,
-                                        report_name=comparison_col_name, dashboard_regression=dashboard_regression)
-                                    )
+                                        # NOTE: Because we don't apply the exact same date aggregates here anymore these must be commented out
+                                        # These might still be needed for other date ranges, but for now that isnt important
+                                        #verify_relative_dates(edw2_request_object, edw3_request_object)
+                                        #match_date_aggregates(edw2_request_object, edw3_request_object)
+                                        futures.append(self.run_simple_difference(
+                                            {"join_on": define_join_on(edw2_request_object, edw3_request_object),
+                                            "comparison_col_name": comparison_col_name},
+                                            edw2_ro=edw2_request_object, edw3_ro=edw3_request_object,
+                                            interval=interval, sim=sim_name, source=source,
+                                            report_name=comparison_col_name, dashboard_regression=dashboard_regression)
+                                        )
 
             result = await asyncio.gather(*futures)
             self.create_change_log(result, sim_name)
