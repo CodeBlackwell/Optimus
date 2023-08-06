@@ -351,7 +351,7 @@ class PrettyTableMaker:
                         if self.end_date is None:
                             self.end_date = new_df["Day"].values[-1]
                         if self.start_date is not None and self.end_date is not None:
-                            self.date_range = f"{self.start_date} - {self.end_date}]"
+                            self.date_range = f"{self.start_date} - {self.end_date}"
                         self.tables_list.append(new_df)
             else:
                 summary_name = os.path.join(source_path, widget)
@@ -430,7 +430,8 @@ class PrettyTableMaker:
                         report_name = category_literal[category]
                         try:
                             result[widget_key].append(
-                                [self.merchant_summary[widget_key][category][report_name]])
+                                [f"{[self.merchant_summary[widget_key][category][report_name]].pop()}"]
+                            )
                         except KeyError:
                             result[widget_key].append([f"N/A"])
 
@@ -438,18 +439,6 @@ class PrettyTableMaker:
             result[widget_key].pop(0)
             result[widget_key].insert(0, [self.convert_run_time()])
         self.categorical_report = result
-
-    def get_currency(self):
-        """
-        Returns:
-            string - Currency listed in the request Object for the comparison
-        """
-        for report in self.tables_list[0]["edw3_request_object"]:
-            ro = json.loads(report)
-            for ro_key in ro:
-                for key in ro[ro_key]:
-                    if key == "currency":
-                        return ro[ro_key][key]
 
     def simplify_merchant_summary(self):
         for widget_name in self.merchant_summary:
@@ -466,11 +455,17 @@ class PrettyTableMaker:
                 """
         return self.tables_list[0]["SQL_source"][0]
 
-    def convert_run_time(self):
-        ugly_runtime = self.dir_path.split("/").pop()
-        clean_runtime = ugly_runtime.split("_").pop()
-        clean_date = "/".join(ugly_runtime.split("_")[:-1])
-        return f"{clean_date} @ {clean_runtime}\n{self.date_range}"
+    def get_currency(self):
+        """
+        Returns:
+            string - Currency listed in the request Object for the comparison
+        """
+        for report in self.tables_list[0]["edw3_request_object"]:
+            ro = json.loads(report)
+            for ro_key in ro:
+                for key in ro[ro_key]:
+                    if key == "currency":
+                        return ro[ro_key][key]
 
     def get_merchant(self):
         """
@@ -478,3 +473,9 @@ class PrettyTableMaker:
            string - Merchant listed for the comparison
         """
         return self.tables_list[0]["merchant"][0]
+
+    def convert_run_time(self):
+        ugly_runtime = self.dir_path.split("/").pop()
+        clean_runtime = ugly_runtime.split("_").pop()
+        clean_date = "/".join(ugly_runtime.split("_")[:-1])
+        return f"{clean_date} @ {clean_runtime}\n{self.date_range}"

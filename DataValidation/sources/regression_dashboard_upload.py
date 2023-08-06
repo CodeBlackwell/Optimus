@@ -53,7 +53,7 @@ class UpdateDashboardLog:
         "A_Life_Plus": "Merchant Summary!G2:G12"
     }
     categorical_report_RANGE = {
-        "rei.com": "REI.com!E1:Z"
+        "rei.com": "REI.com!D1:ZZZ"
     }
     test_account_overview_range = {
         "REI.com": "Test Accounts Overview!A2",
@@ -168,9 +168,9 @@ class UpdateDashboardLog:
     def run(self):
         self.process_account_overview_report_for_google()
         self.update_categorical_reports()
-        self.simplify_merchant_summary()
-        self.update_merchant_summaries()
-        self.update_test_account_overviews()
+        # self.simplify_merchant_summary()
+        # self.update_merchant_summaries()
+        # self.update_test_account_overviews()
         # self.update_all_sources_merchant_summary()
         # self.update_all_sources_test_account_overview()
 
@@ -207,7 +207,7 @@ class UpdateDashboardLog:
         self.update_merchant_summary("top_affiliates_widget")
 
     def update_categorical_reports(self):
-        self.update_merchant_categorical_report("trending_widget")
+        # self.update_merchant_categorical_report("trending_widget")
         self.update_merchant_categorical_report("top_affiliates_widget")
 
     def update_test_account_overviews(self):
@@ -225,7 +225,6 @@ class UpdateDashboardLog:
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=merchant_account_overview_body
             ).execute()
-            pprint(test_account_overview)
         except HttpError as err:
             pprint(test_account_overview)
             print(err)
@@ -254,10 +253,13 @@ class UpdateDashboardLog:
                 spreadsheetId=self.avantlog_spreadsheet_ids[widget_marker][self.sql_source],
                 range=self.categorical_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION,
+                insertDataOption="OVERWRITE",
                 body=top_accounts_categorical_report_body
-            ).execute()
+            )
+            result = top_accounts_result.execute()
+            # print(result)
             print(
-                f"{(top_accounts_result.get('updates').get('updatedCells'))} cells appended. - {widget} - Categorical")
+                f"{(result.get('updates').get('updatedCells'))} - {self.sql_source} - cells appended. - {widget} - Categorical")
         except HttpError as err:
             print(err)
 
