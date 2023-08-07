@@ -269,9 +269,9 @@ def calculate_times(now):
     return start_times, end_times
 
 
-def post_to_dashboard(result, fid, merchant, source, passed, channel='C04HP5S5YNB'):
+def build_metadata(result, fid, merchant, source, passed, channel='C04HP5S5YNB'):
     '''
-    This function compiles a json dictionary of metadata and sends that to the regression library dashboard
+    This function compiles a json dictionary of metadata to send to the regression library dashboard
     Link:https://drive.google.com/drive/u/0/folders/1Pr0FWGKWu1Ji2tTkRlcsOCD2dMp2G3X6
 
     Parameters
@@ -286,15 +286,16 @@ def post_to_dashboard(result, fid, merchant, source, passed, channel='C04HP5S5YN
        None
     '''
     # Grab the identifier for the message
-    message_ts = result['message']['ts']
-
-    # Get url
-    client = WebClient(token=slack_key)
-    result = client.chat_getPermalink(
-        channel=channel,
-        message_ts=message_ts
-    )
-    url = result['permalink']
+    try:
+        url = result['file']['permalink']
+    except:
+        message_ts = result['message']['ts']
+        client = WebClient(token=slack_key)
+        result = client.chat_getPermalink(
+            channel=channel,
+            message_ts=message_ts
+        )
+        url = result['permalink']
 
     # If the source is an empty string, replace that with olap
     if source == '':
@@ -311,13 +312,13 @@ def post_to_dashboard(result, fid, merchant, source, passed, channel='C04HP5S5YN
         "widget": widget,
         "category": category,
         "report": report,
-        "merchant": merchant,
         "data_source": source,
         "link": url,
-        "passed": passed
+        "passed": passed,
+        "file": fid
     }
 
-    # TODO: Send metadata to Le's dashboard script
+    return metadata
 
 if __name__ == "__main__":
     # Accept list of merchants
@@ -381,10 +382,14 @@ if __name__ == "__main__":
             end = now
 
         # Move to working directory (for cron)
-        os.chdir('/home/ubuntu/ds-data_validation/')
+        #os.chdir('/home/ubuntu/ds-data_validation/')
+
+        metadata_dict = {}
 
         # Trigger script
         for merchant in merchants:
+
+            metadata_dict[merchant] = []
             print(f'Running regression for merchant {merchant}')
             try:
                 os.chdir('DataValidation')
@@ -473,11 +478,16 @@ if __name__ == "__main__":
                             if skipped is False:
                                 result, errors, passed = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                                 if not errors:
-                                    post_to_dashboard(result, fid, merchant, source.source, passed)
+                                    metadata_entry = build_metadata(result, fid, merchant, source.source, passed)
+                                    metadata_dict[merchant].append(metadata_entry)
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
+
+            # TODO: Tirgger Le's script
+            print('Data to send to dashboard')
+            print(json.dumps(metadata_dict))
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
