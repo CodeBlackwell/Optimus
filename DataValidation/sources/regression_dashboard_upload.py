@@ -241,19 +241,70 @@ class UpdateDashboardLog:
         self.run()
 
     def run(self):
-        self.process_account_overview_report_for_google()
-        self.update_categorical_reports()
-        # self.simplify_merchant_summary()
-        # self.update_merchant_summaries()
+        self.process_merchant_summary_report_for_google()
+        self.simplify_merchant_summary()
         # self.update_test_account_overviews()
-        # self.update_all_sources_merchant_summary()
-        # self.update_all_sources_test_account_overview()
+
+        # self.update_merchant_summaries()
+        # self.get_spreadsheet_data()
+        # self.update_categorical_reports()
+
+
+    def get_spreadsheet_data(self, spreadsheet_id=None):
+        spreadsheet_id = spreadsheet_id or self.avantlog_spreadsheet_ids["ta"][
+            "cube_postgres"]
+
+        # The ranges to retrieve from the spreadsheet.
+        ranges = [f"{self.categorical_report_RANGE[self.merchant_name]}"]
+
+        # True if grid data should be returned.
+        # This parameter is ignored if a field mask was set in the request.
+        include_grid_data = True
+
+        request = self.service.spreadsheets().get(
+            spreadsheetId=spreadsheet_id,
+            ranges=ranges,
+            includeGridData=include_grid_data
+        )
+        response = request.execute()
+        pprint(response)
+
+    def update_all_sources_test_account_overview(self):
+        tw_test_account_overview_body = {'values': [[
+            f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail']['trending_widget']}"]]}
+        try:
+            # upload - Merchant Summary Report - All Sources - Trending Widget
+            tw_all_sources_test_account_overview = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_test_account_overview_RANGE["trending_widget"][self.sql_source][
+                    self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=tw_test_account_overview_body
+            ).execute()
+            print(tw_all_sources_test_account_overview)
+        except HttpError as err:
+            print(err)
+
+        ta_test_account_overview_body = {'values': [[
+            f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail']['top_affiliates_widget']}"]]}
+        try:
+            # upload - Merchant Summary Report - All Sources - Trending Widget
+            ta_test_account_overview = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_test_account_overview_RANGE["top_affiliates_widget"][self.sql_source][
+                    self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=ta_test_account_overview_body
+            ).execute()
+            print(ta_test_account_overview)
+        except HttpError as err:
+            print(err)
 
     def update_all_sources_merchant_summary(self):
         tw_merchant_account_overview_body = {'values': self.merchant_summary_report_values["tw"]}
         try:
             # upload - Merchant Summary Report - All Sources - Trending Widget
-            tw_merchant_account_overview = self.sheet.update(
+            tw_merchant_summary = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
                 range=self.all_sources_merchant_summary_RANGE["trending_widget"][self.sql_source][self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
@@ -266,20 +317,20 @@ class UpdateDashboardLog:
         ta_merchant_account_overview_body = {'values': self.merchant_summary_report_values["ta"]}
         try:
             # upload - Merchant Summary Report - All Sources - Top Affiliates Widget
-            ta_merchant_account_overview = self.sheet.update(
+            ta_merchant_summary = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
                 range=self.all_sources_merchant_summary_RANGE["top_affiliates_widget"][self.sql_source][
                     self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=ta_merchant_account_overview_body
             ).execute()
-            # print(ta_merchant_account_overview)
         except HttpError as err:
             print(err)
 
     def update_merchant_summaries(self):
         self.update_merchant_summary("trending_widget")
         self.update_merchant_summary("top_affiliates_widget")
+        self.update_all_sources_merchant_summary()
 
     def update_categorical_reports(self):
         # self.update_merchant_categorical_report("trending_widget")
