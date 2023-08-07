@@ -50,10 +50,15 @@ class UpdateDashboardLog:
         "Carousel Checks": "Merchant Summary!D2:D12",
         "Palmetto State Armory": "Merchant Summary!E2:E12",
         "RTIC Outdoors": "Merchant Summary!F2:F12",
-        "A_Life_Plus": "Merchant Summary!G2:G12"
+        "A Life Plus": "Merchant Summary!G2:G12"
     }
     categorical_report_RANGE = {
-        "rei.com": "REI.com!D1:ZZZ"
+        "REI.com": "REI.com!E1:ZZZ",
+        "Black Diamond": "Black Diamond!E1:ZZZ",
+        "Carousel Checks": "Carousel Checks!E1:ZZZ",
+        "RTIC Outdoors": "RTIC Outdoors!E1:ZZZ",
+        "Palmetto State Armory": "Palmetto State Armory!E1:ZZZ",
+        "A Life Plus": "A Life Plus!E1:ZZZ"
     }
     test_account_overview_range = {
         "REI.com": "Test Accounts Overview!A2",
@@ -61,7 +66,7 @@ class UpdateDashboardLog:
         "Carousel Checks": "Test Accounts Overview!A4",
         "Palmetto State Armory": "Test Accounts Overview!A5",
         "RTIC Outdoors": "Test Accounts Overview!A6",
-        "A_Life_Plus": "Test Accounts Overview!A7"
+        "A Life Plus": "Test Accounts Overview!A7"
     }
     all_sources_merchant_summary_RANGE = {
         "trending_widget": {
@@ -71,7 +76,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!D2:D12",
                 "Palmetto State Armory": "Merchant Summary!E2:E12",
                 "RTIC Outdoors": "Merchant Summary!F2:F12",
-                "A_Life_Plus": "Merchant Summary!G2:G12"
+                "A Life Plus": "Merchant Summary!G2:G12"
             },
             "fact_postgres": {
                 "Black Diamond": "Merchant Summary!B15:B25",
@@ -79,7 +84,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!D15:D25",
                 "Palmetto State Armory": "Merchant Summary!E15:E25",
                 "RTIC Outdoors": "Merchant Summary!F15:F25",
-                "A_Life_Plus": "Merchant Summary!G15:G25"
+                "A Life Plus": "Merchant Summary!G15:G25"
             },
             "fact_redshift": {
                 "Black Diamond": "Merchant Summary!B28:B38",
@@ -87,7 +92,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!D28:D38",
                 "Palmetto State Armory": "Merchant Summary!E28:E38",
                 "RTIC Outdoors": "Merchant Summary!F28:F38",
-                "A_Life_Plus": "Merchant Summary!28:G38G"
+                "A Life Plus": "Merchant Summary!28:G38G"
             },
             "cube_olap": {
                 "Black Diamond": "Merchant Summary!B41:B51",
@@ -95,7 +100,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!D41:D51",
                 "Palmetto State Armory": "Merchant Summary!E41:E51",
                 "RTIC Outdoors": "Merchant Summary!F41:F51",
-                "A_Life_Plus": "Merchant Summary!G41:G51"
+                "A Life Plus": "Merchant Summary!G41:G51"
             }
         },
         "top_affiliates_widget": {
@@ -105,7 +110,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!K2:K12",
                 "Palmetto State Armory": "Merchant Summary!L2:L12",
                 "RTIC Outdoors": "Merchant Summary!M2:M12",
-                "A_Life_Plus": "Merchant Summary!N2:N12"
+                "A Life Plus": "Merchant Summary!N2:N12"
             },
             "fact_postgres": {
                 "Black Diamond": "Merchant Summary!I15:I25",
@@ -113,7 +118,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!K15:K25",
                 "Palmetto State Armory": "Merchant Summary!L15:L25",
                 "RTIC Outdoors": "Merchant Summary!M15:M25",
-                "A_Life_Plus": "Merchant Summary!N15:N25"
+                "A Life Plus": "Merchant Summary!N15:N25"
             },
             "fact_redshift": {
                 "Black Diamond": "Merchant Summary!I28:I38",
@@ -121,7 +126,7 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!K28:K38",
                 "Palmetto State Armory": "Merchant Summary!L28:L38",
                 "RTIC Outdoors": "Merchant Summary!M28:M38",
-                "A_Life_Plus": "Merchant Summary!N8:N38G"
+                "A Life Plus": "Merchant Summary!N8:N38G"
             },
             "cube_olap": {
                 "Black Diamond": "Merchant Summary!I41:I51",
@@ -129,11 +134,81 @@ class UpdateDashboardLog:
                 "Carousel Checks": "Merchant Summary!K41:K51",
                 "Palmetto State Armory": "Merchant Summary!L41:L51",
                 "RTIC Outdoors": "Merchant Summary!M41:M51",
-                "A_Life_Plus": "Merchant Summary!N41:N51"
+                "A Life Plus": "Merchant Summary!N41:N51"
             }
         }
     }
-    all_sources_test_account_overview_RANGE = {}
+    all_sources_test_account_overview_RANGE = {
+        "trending_widget": {
+            "cube_postgres": {
+                "REI.com": "Test Accounts Overview!A3",
+                "Black Diamond": "Test Accounts Overview!A4",
+                "Carousel Checks": "Test Accounts Overview!A5",
+                "Palmetto State Armory": "Test Accounts Overview!A6",
+                "RTIC Outdoors": "Test Accounts Overview!A7",
+                "A Life Plus": "Test Accounts Overview!A8"
+            },
+            "fact_postgres": {
+                "REI.com": "Test Accounts Overview!A13",
+                "Black Diamond": "Test Accounts Overview!A14",
+                "Carousel Checks": "Test Accounts Overview!A15",
+                "Palmetto State Armory": "Test Accounts Overview!A16",
+                "RTIC Outdoors": "Test Accounts Overview!A17",
+                "A Life Plus": "Test Accounts Overview!A18"
+            },
+            "fact_redshift": {
+                "REI.com": "Test Accounts Overview!A22",
+                "Black Diamond": "Test Accounts Overview!A23",
+                "Carousel Checks": "Test Accounts Overview!A24",
+                "Palmetto State Armory": "Test Accounts Overview!A25",
+                "RTIC Outdoors": "Test Accounts Overview!A26",
+                "A Life Plus": "Test Accounts Overview!A27"
+            },
+            "cube_olap": {
+                "REI.com": "Test Accounts Overview!A31",
+                "Black Diamond": "Test Accounts Overview!A32",
+                "Carousel Checks": "Test Accounts Overview!A33",
+                "Palmetto State Armory": "Test Accounts Overview!A34",
+                "RTIC Outdoors": "Test Accounts Overview!A35",
+                "A Life Plus": "Test Accounts Overview!A36"
+            }
+        },
+        "top_affiliates_widget": {
+            "cube_postgres": {
+                "REI.com": "Test Accounts Overview!M3",
+                "Black Diamond": "Test Accounts Overview!M4",
+                "Carousel Checks": "Test Accounts Overview!M5",
+                "Palmetto State Armory": "Test Accounts Overview!M6",
+                "RTIC Outdoors": "Test Accounts Overview!M7",
+                "A Life Plus": "Test Accounts Overview!M8"
+            },
+            "fact_postgres": {
+                "REI.com": "Test Accounts Overview!M13",
+                "Black Diamond": "Test Accounts Overview!M14",
+                "Carousel Checks": "Test Accounts Overview!M15",
+                "Palmetto State Armory": "Test Accounts Overview!M16",
+                "RTIC Outdoors": "Test Accounts Overview!M17",
+                "A Life Plus": "Test Accounts Overview!M18"
+            },
+            "fact_redshift": {
+                "REI.com": "Test Accounts Overview!M22",
+                "Black Diamond": "Test Accounts Overview!M23",
+                "Carousel Checks": "Test Accounts Overview!M24",
+                "Palmetto State Armory": "Test Accounts Overview!M25",
+                "RTIC Outdoors": "Test Accounts Overview!M26",
+                "A Life Plus": "Test Accounts Overview!M27"
+            },
+            "cube_olap": {
+                "REI.com": "Test Accounts Overview!M31",
+                "Black Diamond": "Test Accounts Overview!M32",
+                "Carousel Checks": "Test Accounts Overview!M33",
+                "Palmetto State Armory": "Test Accounts Overview!M34",
+                "RTIC Outdoors": "Test Accounts Overview!M35",
+                "A Life Plus": "Test Accounts Overview!M36"
+            }
+        }
+    }
+
 
     def __init__(self, merchant_summary, categorical_report, test_account_overview):
         creds = None
