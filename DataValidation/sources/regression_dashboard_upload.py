@@ -209,7 +209,6 @@ class UpdateDashboardLog:
         }
     }
 
-
     def __init__(self, merchant_summary, categorical_report, test_account_overview):
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
@@ -248,7 +247,6 @@ class UpdateDashboardLog:
         # self.update_merchant_summaries()
         # self.get_spreadsheet_data()
         # self.update_categorical_reports()
-
 
     def get_spreadsheet_data(self, spreadsheet_id=None):
         spreadsheet_id = spreadsheet_id or self.avantlog_spreadsheet_ids["ta"][
@@ -426,10 +424,3 @@ class UpdateDashboardLog:
                     sublist[0] = "PASS!"
         self.merchant_summary_report_values = new_summary_values
         return new_summary_values
-
-    @staticmethod
-    def get_widget_marker(widget):
-        if widget == "top_affiliates_widget":
-            return "ta"
-        elif widget == "trending_widget":
-            return "tw"
