@@ -434,10 +434,14 @@ class PrettyTableMaker:
                             )
                         except KeyError:
                             result[widget_key].append([f"N/A"])
-
+        # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         for widget_key in result:
             result[widget_key].pop(0)
             result[widget_key].insert(0, [self.convert_run_time()])
+            result[widget_key].pop(1)
+            result[widget_key].insert(1, [self.get_sql_source()])
+            result[widget_key].pop(3)
+            result[widget_key].insert(3, [self.get_merchant()])
         self.categorical_report = result
 
     def simplify_merchant_summary(self):
