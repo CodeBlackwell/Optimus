@@ -339,29 +339,27 @@ class UpdateDashboardLog:
     def update_test_account_overviews(self):
         self.update_test_account_overview("trending_widget")
         self.update_test_account_overview("top_affiliates_widget")
+        self.update_all_sources_test_account_overview()
 
     def update_test_account_overview(self, widget):
-        widget_marker = self.get_widget_marker(widget)
-        merchant_account_overview_body = {'values': [[
+        test_account_overview_body = {'values': [[
             f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail'][widget]}"]]}
         try:
             test_account_overview = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids[widget_marker][self.sql_source],
+                spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
                 range=self.test_account_overview_range[self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
-                body=merchant_account_overview_body
+                body=test_account_overview_body
             ).execute()
         except HttpError as err:
-            pprint(test_account_overview)
             print(err)
 
     def update_merchant_summary(self, widget):
-        widget_marker = self.get_widget_marker(widget)
-        account_overview_body = {'values': self.merchant_summary_report_values[widget_marker]}
+        account_overview_body = {'values': self.merchant_summary_report_values[widget]}
         try:
             # upload - Merchant Summary Report - Trending Widget
             merchant_account_overview = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids[widget_marker][self.sql_source],
+                spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
                 range=self.merchant_summary_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=account_overview_body
@@ -371,12 +369,11 @@ class UpdateDashboardLog:
             print(err)
 
     def update_merchant_categorical_report(self, widget):
-        widget_marker = self.get_widget_marker(widget)
         top_accounts_categorical_report_body = {'values': self.categorical_report_values[widget]}
         # upload Categorical Report for each Widget -- Top Affiliates / Trending widget
         try:
             top_accounts_result = self.sheet.append(
-                spreadsheetId=self.avantlog_spreadsheet_ids[widget_marker][self.sql_source],
+                spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
                 range=self.categorical_report_RANGE[self.merchant_name.lower()],
                 valueInputOption=VALUE_INPUT_OPTION,
                 insertDataOption="OVERWRITE",
@@ -389,18 +386,18 @@ class UpdateDashboardLog:
         except HttpError as err:
             print(err)
 
-    def process_account_overview_report_for_google(self):
-        result = []
+    def process_merchant_summary_report_for_google(self):
+        merchant_summary_values = []
         category_order = ["Sales", "Combined Commission", "Network Commission",
                           "Clicks % Impressions", "Adjustments", "Affiliate Commission"]
         subject = self.merchant_summary
-        result.append([subject["Last Test"]])
-        result.append([subject["Date Range"]])
-        result.append([subject["Merchant"]])
-        result.append([subject["Currency"]])
-        result.append([subject["Network"]])
-        ta_result = copy.deepcopy(result)
-        tw_result = copy.deepcopy(result)
+        merchant_summary_values.append([subject["Last Test"]])
+        merchant_summary_values.append([subject["Date Range"]])
+        merchant_summary_values.append([subject["Merchant"]])
+        merchant_summary_values.append([subject["Currency"]])
+        merchant_summary_values.append([subject["Network"]])
+        ta_result = copy.deepcopy(merchant_summary_values)
+        tw_result = copy.deepcopy(merchant_summary_values)
         for category in category_order:
             ta_result.append([subject["top_affiliates_widget"][category]])
         for category in category_order:
@@ -415,8 +412,8 @@ class UpdateDashboardLog:
                 new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
                 sublist.pop()
                 sublist.append(new_val)
-        self.merchant_summary_report_values["ta"] = ta_result
-        self.merchant_summary_report_values["tw"] = tw_result
+        self.merchant_summary_report_values["top_affiliates_widget"] = ta_result
+        self.merchant_summary_report_values["trending_widget"] = tw_result
         return tw_result, ta_result
 
     def simplify_merchant_summary(self):
