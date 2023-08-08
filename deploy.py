@@ -120,10 +120,16 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         os.remove(fid)
         return
 
-    # Check if file matches between edw2 and edw3
-    # Only send those that do not match to Slack
+    # Read file into dataframe
     df = pd.read_excel(fid)
     columns = df.columns.to_list()
+
+    # Account for case where edw3 is 0 and edw2 is null
+    # In this case, we want these values to be treated as the same, so replace nan with 0
+    df = df.fillna(0)
+
+    # Check if file matches between edw2 and edw3
+    # Only send those that do not match to Slack
     source_error = False
     data_source = None
     edw3_request_object = None
@@ -146,7 +152,11 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
             matches = True
             fault_tolerance = '(within 0.01 percent fault tolerance)'
         else:
-            matches = False
+            # Checks for edge case where edw2 and edw3 are different data type but all 0s
+            if (df[edw3_column] == 0).all() and(df[edw2_column] == 0).all():
+                matches = True
+            else:
+                matches = False
 
     # Build an upload curl command to post to slack
     # The components here govern how the data is displayed- note the display file name != system file name
@@ -182,8 +192,12 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         if 'summary' in upload_name:
              upload_name = merchant + '_' + 'Combined_Summary.xlsx'
         cmd = f"curl -F title='{upload_name}' -F initial_comment='{title}'  --form-string channels={fail_channel} -F file=@{fid} -F filename={upload_name} -F token={slack_key} https://slack.com/api/files.upload -k"
-    proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
-    result = json.loads(proc.stdout)
+    try:
+        proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
+        result = json.loads(proc.stdout)
+    except subprocess.TimeoutExpired:
+        # Slack server must be busy- Well that sucks
+        return
 
     # Log result
     # If it failed, log the stdout for debug
