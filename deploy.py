@@ -128,6 +128,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     source_error = False
     data_source = None
     passed = False
+    report_name = ''
     edw3_request_object = None
     fault_tolerance = ''
     for column in columns:
@@ -139,6 +140,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
                 source_error = True
                 edw3_request_object = df['edw3_request_object'][0]
             edw3_column = column
+        # Grab report name  for metadata dict
+        elif column == "Dashboard Report Name":
+            report_name = df[column][0]
+
     if df[edw2_column].equals(df[edw3_column]) is True:
         matches = True
     else:
@@ -201,7 +206,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # Remove temp file (if used)
     if temp_file is not None:
         os.remove(temp_file)
-    return result, errors, passed
+    return result, errors, passed, report_name
 
 def build_file_list():
     '''
@@ -269,7 +274,7 @@ def calculate_times(now):
     return start_times, end_times
 
 
-def build_metadata(result, fid, merchant, source, passed, channel='C04HP5S5YNB'):
+def build_metadata(result, fid, merchant, source, passed, report_name, channel='C04HP5S5YNB'):
     '''
     This function compiles a json dictionary of metadata to send to the regression library dashboard
     Link:https://drive.google.com/drive/u/0/folders/1Pr0FWGKWu1Ji2tTkRlcsOCD2dMp2G3X6
@@ -281,6 +286,7 @@ def build_metadata(result, fid, merchant, source, passed, channel='C04HP5S5YNB')
         source: str, location data came from (e.g. Redshift)
         passed: boolean, indicates pass/fail of regression test
         channel: str, channel used to find the message. Default is ds_data_validation in string form
+        report_name: str, gives the proper name of the report to display on the dahsboard
 
     Returns:
        None
@@ -315,7 +321,8 @@ def build_metadata(result, fid, merchant, source, passed, channel='C04HP5S5YNB')
         "data_source": source,
         "link": url,
         "passed": passed,
-        "file": fid
+        "file": fid,
+        "report_name": report_name
     }
 
     return metadata
@@ -476,9 +483,9 @@ if __name__ == "__main__":
                                     print(f'Skipped blacklisted entry {fid}')
                                     skipped = True
                             if skipped is False:
-                                result, errors, passed = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                result, errors, passed, report_name = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                                 if not errors:
-                                    metadata_entry = build_metadata(result, fid, merchant, source.source, passed)
+                                    metadata_entry = build_metadata(result, fid, merchant, source.source, passed, report_name)
                                     metadata_dict[merchant].append(metadata_entry)
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
