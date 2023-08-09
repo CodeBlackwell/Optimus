@@ -3,6 +3,7 @@ from __future__ import print_function
 import copy
 import os.path
 from pprint import pprint
+import json
 
 import sys
 from pprint import pprint
@@ -280,7 +281,6 @@ class UpdateDashboardLog:
         # self.update_merchant_summaries()
         # self.update_test_account_overviews()
         # self.update_categorical_reports()
-        self.insert_blank_categorical_report_column("top_affiliates_widget")
         sys.exit()
         # self.update_values()
 
@@ -297,9 +297,11 @@ class UpdateDashboardLog:
             ]
         }
         result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
-    def update_values(self):
-        spreadsheet_id = self.avantlog_spreadsheet_ids["top_affiliates_widget"]["cube_postgres"]
-        # TODO: Build
+
+    def insert_slack_hyperlinks(self, widget):
+        avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
+        categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][self.merchant_name]
+
 
     def update_all_sources_test_account_overview(self):
         tw_test_account_overview_body = {'values': [[
@@ -390,17 +392,6 @@ class UpdateDashboardLog:
         merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values[widget][:2]}
         merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values[widget][3:]}
 
-        preadsheetId = self.avantlog_spreadsheet_ids[widget][self.sql_source],
-        range = self.merchant_summary_RANGE["part_1"][self.merchant_name],
-        valueInputOption = VALUE_INPUT_OPTION,
-        body = merchant_summary_body_part_1
-        print({
-            preadsheetId,
-            range,
-            valueInputOption,
-            body
-        })
-        sys.exit()
         try:
             # upload - Merchant Summary Report - Part 1
             merchant_account_overview_part_1 = self.sheet.update(
@@ -425,23 +416,19 @@ class UpdateDashboardLog:
             print(err)
 
     def update_merchant_categorical_report(self, widget):
-        top_accounts_categorical_report_body = {'values': self.categorical_report_values[widget]}
+        categorical_report_body = {'values': self.categorical_report_values[widget]}
         self.insert_blank_categorical_report_column(widget)
-        sys.exit()
 
         # upload Categorical Report for each Widget -- Top Affiliates / Trending widget
         try:
-            top_accounts_result = self.sheet.append(
+            categorical_report_request = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
                 range=self.categorical_report_RANGE[self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
-                insertDataOption="OVERWRITE",
-                body=top_accounts_categorical_report_body
+                body=categorical_report_body
             )
-            result = top_accounts_result.execute()
-            # print(result)
-            print(
-                f"{(result.get('updates').get('updatedCells'))} - {self.sql_source} - cells appended. - {widget} - {self.merchant_name} - Categorical")
+            result = categorical_report_request.execute()
+            print(result)
         except HttpError as err:
             print(err)
 
