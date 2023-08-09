@@ -404,16 +404,18 @@ class UpdateDashboardLog:
     def run(self):
         self.process_merchant_summary_report_for_google()
         self.simplify_merchant_summary()
-        # self.update_merchant_summaries()
-        # self.update_test_account_overviews()
-        # self.update_categorical_reports()
-        sys.exit()
-        # self.update_values()
+        self.update_merchant_summaries()
+        self.update_test_account_overviews()
+        self.update_categorical_reports()
 
-    # @TODO: Remove Hardcoded sheet_id and spreadsheet id
-    def insert_blank_categorical_report_column(self, widget):
-        avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
-        categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][self.merchant_name]
+    def insert_blank_categorical_report_column(self, widget, all_sources=False):
+        if not all_sources:
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
+            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][
+                self.merchant_name]
+        if all_sources:
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget]["all_sources"]
+            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget]["all_sources"]
 
         body = {
             "requests": [
@@ -441,49 +443,108 @@ class UpdateDashboardLog:
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=tw_test_account_overview_body
             ).execute()
-            print(tw_all_sources_test_account_overview)
+            # print(tw_all_sources_test_account_overview)
         except HttpError as err:
             print(err)
 
+        # upload - Test Account Overview - All Sources - Top Affiliates Widget
         ta_test_account_overview_body = {'values': [[
             f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail']['top_affiliates_widget']}"]]}
         try:
-            # upload - Merchant Summary Report - All Sources - Trending Widget
-            ta_test_account_overview = self.sheet.update(
+            ta_all_sources_test_account_overview = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
                 range=self.all_sources_test_account_overview_RANGE["top_affiliates_widget"][self.sql_source][
                     self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=ta_test_account_overview_body
             ).execute()
-            print(ta_test_account_overview)
+            # print(ta_all_sources_test_account_overview)
+        except HttpError as err:
+            print(err)
+
+    def update_all_sources_categorical_report(self):
+        categorical_report_body = {'values': self.categorical_report_values["trending_widget"]}
+        self.insert_blank_categorical_report_column("trending_widget", all_sources=True)
+
+        # upload Categorical Report for each Widget - All Sources - Trending Widget
+        try:
+            categorical_report_request = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.categorical_report_RANGE[self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=categorical_report_body
+            )
+            result = categorical_report_request.execute()
+            # print(result)
+        except HttpError as err:
+            print(err)
+
+        # upload Categorical Report for each Widget - All Sources - Top Affiliates
+        categorical_report_body = {'values': self.categorical_report_values["top_affiliates_widget"]}
+        self.insert_blank_categorical_report_column("top_affiliates_widget", all_sources=True)
+
+        try:
+            categorical_report_request = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.categorical_report_RANGE[self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=categorical_report_body
+            )
+            result = categorical_report_request.execute()
+            # print(result)
         except HttpError as err:
             print(err)
 
     def update_all_sources_merchant_summary(self):
-        tw_merchant_account_overview_body = {'values': self.merchant_summary_report_values["tw"]}
+        tw_merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values["trending_widget"][:2]}
+        tw_merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values["trending_widget"][3:]}
+
         try:
-            # upload - Merchant Summary Report - All Sources - Trending Widget
-            tw_merchant_summary = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
-                range=self.all_sources_merchant_summary_RANGE["trending_widget"][self.sql_source][self.merchant_name],
+            # upload - Merchant Summary Report - Part 1
+            merchant_account_overview_part_1 = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["trending_widget"][self.sql_source],
+                range=self.all_sources_merchant_summary_RANGE["part_1"][self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
-                body=tw_merchant_account_overview_body
+                body=tw_merchant_summary_body_part_1
             ).execute()
-            # print(tw_merchant_account_overview)
+            # pprint(merchant_account_overview_part_1)
         except HttpError as err:
             print(err)
-
-        ta_merchant_account_overview_body = {'values': self.merchant_summary_report_values["ta"]}
         try:
-            # upload - Merchant Summary Report - All Sources - Top Affiliates Widget
-            ta_merchant_summary = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
-                range=self.all_sources_merchant_summary_RANGE["top_affiliates_widget"][self.sql_source][
-                    self.merchant_name],
+            # upload - Merchant Summary Report - Part 2
+            merchant_account_overview_part_2 = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["trending_widget"][self.sql_source],
+                range=self.all_sources_merchant_summary_RANGE["part_2"][self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
-                body=ta_merchant_account_overview_body
+                body=tw_merchant_summary_body_part_2
             ).execute()
+            # pprint(merchant_account_overview_part_2)
+        except HttpError as err:
+            print(err)
+        # Update All Sources Merchant Summary - Top Affiliates widget
+        ta_merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values["trending_widget"][:2]}
+        ta_merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values["top_affiliates_widget"][3:]}
+
+        try:
+            # upload - Merchant Summary Report - Part 1
+            merchant_account_overview_part_1 = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["top_affiliates_widget"][self.sql_source],
+                range=self.all_sources_merchant_summary_RANGE["part_1"][self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=ta_merchant_summary_body_part_1
+            ).execute()
+            # pprint(merchant_account_overview_part_1)
+        except HttpError as err:
+            print(err)
+        try:
+            # upload - Merchant Summary Report - Part 2
+            merchant_account_overview_part_2 = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids["top_affiliates_widget"][self.sql_source],
+                range=self.all_sources_merchant_summary_RANGE["part_2"][self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=ta_merchant_summary_body_part_2
+            ).execute()
+            # pprint(merchant_account_overview_part_2)
         except HttpError as err:
             print(err)
 
@@ -493,8 +554,9 @@ class UpdateDashboardLog:
         self.update_all_sources_merchant_summary()
 
     def update_categorical_reports(self):
-        # self.update_merchant_categorical_report("trending_widget")
+        self.update_merchant_categorical_report("trending_widget")
         self.update_merchant_categorical_report("top_affiliates_widget")
+        self.update_all_sources_categorical_report()
 
     def update_test_account_overviews(self):
         self.update_test_account_overview("trending_widget")
@@ -541,7 +603,7 @@ class UpdateDashboardLog:
         except HttpError as err:
             print(err)
 
-    def update_merchant_categorical_report(self, widget):
+    def update_merchant_categorical_report(self, widget=None):
         categorical_report_body = {'values': self.categorical_report_values[widget]}
         self.insert_blank_categorical_report_column(widget)
 
