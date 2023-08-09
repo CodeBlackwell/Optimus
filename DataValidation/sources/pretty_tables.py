@@ -322,7 +322,8 @@ class PrettyTableMaker:
 
     def __init__(self, merchant_summary_from_deploy=None, dir_path=None):
         if not merchant_summary_from_deploy and not dir_path:
-            print('this Library requires either a merchant summary input from deploy.py or a directory path containing reports')
+            print(
+                'this Library requires either a merchant summary input from deploy.py or a directory path containing reports')
         if not merchant_summary_from_deploy:
             print("No Deploy.py style merchant summary, or dir_path input was provided. providing example")
             self.merchant_summary_from_deploy = self.clean_input_category_names(self.provide_example())
@@ -347,6 +348,7 @@ class PrettyTableMaker:
         self.build_reverse_index_map()
         self.generate_categorical_reports()
         self.generate_test_account_overview_update()
+        self.generate_slack_hyperlinks()
         return self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report
 
     def build_slack_link_map(self):
@@ -374,7 +376,7 @@ class PrettyTableMaker:
                         if report_name in result[widget][category]:
                             result[widget][category][report_name] = {
                                 "result": self.merchant_summary[widget][category][report_name],
-                                "slack_link": result[widget][category][report_name]
+                                "slack_link": result[widget][category][report_name]["slack_link"]
                             }
                         else:
                             result[widget][category][report_name] = {
@@ -384,31 +386,31 @@ class PrettyTableMaker:
         self.linked_categorical_report = result
 
     def build_internal_tables(self):
-        if self.dir_path:
-            sim_dir = os.listdir(self.dir_path)
-            sim_path = os.path.join(self.dir_path, sim_dir[0])
-            source_name = os.listdir(sim_path)[0]
-            source_path = os.path.join(sim_path, source_name)
+        sim_dir = os.listdir(self.dir_path)
+        self.sim_name = sim_dir[0]
+        sim_path = os.path.join(self.dir_path, sim_dir[0])
+        source_name = os.listdir(sim_path)[0]
+        source_path = os.path.join(sim_path, source_name)
 
-            source_path_files = os.listdir(source_path)
-            for widget in source_path_files:
-                if os.path.isdir(os.path.join(source_path, widget)):
-                    widget_path = os.path.join(source_path, widget)
-                    for category in os.listdir(widget_path):
-                        category_path = os.path.join(widget_path, category)
-                        for filename in os.listdir(category_path):
-                            filepath = os.path.join(category_path, filename)
-                            new_df = pd.read_excel(filepath)
-                            self.tables_list.append(new_df)
-                            if self.start_date is None:
-                                self.start_date = new_df["Day"].values[0]
-                            if self.end_date is None:
-                                self.end_date = new_df["Day"].values[-1]
-                            if self.start_date is not None and self.end_date is not None:
-                                self.date_range = f"{self.start_date} - {self.end_date}"
-                else:
-                    summary_name = os.path.join(source_path, widget)
-                    self.summary_tables.append(pd.read_excel(summary_name))
+        source_path_files = os.listdir(source_path)
+        for widget in source_path_files:
+            if os.path.isdir(os.path.join(source_path, widget)):
+                widget_path = os.path.join(source_path, widget)
+                for category in os.listdir(widget_path):
+                    category_path = os.path.join(widget_path, category)
+                    for filename in os.listdir(category_path):
+                        filepath = os.path.join(category_path, filename)
+                        new_df = pd.read_excel(filepath)
+                        self.tables_list.append(new_df)
+                        if self.start_date is None:
+                            self.start_date = new_df["Day"].values[0]
+                        if self.end_date is None:
+                            self.end_date = new_df["Day"].values[-1]
+                        if self.start_date is not None and self.end_date is not None:
+                            self.date_range = f"{self.start_date} - {self.end_date}"
+            else:
+                summary_name = os.path.join(source_path, widget)
+                self.summary_tables.append(pd.read_excel(summary_name))
 
     def generate_test_account_overview_update(self):
         ta_flag = "PASS!"
@@ -497,6 +499,61 @@ class PrettyTableMaker:
             result[widget_key].insert(1, [self.get_sql_source()])
             result[widget_key].insert(3, [self.get_merchant()])
         self.categorical_report = result
+
+    def generate_slack_hyperlinks(self):
+        overview = copy.deepcopy(self.merchant_summary)
+        result = {
+            "top_affiliates_widget": [],
+            "trending_widget": []
+        }
+        for widget_key in overview:
+            if "widget" in widget_key:
+                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
+                    if cell not in self.reversed_report_index_map[widget_key]:
+                        result[widget_key].append([])
+                    else:
+                        category_literal = self.reversed_report_index_map[widget_key][cell]
+                        category = list(category_literal.keys()).pop()
+                        report_name = category_literal[category]
+                        try:
+                            if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
+                                result[widget_key].append(
+                                       self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[widget_key][category][report_name]["slack_link"])
+                                )
+                            else:
+                                result[widget_key].append([f"{widget_key} - {category} - {report_name} - had no link"])
+                        except KeyError:
+                            result[widget_key].append([f"{widget_key} - {category} - {report_name} - had no link"])
+
+        # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
+        for widget_key in result:
+            result[widget_key].pop(0)
+            result[widget_key].insert(0, [self.convert_run_time()])
+            result[widget_key].pop(1)
+            result[widget_key].insert(1, [self.get_sql_source()])
+            result[widget_key].insert(3, [self.get_merchant()])
+            print(len(result[widget_key]))
+
+        # pprint(result)
+        sys.exit()
+    @staticmethod
+    def generate_single_slack_hyperlink_request(index, slack_message_link):
+        result = {
+                "updateTextStyle": {
+                    "textStyle": {
+                        "link": {
+                            "url": slack_message_link
+                        }
+                    },
+                    "range": {
+                        "startIndex": index,
+                        "endIndex": index + 1
+                    },
+                    "fields": "link"
+                }
+        }
+        print(result)
+        return result
 
     def simplify_merchant_summary(self):
         for widget_name in self.merchant_summary:
