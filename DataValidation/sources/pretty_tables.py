@@ -8,10 +8,15 @@ import pandas as pd
 
 import sources
 
+true = True
+false = False
+null = None
+
 
 class PrettyTableMaker:
     tables_list = []
     summary_tables = []
+    sim_name = None
     category_literal = {
         "trending_widget": {
             "Sales": {
@@ -311,7 +316,19 @@ class PrettyTableMaker:
         "Adjustments": None,
         "Affiliate Commission": None
     }
+    merchant_summary_from_deploy = {}
+    linked_categorical_report = {}
     dir_path = None
+
+    def __init__(self, merchant_summary_from_deploy=None, dir_path=None):
+        if not merchant_summary_from_deploy and not dir_path:
+            print('this Library requires either a merchant summary input from deploy.py or a directory path containing reports')
+        if not merchant_summary_from_deploy:
+            print("No Deploy.py style merchant summary, or dir_path input was provided. providing example")
+            self.merchant_summary_from_deploy = self.clean_input_category_names(self.provide_example())
+
+        if dir_path:
+            self.dir_path = dir_path
 
     def build_reverse_index_map(self):
         result = {}
@@ -324,38 +341,74 @@ class PrettyTableMaker:
         return result
 
     def run(self):
-        self.retrieve_tables()
+        self.build_internal_tables()
         self.generate_merchant_summary_update_literal()
+        self.build_slack_link_map()
         self.build_reverse_index_map()
         self.generate_categorical_reports()
         self.generate_test_account_overview_update()
-        return self.merchant_summary, self.categorical_report, self.test_account_overview_update
+        return self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report
 
-    def retrieve_tables(self):
-        sim_dir = os.listdir(self.dir_path)
-        sim_path = os.path.join(self.dir_path, sim_dir[0])
-        source_name = os.listdir(sim_path)[0]
-        source_path = os.path.join(sim_path, source_name)
+    def build_slack_link_map(self):
+        subject = {}
+        result = {}
+        if self.merchant_summary_from_deploy:
+            subject = copy.deepcopy(self.merchant_summary_from_deploy)
 
-        source_path_files = os.listdir(source_path)
-        for widget in source_path_files:
-            if os.path.isdir(os.path.join(source_path, widget)):
-                widget_path = os.path.join(source_path, widget)
-                for category in os.listdir(widget_path):
-                    category_path = os.path.join(widget_path, category)
-                    for filename in os.listdir(category_path):
-                        filepath = os.path.join(category_path, filename)
-                        new_df = pd.read_excel(filepath)
-                        if self.start_date is None:
-                            self.start_date = new_df["Day"].values[0]
-                        if self.end_date is None:
-                            self.end_date = new_df["Day"].values[-1]
-                        if self.start_date is not None and self.end_date is not None:
-                            self.date_range = f"{self.start_date} - {self.end_date}"
-                        self.tables_list.append(new_df)
-            else:
-                summary_name = os.path.join(source_path, widget)
-                self.summary_tables.append(pd.read_excel(summary_name))
+        for merchant_name in subject:
+            for report_literal in subject[merchant_name]:
+                if report_literal["widget"] not in result:
+                    result[report_literal["widget"]] = {}
+                if report_literal["category"] not in result[report_literal["widget"]]:
+                    result[report_literal["widget"]][report_literal["category"]] = {}
+                if report_literal['report_name'] not in result[report_literal["widget"]][report_literal["category"]]:
+                    result[report_literal["widget"]][report_literal["category"]][report_literal['report_name']] = \
+                        {"slack_link": report_literal['link']}
+
+        for widget in copy.deepcopy(self.merchant_summary):
+            if "widget" in widget:
+                for category in self.merchant_summary[widget]:
+                    if category not in result[widget]:
+                        result[widget][category] = {}
+                    for report_name in self.merchant_summary[widget][category]:
+                        if report_name in result[widget][category]:
+                            result[widget][category][report_name] = {
+                                "result": self.merchant_summary[widget][category][report_name],
+                                "slack_link": result[widget][category][report_name]
+                            }
+                        else:
+                            result[widget][category][report_name] = {
+                                "result": self.merchant_summary[widget][category][report_name],
+                                "slack_link": None
+                            }
+        self.linked_categorical_report = result
+
+    def build_internal_tables(self):
+        if self.dir_path:
+            sim_dir = os.listdir(self.dir_path)
+            sim_path = os.path.join(self.dir_path, sim_dir[0])
+            source_name = os.listdir(sim_path)[0]
+            source_path = os.path.join(sim_path, source_name)
+
+            source_path_files = os.listdir(source_path)
+            for widget in source_path_files:
+                if os.path.isdir(os.path.join(source_path, widget)):
+                    widget_path = os.path.join(source_path, widget)
+                    for category in os.listdir(widget_path):
+                        category_path = os.path.join(widget_path, category)
+                        for filename in os.listdir(category_path):
+                            filepath = os.path.join(category_path, filename)
+                            new_df = pd.read_excel(filepath)
+                            self.tables_list.append(new_df)
+                            if self.start_date is None:
+                                self.start_date = new_df["Day"].values[0]
+                            if self.end_date is None:
+                                self.end_date = new_df["Day"].values[-1]
+                            if self.start_date is not None and self.end_date is not None:
+                                self.date_range = f"{self.start_date} - {self.end_date}"
+                else:
+                    summary_name = os.path.join(source_path, widget)
+                    self.summary_tables.append(pd.read_excel(summary_name))
 
     def generate_test_account_overview_update(self):
         ta_flag = "PASS!"
@@ -430,10 +483,12 @@ class PrettyTableMaker:
                         report_name = category_literal[category]
                         try:
                             result[widget_key].append(
-                                [f"{[self.merchant_summary[widget_key][category][report_name]].pop()}"]
+                                [
+                                    f"{[self.merchant_summary[widget_key][category][report_name]].pop()} - {category_literal}"]
                             )
                         except KeyError:
-                            result[widget_key].append([f"N/A"])
+                            result[widget_key].append([f"N/A - {category_literal}"])
+
         # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         for widget_key in result:
             result[widget_key].pop(0)
@@ -482,3 +537,140 @@ class PrettyTableMaker:
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
         return f"{clean_date} @ {clean_runtime}\n{self.date_range}"
+
+    def provide_example(self):
+        true = True
+        false = False
+        return {
+            "REI.com": [
+                {"widget": "top_affiliates_widget", "category": "Network_Commission",
+                 "report": "TA_NetworkSaleCommission",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513081723139",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkSaleCommission.xlsx",
+                 "report_name": "Network Sale Commission"},
+                {"widget": "top_affiliates_widget", "category": "Network_Commission", "report": "TA_NetworkBonus",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513084270259",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkBonus.xlsx",
+                 "report_name": "Network Bonus"},
+                {"widget": "top_affiliates_widget", "category": "Network_Commission", "report": "TA_NetworkCPC",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513086786479",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkCPC.xlsx",
+                 "report_name": "Network CPC"},
+                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission", "report": "TA_AffilCPC",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513089288769",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilCPC.xlsx",
+                 "report_name": "Affiliate CPC"},
+                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission", "report": "TA_AffilBonus",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513091817259",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilBonus.xlsx",
+                 "report_name": "Affiliate Bonus"},
+                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission",
+                 "report": "TA_AffilSaleCommission",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513094328079",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilSaleCommission.xlsx",
+                 "report_name": "Affiliate Sale Commission"},
+                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission",
+                 "report": "TA_AffilIncentiveCommissi", "data_source": "olap",
+                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513096867209", "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilIncentiveCommissi.xlsx",
+                 "report_name": "Affiliate Incentive Commission"},
+                {"widget": "top_affiliates_widget", "category": "Clicks % Impressions", "report": "TA_Impressions",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513099342479",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Clicks_%_Impressions/TA_Impressions.xlsx",
+                 "report_name": "Impressions"},
+                {"widget": "top_affiliates_widget", "category": "Clicks % Impressions", "report": "TA_Clicks",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513102053469",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Clicks_%_Impressions/TA_Clicks.xlsx",
+                 "report_name": "Clicks"},
+                {"widget": "top_affiliates_widget", "category": "Sales", "report": "TA_Orders", "data_source": "olap",
+                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513104649519", "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Sales/TA_Orders.xlsx",
+                 "report_name": "Orders"},
+                {"widget": "top_affiliates_widget", "category": "Sales", "report": "TA_GrossSales",
+                 "data_source": "olap",
+                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513107209679", "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Sales/TA_GrossSales.xlsx",
+                 "report_name": "Gross Sales"},
+                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkBonus",
+                 "data_source": "olap",
+                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05LVQR727L/rei.com_tw_networkbonus.xlsx",
+                 "passed": false,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkBonus.xlsx",
+                 "report_name": "Network Bonus"},
+                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkCPC",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513112399169",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkCPC.xlsx",
+                 "report_name": "Network CPC"},
+                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkPaidPlacement",
+                 "data_source": "olap",
+                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05M8E38QP3/rei.com_tw_networkpaidplacement.xlsx",
+                 "passed": false,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkPaidPlacement.xlsx",
+                 "report_name": "Network Paid Placement"},
+                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkSaleCommission",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513116936849",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkSaleCommission.xlsx",
+                 "report_name": "Network Sale Commission"},
+                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilSaleCommission",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513119428069",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilSaleCommission.xlsx",
+                 "report_name": "Affiliate Sale Commission"},
+                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilCPC",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513122005639",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilCPC.xlsx",
+                 "report_name": "Affiliate CPC"},
+                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilIncentiveCommissi",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513124547339",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilIncentiveCommissi.xlsx",
+                 "report_name": "Affiliate Incentive Commission"},
+                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilBonus",
+                 "data_source": "olap",
+                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05LVQT4UTC/rei.com_tw_affilbonus.xlsx",
+                 "passed": false,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilBonus.xlsx",
+                 "report_name": "Affiliate Bonus"},
+                {"widget": "trending_widget", "category": "Clicks % Impressions", "report": "TW_Clicks",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513129087389",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Clicks_%_Impressions/TW_Clicks.xlsx",
+                 "report_name": "Clicks"},
+                {"widget": "trending_widget", "category": "Clicks % Impressions", "report": "TW_Impressions",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513131638639",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Clicks_%_Impressions/TW_Impressions.xlsx",
+                 "report_name": "Impressions"},
+                {"widget": "trending_widget", "category": "Sales", "report": "TW_GrossSales", "data_source": "olap",
+                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513134208909", "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Sales/TW_GrossSales.xlsx",
+                 "report_name": "Gross Sales"},
+                {"widget": "trending_widget", "category": "Adjustments", "report": "TW_Adjustments",
+                 "data_source": "olap",
+                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513137758649", "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Adjustments/TW_Adjustments.xlsx",
+                 "report_name": "Adjustments"},
+                {"widget": "trending_widget", "category": "Adjustments", "report": "TW_AdjustedSales",
+                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513140280649",
+                 "passed": true,
+                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Adjustments/TW_AdjustedSales.xlsx",
+                 "report_name": "Adjusted Sales"}]}
+
+    @staticmethod
+    def clean_input_category_names(deploy_output):
+        for merchant_name in deploy_output:
+            for literal in deploy_output[merchant_name]:
+                clean_category = literal['category'].replace("_", " ")
+                literal.update({'category': clean_category})
+        return deploy_output
