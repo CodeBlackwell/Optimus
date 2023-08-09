@@ -29,13 +29,13 @@ class UpdateDashboardLog:
         "tw": []
     }
     avantlog_spreadsheet_ids = {
-        "ta": {
+        "top_affiliates_widget": {
             "fact_postgres": "1jvLwUWylyoU4moSJSuVZ8Nq1IkIqGnRtGa0OHWAgmcQ",
             "fact_redshift": "16AGoYobiSKieJpTl9bwl1bo6l58QNqxM5Iwiq5AJ24U",
             "cube_postgres": "1HieLzmnLKY-T1Siz4Gn_k0_lKNcJDwY_1sMV2gNwi64",
             "cube_olap": "15G0xYyQNdhDcqFvBqq3S1M3cFAaJHx8SwZyDtBLG_h8"
         },
-        "tw": {
+        "trending_widget": {
             "fact_postgres": "1ZXk4QlTjDE3mkH6SOKqFMouAdHMEDf7xbRXALPQkLAs",
             "fact_redshift": "12K1sdP8ezk1e8OkvPFoSgiDhdqD0uYIHSJBRMB6LEmU",
             "cube_postgres": "1knT1Q0qKsucl1YEjzT8e7iNsVWouhXp5oJ4zS9RWfbE",
@@ -45,20 +45,49 @@ class UpdateDashboardLog:
         "historic_logs": "1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw"
     }
     merchant_summary_RANGE = {
-        "rei.com": "Merchant Summary!C2:C12",
-        "Black Diamond": "Merchant Summary!B2:B12",
-        "Carousel Checks": "Merchant Summary!D2:D12",
-        "Palmetto State Armory": "Merchant Summary!E2:E12",
-        "RTIC Outdoors": "Merchant Summary!F2:F12",
-        "A Life Plus": "Merchant Summary!G2:G12"
+        "part_1": {
+            "rei.com": "Merchant Summary!C2:C3",
+            "Black Diamond": "Merchant Summary!B2:B3",
+            "Carousel Checks": "Merchant Summary!D2:D3",
+            "Palmetto State Armory": "Merchant Summary!E2:E3",
+            "RTIC Outdoors": "Merchant Summary!F2:F3",
+            "A Life Plus": "Merchant Summary!G2:G3"
+        },
+        "part_2": {
+            "rei.com": "Merchant Summary!C5:C12",
+            "Black Diamond": "Merchant Summary!B5:B12",
+            "Carousel Checks": "Merchant Summary!D5:D12",
+            "Palmetto State Armory": "Merchant Summary!E5:E12",
+            "RTIC Outdoors": "Merchant Summary!F5:F12",
+            "A Life Plus": "Merchant Summary!G5:G12"
+        }
     }
     categorical_report_RANGE = {
-        "REI.com": "REI.com!E1:ZZZ",
-        "Black Diamond": "Black Diamond!E1:ZZZ",
-        "Carousel Checks": "Carousel Checks!E1:ZZZ",
-        "RTIC Outdoors": "RTIC Outdoors!E1:ZZZ",
-        "Palmetto State Armory": "Palmetto State Armory!E1:ZZZ",
-        "A Life Plus": "A Life Plus!E1:ZZZ"
+        "REI.com": "REI.com!E1:E50",
+        "Black Diamond": "Black Diamond!E1:E50",
+        "Carousel Checks": "Carousel Checks!E1:E50",
+        "RTIC Outdoors": "RTIC Outdoors!E1:E50",
+        "Palmetto State Armory": "Palmetto State Armory!E1:E50",
+        "A Life Plus": "A Life Plus!E1:E50"
+    }
+    linked_categorical_report = {}
+    categorical_report_spreadsheet_ids = {
+        "trending_widget": {
+            "cube_olap": {},
+            "cube_postgres": {
+                "RTIC Outdoors": 483196132
+            },
+            "fact_postgres": {},
+            "fact_redshift": {}
+        },
+        "top_affiliates_widget": {
+            "cube_olap": {},
+            "cube_postgres": {
+                "RTIC Outdoors": 1188930327
+            },
+            "fact_postgres": {},
+            "fact_redshift": {}
+        }
     }
     test_account_overview_range = {
         "REI.com": "Test Accounts Overview!A2",
@@ -208,8 +237,12 @@ class UpdateDashboardLog:
             }
         }
     }
+    categorical_report_slack_title_format_map = {
+        "top_affiliates_widget": {},
+        "trending_widget": {}
+    }
 
-    def __init__(self, merchant_summary, categorical_report, test_account_overview):
+    def __init__(self, merchant_summary, categorical_report, test_account_overview, linked_categorical_report):
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -231,7 +264,9 @@ class UpdateDashboardLog:
         service = build('sheets', 'v4', credentials=creds)
         self.service = service
         self.sheet = service.spreadsheets().values()
+        self.linked_categorical_report = linked_categorical_report
         self.categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
+
         self.merchant_summary = merchant_summary
         self.test_account_overview = test_account_overview
         self.sql_source = merchant_summary["SQL_source"]
@@ -242,30 +277,29 @@ class UpdateDashboardLog:
     def run(self):
         self.process_merchant_summary_report_for_google()
         self.simplify_merchant_summary()
-        # self.update_test_account_overviews()
-
         # self.update_merchant_summaries()
-        # self.get_spreadsheet_data()
+        # self.update_test_account_overviews()
         # self.update_categorical_reports()
+        self.insert_blank_categorical_report_column("top_affiliates_widget")
+        sys.exit()
+        # self.update_values()
 
-    def get_spreadsheet_data(self, spreadsheet_id=None):
-        spreadsheet_id = spreadsheet_id or self.avantlog_spreadsheet_ids["ta"][
-            "cube_postgres"]
+    # @TODO: Remove Hardcoded sheet_id and spreadsheet id
+    def insert_blank_categorical_report_column(self, widget):
+        avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
+        categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][self.merchant_name]
 
-        # The ranges to retrieve from the spreadsheet.
-        ranges = [f"{self.categorical_report_RANGE[self.merchant_name]}"]
-
-        # True if grid data should be returned.
-        # This parameter is ignored if a field mask was set in the request.
-        include_grid_data = True
-
-        request = self.service.spreadsheets().get(
-            spreadsheetId=spreadsheet_id,
-            ranges=ranges,
-            includeGridData=include_grid_data
-        )
-        response = request.execute()
-        pprint(response)
+        body = {
+            "requests": [
+                {"insertDimension": {
+                    "range": {"sheetId": categorical_report_tab_id, "dimension": "COLUMNS", "startIndex": 4,
+                              "endIndex": 5}, "inheritFromBefore": False}}
+            ]
+        }
+        result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
+    def update_values(self):
+        spreadsheet_id = self.avantlog_spreadsheet_ids["top_affiliates_widget"]["cube_postgres"]
+        # TODO: Build
 
     def update_all_sources_test_account_overview(self):
         tw_test_account_overview_body = {'values': [[
@@ -353,26 +387,53 @@ class UpdateDashboardLog:
             print(err)
 
     def update_merchant_summary(self, widget):
-        account_overview_body = {'values': self.merchant_summary_report_values[widget]}
+        merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values[widget][:2]}
+        merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values[widget][3:]}
+
+        preadsheetId = self.avantlog_spreadsheet_ids[widget][self.sql_source],
+        range = self.merchant_summary_RANGE["part_1"][self.merchant_name],
+        valueInputOption = VALUE_INPUT_OPTION,
+        body = merchant_summary_body_part_1
+        print({
+            preadsheetId,
+            range,
+            valueInputOption,
+            body
+        })
+        sys.exit()
         try:
-            # upload - Merchant Summary Report - Trending Widget
-            merchant_account_overview = self.sheet.update(
+            # upload - Merchant Summary Report - Part 1
+            merchant_account_overview_part_1 = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
-                range=self.merchant_summary_RANGE[self.merchant_name.lower()],
+                range=self.merchant_summary_RANGE["part_1"][self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
-                body=account_overview_body
+                body=merchant_summary_body_part_1
             ).execute()
-            pprint(merchant_account_overview)
+            # pprint(merchant_account_overview_part_1)
+        except HttpError as err:
+            print(err)
+        try:
+            # upload - Merchant Summary Report - Part 2
+            merchant_account_overview_part_2 = self.sheet.update(
+                spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
+                range=self.merchant_summary_RANGE["part_2"][self.merchant_name],
+                valueInputOption=VALUE_INPUT_OPTION,
+                body=merchant_summary_body_part_2
+            ).execute()
+            # pprint(merchant_account_overview_part_2)
         except HttpError as err:
             print(err)
 
     def update_merchant_categorical_report(self, widget):
         top_accounts_categorical_report_body = {'values': self.categorical_report_values[widget]}
+        self.insert_blank_categorical_report_column(widget)
+        sys.exit()
+
         # upload Categorical Report for each Widget -- Top Affiliates / Trending widget
         try:
             top_accounts_result = self.sheet.append(
                 spreadsheetId=self.avantlog_spreadsheet_ids[widget][self.sql_source],
-                range=self.categorical_report_RANGE[self.merchant_name.lower()],
+                range=self.categorical_report_RANGE[self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 insertDataOption="OVERWRITE",
                 body=top_accounts_categorical_report_body
@@ -380,7 +441,7 @@ class UpdateDashboardLog:
             result = top_accounts_result.execute()
             # print(result)
             print(
-                f"{(result.get('updates').get('updatedCells'))} - {self.sql_source} - cells appended. - {widget} - Categorical")
+                f"{(result.get('updates').get('updatedCells'))} - {self.sql_source} - cells appended. - {widget} - {self.merchant_name} - Categorical")
         except HttpError as err:
             print(err)
 
