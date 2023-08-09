@@ -74,20 +74,74 @@ class UpdateDashboardLog:
     linked_categorical_report = {}
     categorical_report_spreadsheet_ids = {
         "trending_widget": {
-            "cube_olap": {},
-            "cube_postgres": {
-                "RTIC Outdoors": 483196132
+            "cube_olap": {
+                "REI.com": 703945982,
+                "Black Diamond": 216714549,
+                "Carousel Checks": 338170075,
+                "Palmetto State Armory": 748327824,
+                "RTIC Outdoors": 11214453,
+                "A Life Plus": 453348889
             },
-            "fact_postgres": {},
-            "fact_redshift": {}
+            "cube_postgres": {
+                "RTIC Outdoors": 483196132,
+                "REI.com": 1654910639,
+                "Black Diamond": 50980162,
+                "Carousel Checks": 2116400324,
+                "Palmetto State Armory": 583081350,
+                "A Life Plus": 893464757
+            },
+            "fact_postgres": {
+                "REI.com": 1674335050,
+                "Black Diamond": 713675991,
+                "Carousel Checks": 1977279573,
+                "Palmetto State Armory": 593436964,
+                "RTIC Outdoors": 1974675983,
+                "A Life Plus": 564407217
+            },
+            "fact_redshift": {
+                "REI.com": 1091042768,
+                "Black Diamond": 1028869454,
+                "Carousel Checks": 1683149162,
+                "Palmetto State Armory": 549061267,
+                "RTIC Outdoors": 523928566,
+                "A Life Plus": 895709852
+            },
+            "all_sources": 1567122299
         },
         "top_affiliates_widget": {
-            "cube_olap": {},
-            "cube_postgres": {
-                "RTIC Outdoors": 1188930327
+            "cube_olap": {
+                "REI.com": 564315687,
+                "Black Diamond": 1931016559,
+                "Carousel Checks": 969222130,
+                "Palmetto State Armory": 653692908,
+                "RTIC Outdoors": 130979600,
+                "A Life Plus": 886186822
             },
-            "fact_postgres": {},
-            "fact_redshift": {}
+            "cube_postgres": {
+                "REI.com": 1018886555,
+                "Black Diamond": 318135753,
+                "Carousel Checks": 318037317,
+                "Palmetto State Armory": 873660368,
+                "RTIC Outdoors": 1188930327,
+                "A Life Plus": 653247468
+            },
+            "fact_postgres": {
+                "REI.com": 687597798,
+                "Black Diamond": 657468600,
+                "Carousel Checks": 1960841405,
+                "Palmetto State Armory": 998588654,
+                "RTIC Outdoors": 52608501,
+                "A Life Plus": 1693042867
+            },
+            "fact_redshift": {
+                "rei.com": 1114619640,
+                "Black Diamond": 1032630095,
+                "Carousel Checks": 1039748189,
+                "Palmetto State Armory": 1858213088,
+                "RTIC Outdoors": 1260101347,
+                "A Life Plus": 437151484
+            },
+            "all_sources": 1278908903
         }
     }
     test_account_overview_range = {
@@ -99,74 +153,146 @@ class UpdateDashboardLog:
         "A Life Plus": "Test Accounts Overview!A7"
     }
     all_sources_merchant_summary_RANGE = {
-        "trending_widget": {
-            "cube_postgres": {
-                "Black Diamond": "Merchant Summary!B2:B12",
-                "REI.com": "Merchant Summary!C2:C12",
-                "Carousel Checks": "Merchant Summary!D2:D12",
-                "Palmetto State Armory": "Merchant Summary!E2:E12",
-                "RTIC Outdoors": "Merchant Summary!F2:F12",
-                "A Life Plus": "Merchant Summary!G2:G12"
+        "part_1": {
+            "trending_widget": {
+                "cube_postgres": {
+                    "Black Diamond": "Merchant Summary!B2:B3",
+                    "REI.com": "Merchant Summary!C2:C3",
+                    "Carousel Checks": "Merchant Summary!D2:D3",
+                    "Palmetto State Armory": "Merchant Summary!E2:E3",
+                    "RTIC Outdoors": "Merchant Summary!F2:F3",
+                    "A Life Plus": "Merchant Summary!G2:G3"
+                },
+                "fact_postgres": {
+                    "Black Diamond": "Merchant Summary!B15:B16",
+                    "REI.com": "Merchant Summary!C15:C16",
+                    "Carousel Checks": "Merchant Summary!D15:D16",
+                    "Palmetto State Armory": "Merchant Summary!E15:E16",
+                    "RTIC Outdoors": "Merchant Summary!F15:F16",
+                    "A Life Plus": "Merchant Summary!G15:G16"
+                },
+                "fact_redshift": {
+                    "Black Diamond": "Merchant Summary!B28:B29",
+                    "REI.com": "Merchant Summary!C28:C29",
+                    "Carousel Checks": "Merchant Summary!D28:D29",
+                    "Palmetto State Armory": "Merchant Summary!E28:E29",
+                    "RTIC Outdoors": "Merchant Summary!F28:F29",
+                    "A Life Plus": "Merchant Summary!G28:G29"
+                },
+                "cube_olap": {
+                    "Black Diamond": "Merchant Summary!B41:B42",
+                    "REI.com": "Merchant Summary!C41:C42",
+                    "Carousel Checks": "Merchant Summary!D41:D42",
+                    "Palmetto State Armory": "Merchant Summary!E41:E42",
+                    "RTIC Outdoors": "Merchant Summary!F41:F42",
+                    "A Life Plus": "Merchant Summary!G41:G42"
+                }
             },
-            "fact_postgres": {
-                "Black Diamond": "Merchant Summary!B15:B25",
-                "REI.com": "Merchant Summary!C15:C25",
-                "Carousel Checks": "Merchant Summary!D15:D25",
-                "Palmetto State Armory": "Merchant Summary!E15:E25",
-                "RTIC Outdoors": "Merchant Summary!F15:F25",
-                "A Life Plus": "Merchant Summary!G15:G25"
-            },
-            "fact_redshift": {
-                "Black Diamond": "Merchant Summary!B28:B38",
-                "REI.com": "Merchant Summary!C28:C38",
-                "Carousel Checks": "Merchant Summary!D28:D38",
-                "Palmetto State Armory": "Merchant Summary!E28:E38",
-                "RTIC Outdoors": "Merchant Summary!F28:F38",
-                "A Life Plus": "Merchant Summary!28:G38G"
-            },
-            "cube_olap": {
-                "Black Diamond": "Merchant Summary!B41:B51",
-                "REI.com": "Merchant Summary!C41:C51",
-                "Carousel Checks": "Merchant Summary!D41:D51",
-                "Palmetto State Armory": "Merchant Summary!E41:E51",
-                "RTIC Outdoors": "Merchant Summary!F41:F51",
-                "A Life Plus": "Merchant Summary!G41:G51"
+            "top_affiliates_widget": {
+                "cube_postgres": {
+                    "Black Diamond": "Merchant Summary!I2:I3",
+                    "REI.com": "Merchant Summary!J2:J3",
+                    "Carousel Checks": "Merchant Summary!K2:K3",
+                    "Palmetto State Armory": "Merchant Summary!L2:L3",
+                    "RTIC Outdoors": "Merchant Summary!M2:M3",
+                    "A Life Plus": "Merchant Summary!N2:N3"
+                },
+                "fact_postgres": {
+                    "Black Diamond": "Merchant Summary!I15:I16",
+                    "REI.com": "Merchant Summary!J15:J16",
+                    "Carousel Checks": "Merchant Summary!K15:K16",
+                    "Palmetto State Armory": "Merchant Summary!L15:L16",
+                    "RTIC Outdoors": "Merchant Summary!M15:M16",
+                    "A Life Plus": "Merchant Summary!N15:N16"
+                },
+                "fact_redshift": {
+                    "Black Diamond": "Merchant Summary!I28:I29",
+                    "REI.com": "Merchant Summary!J28:J29",
+                    "Carousel Checks": "Merchant Summary!K28:K29",
+                    "Palmetto State Armory": "Merchant Summary!L28:L29",
+                    "RTIC Outdoors": "Merchant Summary!M28:M29",
+                    "A Life Plus": "Merchant Summary!N28:N29"
+                },
+                "cube_olap": {
+                    "Black Diamond": "Merchant Summary!I41:I42",
+                    "REI.com": "Merchant Summary!J41:J42",
+                    "Carousel Checks": "Merchant Summary!K41:K42",
+                    "Palmetto State Armory": "Merchant Summary!L41:L42",
+                    "RTIC Outdoors": "Merchant Summary!M41:M42",
+                    "A Life Plus": "Merchant Summary!N41:N42"
+                }
             }
         },
-        "top_affiliates_widget": {
-            "cube_postgres": {
-                "Black Diamond": "Merchant Summary!I2:I12",
-                "REI.com": "Merchant Summary!J2:J12",
-                "Carousel Checks": "Merchant Summary!K2:K12",
-                "Palmetto State Armory": "Merchant Summary!L2:L12",
-                "RTIC Outdoors": "Merchant Summary!M2:M12",
-                "A Life Plus": "Merchant Summary!N2:N12"
+        "part_2": {
+            "trending_widget": {
+                "cube_postgres": {
+                    "Black Diamond": "Merchant Summary!B5:B12",
+                    "REI.com": "Merchant Summary!C5:C12",
+                    "Carousel Checks": "Merchant Summary!D5:D12",
+                    "Palmetto State Armory": "Merchant Summary!E5:E12",
+                    "RTIC Outdoors": "Merchant Summary!F5:F12",
+                    "A Life Plus": "Merchant Summary!G5:G12"
+                },
+                "fact_postgres": {
+                    "Black Diamond": "Merchant Summary!B18:B25",
+                    "REI.com": "Merchant Summary!C18:C25",
+                    "Carousel Checks": "Merchant Summary!D18:D25",
+                    "Palmetto State Armory": "Merchant Summary!E18:E25",
+                    "RTIC Outdoors": "Merchant Summary!F18:F25",
+                    "A Life Plus": "Merchant Summary!G18:G25"
+                },
+                "fact_redshift": {
+                    "Black Diamond": "Merchant Summary!B31:B38",
+                    "REI.com": "Merchant Summary!C31:C38",
+                    "Carousel Checks": "Merchant Summary!D31:D38",
+                    "Palmetto State Armory": "Merchant Summary!E31:E38",
+                    "RTIC Outdoors": "Merchant Summary!F31:F38",
+                    "A Life Plus": "Merchant Summary!G31:G38"
+                },
+                "cube_olap": {
+                    "Black Diamond": "Merchant Summary!B44:B51",
+                    "REI.com": "Merchant Summary!C44:C51",
+                    "Carousel Checks": "Merchant Summary!D44:D51",
+                    "Palmetto State Armory": "Merchant Summary!E44:E51",
+                    "RTIC Outdoors": "Merchant Summary!F44:F51",
+                    "A Life Plus": "Merchant Summary!G44:G51"
+                }
             },
-            "fact_postgres": {
-                "Black Diamond": "Merchant Summary!I15:I25",
-                "REI.com": "Merchant Summary!J15:J25",
-                "Carousel Checks": "Merchant Summary!K15:K25",
-                "Palmetto State Armory": "Merchant Summary!L15:L25",
-                "RTIC Outdoors": "Merchant Summary!M15:M25",
-                "A Life Plus": "Merchant Summary!N15:N25"
-            },
-            "fact_redshift": {
-                "Black Diamond": "Merchant Summary!I28:I38",
-                "REI.com": "Merchant Summary!J28:J38",
-                "Carousel Checks": "Merchant Summary!K28:K38",
-                "Palmetto State Armory": "Merchant Summary!L28:L38",
-                "RTIC Outdoors": "Merchant Summary!M28:M38",
-                "A Life Plus": "Merchant Summary!N8:N38G"
-            },
-            "cube_olap": {
-                "Black Diamond": "Merchant Summary!I41:I51",
-                "REI.com": "Merchant Summary!J41:J51",
-                "Carousel Checks": "Merchant Summary!K41:K51",
-                "Palmetto State Armory": "Merchant Summary!L41:L51",
-                "RTIC Outdoors": "Merchant Summary!M41:M51",
-                "A Life Plus": "Merchant Summary!N41:N51"
+            "top_affiliates_widget": {
+                "cube_postgres": {
+                    "Black Diamond": "Merchant Summary!I5:I12",
+                    "REI.com": "Merchant Summary!J5:J12",
+                    "Carousel Checks": "Merchant Summary!K5:K12",
+                    "Palmetto State Armory": "Merchant Summary!L5:L12",
+                    "RTIC Outdoors": "Merchant Summary!M5:M12",
+                    "A Life Plus": "Merchant Summary!N5:N12"
+                },
+                "fact_postgres": {
+                    "Black Diamond": "Merchant Summary!I18:I25",
+                    "REI.com": "Merchant Summary!J18:J25",
+                    "Carousel Checks": "Merchant Summary!K18:K25",
+                    "Palmetto State Armory": "Merchant Summary!L18:L25",
+                    "RTIC Outdoors": "Merchant Summary!M18:M25",
+                    "A Life Plus": "Merchant Summary!N18:N25"
+                },
+                "fact_redshift": {
+                    "Black Diamond": "Merchant Summary!I31:I38",
+                    "REI.com": "Merchant Summary!J31:J38",
+                    "Carousel Checks": "Merchant Summary!K31:K38",
+                    "Palmetto State Armory": "Merchant Summary!L31:L38",
+                    "RTIC Outdoors": "Merchant Summary!M31:M38",
+                    "A Life Plus": "Merchant Summary!N31:N38"
+                },
+                "cube_olap": {
+                    "Black Diamond": "Merchant Summary!I44:I51",
+                    "REI.com": "Merchant Summary!J44:J51",
+                    "Carousel Checks": "Merchant Summary!K44:K51",
+                    "Palmetto State Armory": "Merchant Summary!L44:L51",
+                    "RTIC Outdoors": "Merchant Summary!M44:M51",
+                    "A Life Plus": "Merchant Summary!N44:N51"
+                }
             }
-        }
+        },
     }
     all_sources_test_account_overview_RANGE = {
         "trending_widget": {
