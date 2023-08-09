@@ -518,7 +518,8 @@ class PrettyTableMaker:
                         try:
                             if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
                                 result[widget_key].append(
-                                       self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[widget_key][category][report_name]["slack_link"])
+                                    self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[
+                                        widget_key][category][report_name]["slack_link"])
                                 )
                             else:
                                 result[widget_key].append([f"{widget_key} - {category} - {report_name} - had no link"])
@@ -532,27 +533,28 @@ class PrettyTableMaker:
             result[widget_key].pop(1)
             result[widget_key].insert(1, [self.get_sql_source()])
             result[widget_key].insert(3, [self.get_merchant()])
-            print(len(result[widget_key]))
+        final_requests_body = []
+        for widget in result:
+            for val in result[widget]:
+                if isinstance(val, dict):
+                    final_requests_body.append(val)
 
-        # pprint(result)
-        sys.exit()
     @staticmethod
     def generate_single_slack_hyperlink_request(index, slack_message_link):
         result = {
-                "updateTextStyle": {
-                    "textStyle": {
-                        "link": {
-                            "url": slack_message_link
-                        }
-                    },
-                    "range": {
-                        "startIndex": index,
-                        "endIndex": index + 1
-                    },
-                    "fields": "link"
-                }
+            "updateTextStyle": {
+                "textStyle": {
+                    "link": {
+                        "url": slack_message_link
+                    }
+                },
+                "range": {
+                    "startIndex": index,
+                    "endIndex": index + 1
+                },
+                "fields": "link"
+            }
         }
-        print(result)
         return result
 
     def simplify_merchant_summary(self):
