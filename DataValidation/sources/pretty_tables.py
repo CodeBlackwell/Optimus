@@ -352,7 +352,7 @@ class PrettyTableMaker:
         self.generate_test_account_overview_update()
         self.build_slack_link_map()
         self.generate_slack_hyperlinks()
-        return self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report
+        return sources.UpdateDashboardlog(self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report)
 
     def build_slack_link_map(self):
         subject = {}
