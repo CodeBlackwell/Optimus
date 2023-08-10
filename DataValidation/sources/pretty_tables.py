@@ -327,7 +327,10 @@ class PrettyTableMaker:
         if not merchant_summary_from_deploy:
             print("No Deploy.py style merchant summary, or dir_path input was provided. providing example")
             self.merchant_summary_from_deploy = self.clean_input_category_names(self.provide_example())
-
+        if merchant_summary_from_deploy:
+            for merchant_name in merchant_summary_from_deploy:
+                for val in merchant_summary_from_deploy[merchant_name]:
+                    self.dir_path = "/".join(val["file"].split("/")[:4])
         if dir_path:
             self.dir_path = dir_path
 
@@ -396,7 +399,6 @@ class PrettyTableMaker:
             if "widget" in widget_key:
                 for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
                     if cell not in self.reversed_report_index_map[widget_key]:
-                        # result[widget_key].append([])
                         continue
                     else:
                         category_literal = self.reversed_report_index_map[widget_key][cell]
@@ -410,7 +412,6 @@ class PrettyTableMaker:
                                 )
                         except KeyError:
                             pass
-        # pprint(result)
         self.linked_categorical_report = result
         # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         return result
