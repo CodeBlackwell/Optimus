@@ -220,10 +220,6 @@ class Cascade:
                     f = open(filepath, "r")
                     request_object = json.loads(f.read())
 
-                    print('---------')
-                    print(report_name)
-                    print(json.dumps(request_object))
-
                     # For testing via simulation
                     if sim is not None:
                         # This is here because I think simulations don't work with partitioned reports
