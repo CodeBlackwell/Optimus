@@ -426,16 +426,24 @@ class UpdateDashboardLog:
         }
         result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
 
-    def insert_slack_hyperlinks(self, widget):
-        avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
-        categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][self.merchant_name]
-
+    def insert_slack_hyperlinks(self, widget, all_sources=False):
+        if not all_sources:
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
+            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][
+                self.merchant_name]
+        if all_sources:
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids["all_sources"]
+            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget]["all_sources"]
+        body = {
+            "requests": self.linked_categorical_report[widget]
+        }
+        result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
 
     def update_all_sources_test_account_overview(self):
         tw_test_account_overview_body = {'values': [[
             f"{self.test_account_overview['Last Test']} \n {self.test_account_overview['pass/fail']['trending_widget']}"]]}
         try:
-            # upload - Merchant Summary Report - All Sources - Trending Widget
+            # upload - Test Account Overview - All Sources - Trending Widget
             tw_all_sources_test_account_overview = self.sheet.update(
                 spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
                 range=self.all_sources_test_account_overview_RANGE["trending_widget"][self.sql_source][
@@ -478,6 +486,7 @@ class UpdateDashboardLog:
             # print(result)
         except HttpError as err:
             print(err)
+        self.insert_slack_hyperlinks("trending_widget", all_sources=True)
 
         # upload Categorical Report for each Widget - All Sources - Top Affiliates
         categorical_report_body = {'values': self.categorical_report_values["top_affiliates_widget"]}
@@ -495,6 +504,8 @@ class UpdateDashboardLog:
         except HttpError as err:
             print(err)
 
+        self.insert_slack_hyperlinks("top_affiliates_widget", all_sources=True)
+
     def update_all_sources_merchant_summary(self):
         tw_merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values["trending_widget"][:2]}
         tw_merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values["trending_widget"][3:]}
@@ -502,19 +513,22 @@ class UpdateDashboardLog:
         try:
             # upload - Merchant Summary Report - Part 1
             merchant_account_overview_part_1 = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["trending_widget"][self.sql_source],
-                range=self.all_sources_merchant_summary_RANGE["part_1"][self.merchant_name],
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_merchant_summary_RANGE["part_1"]["trending_widget"][self.sql_source][
+                    self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=tw_merchant_summary_body_part_1
             ).execute()
             # pprint(merchant_account_overview_part_1)
         except HttpError as err:
             print(err)
+
         try:
             # upload - Merchant Summary Report - Part 2
             merchant_account_overview_part_2 = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["trending_widget"][self.sql_source],
-                range=self.all_sources_merchant_summary_RANGE["part_2"][self.merchant_name],
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_merchant_summary_RANGE["part_2"]["trending_widget"][self.sql_source][
+                    self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=tw_merchant_summary_body_part_2
             ).execute()
@@ -522,14 +536,15 @@ class UpdateDashboardLog:
         except HttpError as err:
             print(err)
         # Update All Sources Merchant Summary - Top Affiliates widget
-        ta_merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values["trending_widget"][:2]}
+        ta_merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values["top_affiliates_widget"][:2]}
         ta_merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values["top_affiliates_widget"][3:]}
 
         try:
             # upload - Merchant Summary Report - Part 1
             merchant_account_overview_part_1 = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["top_affiliates_widget"][self.sql_source],
-                range=self.all_sources_merchant_summary_RANGE["part_1"][self.merchant_name],
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_merchant_summary_RANGE["part_1"]["top_affiliates_widget"][self.sql_source][
+                    self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=ta_merchant_summary_body_part_1
             ).execute()
@@ -539,8 +554,9 @@ class UpdateDashboardLog:
         try:
             # upload - Merchant Summary Report - Part 2
             merchant_account_overview_part_2 = self.sheet.update(
-                spreadsheetId=self.avantlog_spreadsheet_ids["top_affiliates_widget"][self.sql_source],
-                range=self.all_sources_merchant_summary_RANGE["part_2"][self.merchant_name],
+                spreadsheetId=self.avantlog_spreadsheet_ids["all_sources"],
+                range=self.all_sources_merchant_summary_RANGE["part_2"]["top_affiliates_widget"][self.sql_source][
+                    self.merchant_name],
                 valueInputOption=VALUE_INPUT_OPTION,
                 body=ta_merchant_summary_body_part_2
             ).execute()
@@ -619,6 +635,7 @@ class UpdateDashboardLog:
             print(result)
         except HttpError as err:
             print(err)
+        self.insert_slack_hyperlinks(widget)
 
     def process_merchant_summary_report_for_google(self):
         merchant_summary_values = []
