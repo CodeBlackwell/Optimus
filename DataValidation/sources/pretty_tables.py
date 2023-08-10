@@ -413,6 +413,7 @@ class PrettyTableMaker:
                         except KeyError:
                             pass
         self.linked_categorical_report = result
+        # pprint(result)
         # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         return result
 
@@ -533,7 +534,7 @@ class PrettyTableMaker:
 
 
     @staticmethod
-    def generate_single_slack_hyperlink_request(index, slack_message_link):
+    def generate_single_slack_hyperlink_request(index, slack_message_link, spreadsheet_id="1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk", pass_status="N/A"):
         result = {
             "updateTextStyle": {
                 "textStyle": {
@@ -548,7 +549,26 @@ class PrettyTableMaker:
                 "fields": "link"
             }
         }
-        return result
+
+        alternative_result = {
+            "updateCells": {
+                "rows": [
+                    {
+                        "values": [{
+                            "userEnteredValue": {
+                                "formulaValue": "=HYPERLINK({},{})".format(slack_message_link, pass_status)
+                            }
+                        }]
+                    }
+                ],
+                "fields": "userEnteredValue",
+                "start": {
+                    "sheetId": spreadsheet_id,
+                    "rowIndex": index,
+                    "columnIndex": 5
+                }
+            }}
+        return alternative_result
 
     def simplify_merchant_summary(self):
         for widget_name in self.merchant_summary:

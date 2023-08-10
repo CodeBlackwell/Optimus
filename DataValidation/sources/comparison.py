@@ -1212,10 +1212,9 @@ def define_join_on(ro1, ro2):
 def test_pretty_tables():
     dir_path = os.path.join(os.getcwd(), "validation_outputs/xlsx/08_07_23_00:59:31")
     pretty_tables = sources.PrettyTableMaker(dir_path=dir_path)
-    # new_pretty_tables = sources.PrettyTableMaker(merchant_summary_from_deploy=pretty_tables.provide_example())
-
+    # new_pretty_tables = sources.PrettyTableMaker(merchant_summary_from_deploy=zachs_input)
     merchant_summary_report, categorical_report, test_account_overview, linked_categorical_report = pretty_tables.run()
-    # sources.UpdateDashboardLog(merchant_summary_report, categorical_report, test_account_overview, linked_categorical_report)
+    sources.UpdateDashboardLog(merchant_summary_report, categorical_report, test_account_overview, linked_categorical_report)
 
 
 def main():
@@ -1224,6 +1223,8 @@ def main():
 
     # Instantiate the class
     cascade = Cascade()
+    test_pretty_tables()
+    sys.exit()
     # If a timeout happened, raise the Timeout Exception
     # There's no specific convention for this, so use the exit code 1 (catch all generic error)
     if cascade.timeout is True:
