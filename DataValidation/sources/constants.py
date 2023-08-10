@@ -6,7 +6,7 @@ class PickerConstants(object):
     auth = "d9b81c2f873a3ae4fbe7064e167be3ce"
     user_id = "d60bc92a-b912-42d1-89cd-db14bce86c51"
     tz = "America/Denver"
-    currency = "USD"
+    currency = "NATIVE"
     default_currency = "USD"
     fmonth = 'jan'
     module = 'AdminReport'

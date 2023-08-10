@@ -27,9 +27,15 @@ import pandas as pd
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
+import requests
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 from data_sources import DataSource, RedshiftDataSource
+
+# Get API key for file attachment
+config = configparser.ConfigParser()
+config.read('avantlinkpy2.conf')
+slack_key = config.get('slack', 'api_key')
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
     '''
@@ -48,11 +54,6 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     Returns:
         None
     '''
-    # Get API key for file attachment
-    config = configparser.ConfigParser()
-    config.read('avantlinkpy2.conf')
-    slack_key = config.get('slack', 'api_key')
-
     # Check if a separate fail channel was given
     # If not, pipe all outputs to the same place
     if fail_channel is None:
@@ -67,6 +68,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         # Generic timeout
         else:
             title = f'{merchant} timed out'
+
+        # Append sim name to test if valid
+        if args.simulation != '':
+            title += f' ({args.simulation})'
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
         proc = subprocess.run(cmd, shell=True, timeout=30, stdout=subprocess.PIPE)
         result = json.loads(proc.stdout)
@@ -79,6 +84,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
         title = js['test_name']
         edw3_ro = js['edw3_request_object']
         errors = js['errors']
+
+        # Append sim name to test if valid
+        if args.simulation != '':
+            title += f' ({args.simulation})'
 
         # Try to build an error message
         # If it isn't there, use the default
@@ -118,6 +127,8 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     columns = df.columns.to_list()
     source_error = False
     data_source = None
+    passed = False
+    report_name = ''
     edw3_request_object = None
     fault_tolerance = ''
     for column in columns:
@@ -129,6 +140,10 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
                 source_error = True
                 edw3_request_object = df['edw3_request_object'][0]
             edw3_column = column
+        # Grab report name  for metadata dict
+        elif column == "Dashboard Report Name":
+            report_name = df[column][0]
+
     if df[edw2_column].equals(df[edw3_column]) is True:
         matches = True
     else:
@@ -151,6 +166,7 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
              title = upload_name.replace('.xlsx', '') + f' ({source}) passed {fault_tolerance}'
         else:
             title = upload_name.replace('.xlsx', '') + f' passed {fault_tolerance}'
+            passed = True
         cmd = f'''curl -d "text={title}" -d "channel={channel}" -H "Authorization: Bearer {slack_key}" -X POST https://slack.com/api/chat.postMessage -k'''
     # Cover the case where we requested a particular source, but got something else back instead
     # Here we want to post request object and mention the requested source but what we got instead
@@ -181,13 +197,16 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # If it failed, log the stdout for debug
     if result["ok"] is True:
         print('Posted to Slack')
+        errors = False
     else:
         print('Error posting to slack')
         print(result)
+        errors = True
 
     # Remove temp file (if used)
     if temp_file is not None:
         os.remove(temp_file)
+    return result, errors, passed, report_name
 
 def build_file_list():
     '''
@@ -254,6 +273,60 @@ def calculate_times(now):
     end_times = [mtd_end, lm_end, ly_end]
     return start_times, end_times
 
+
+def build_metadata(result, fid, merchant, source, passed, report_name, channel='C04HP5S5YNB'):
+    '''
+    This function compiles a json dictionary of metadata to send to the regression library dashboard
+    Link:https://drive.google.com/drive/u/0/folders/1Pr0FWGKWu1Ji2tTkRlcsOCD2dMp2G3X6
+
+    Parameters
+        result: json object returned from Slack giving all of the parameters used to identify the post
+        fid: str, full file path of the file posted, used to break apart into identifiers
+        merchant: str, merchant used in this regression run
+        source: str, location data came from (e.g. Redshift)
+        passed: boolean, indicates pass/fail of regression test
+        channel: str, channel used to find the message. Default is ds_data_validation in string form
+        report_name: str, gives the proper name of the report to display on the dahsboard
+
+    Returns:
+       None
+    '''
+    # Grab the identifier for the message
+    try:
+        url = result['file']['permalink']
+    except:
+        message_ts = result['message']['ts']
+        client = WebClient(token=slack_key)
+        result = client.chat_getPermalink(
+            channel=channel,
+            message_ts=message_ts
+        )
+        url = result['permalink']
+
+    # If the source is an empty string, replace that with olap
+    if source == '':
+        source = 'olap'
+
+    # Build the json dictionary we need for the dashboard
+    # {Widget, category, report name, merchant name, slack link}
+    # Split fid into metadat pieces
+    metadata_string = fid.split('/')
+    report = metadata_string[-1].replace('.xlsx', '')
+    category = metadata_string[-2]
+    widget = metadata_string[-3]
+    metadata = {
+        "widget": widget,
+        "category": category,
+        "report": report,
+        "data_source": source,
+        "link": url,
+        "passed": passed,
+        "file": fid,
+        "report_name": report_name
+    }
+
+    return metadata
+
 if __name__ == "__main__":
     # Accept list of merchants
     # The "default" gives a list of 5 merchants we frequently run. This is the default setting
@@ -276,6 +349,12 @@ if __name__ == "__main__":
         source = RedshiftDataSource()
     else:
         source = DataSource(source=args.source)
+
+    # Check for simulation
+    if args.simulation != "":
+        sim = args.simulation
+    else:
+        sim = None
 
     # Grab dates (30 days back ending yesterday is default)
     now = datetime.utcnow().replace(microsecond=0)
@@ -310,10 +389,14 @@ if __name__ == "__main__":
             end = now
 
         # Move to working directory (for cron)
-        os.chdir('/home/ubuntu/ds-data_validation/')
+        #os.chdir('/home/ubuntu/ds-data_validation/')
+
+        metadata_dict = {}
 
         # Trigger script
         for merchant in merchants:
+
+            metadata_dict[merchant] = []
             print(f'Running regression for merchant {merchant}')
             try:
                 os.chdir('DataValidation')
@@ -322,7 +405,7 @@ if __name__ == "__main__":
             # Cannot use spaces in cli, replace with _
             merchant = merchant.replace(' ', '_')
             if args.no_error:
-                run_command = NoErrorCommand(merchants=merchant, source=source.source)
+                run_command = NoErrorCommand(merchants=merchant, source=source.source, sim=sim)
             else:
                 #cmd = f'python -m sources.comparison -ra -sd {start} -ed {end} -mer {merchant}' # FIXME: Le's script hasn't been tested with custom times
                 # Generally, logging will be done here: https://docs.google.com/spreadsheets/d/1JKJ_hQA4xzOxPHEd1xqgAPYk9vfmgpxeGXf21sBkWYw/edit#gid=0
@@ -341,6 +424,7 @@ if __name__ == "__main__":
                 timeout = False
             except subprocess.TimeoutExpired:
                 timeout = True # Log the timeout and then continue
+                return_code = 1
 
             # If returned 1 (error), set timeout
             if return_code == 1:
@@ -399,11 +483,18 @@ if __name__ == "__main__":
                                     print(f'Skipped blacklisted entry {fid}')
                                     skipped = True
                             if skipped is False:
-                                post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                result, errors, passed, report_name = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
+                                if not errors:
+                                    metadata_entry = build_metadata(result, fid, merchant, source.source, passed, report_name)
+                                    metadata_dict[merchant].append(metadata_entry)
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
+
+            # TODO: Tirgger Le's script
+            print('Data to send to dashboard')
+            print(json.dumps(metadata_dict))
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')

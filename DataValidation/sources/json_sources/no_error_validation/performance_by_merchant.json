@@ -65,7 +65,7 @@
       ],
       "totals":true,
       "offset":0,
-      "currency":"USD",
+      "currency":"NATIVE",
       "limit":30,
       "widths":true,
       "counts":true,
