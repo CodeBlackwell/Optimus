@@ -308,17 +308,17 @@ class Comparison(KnownDiscrepancies):
             mismatches['difference'] = mismatches[col_x] - mismatches[col_y]
             orphans['difference'] = orphans[col_x] - orphans[col_y]
             matches['difference'] = 0
-            # # Append Request objects directly to the rows as they are generated
-            # matches['edw2_request_object'] = edw2_ro
-            # matches['edw3_request_object'] = edw3_ro
-            # orphans['edw2_request_object'] = edw2_ro
-            # orphans['edw3_request_object'] = edw3_ro
-            # mismatches['edw2_request_object'] = edw2_ro
-            # mismatches['edw3_request_object'] = edw3_ro
             merge = pd.concat([matches, mismatches, orphans])
             merge[col_x] = merge[col_x].replace(regex_query_selector, '', regex=True).astype(float)
             merge[col_y] = merge[col_y].replace(regex_query_selector, '', regex=True).astype(float)
             merge['difference'] = merge[col_x] - merge[col_y]
+            flag = 'PASS!'
+            if sum(merge[col_x].values) == 0 and sum(merge[col_y].values) == 0:
+                flag = 'PASS! ALL ZEROS!'
+            for num in merge['difference'].values:
+                if num != 0:
+                    flag = 'FAIL!'
+            merge['pass/fail'] = flag
             self.simple_difference_comparison = merge
 
             if self.dashboard_regression:

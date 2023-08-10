@@ -7277,9 +7277,9 @@ edw3_dashboard_objects = {
                         }
                     ],
                     "sort": [{
-			"field": "dim_affiliate_default_website-affiliate_website_url_stripped",
-			"direction": "asc"
-		    }],
+                        "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                        "direction": "asc"
+                    }],
                     "totals": false,
                     "offset": 0,
                     "currency": "NATIVE",
@@ -9164,9 +9164,9 @@ edw3_dashboard_objects = {
                             "direction": "desc",
                             "alias": "number_of_orders"
                         }, {
-			    "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
-			    "direction": "asc"
-		        }
+                            "field": "dim_affiliate_default_website-affiliate_website_url_stripped",
+                            "direction": "asc"
+                        }
                     ],
                     "offset": 0,
                     "currency": "NATIVE",

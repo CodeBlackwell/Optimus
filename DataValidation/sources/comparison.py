@@ -17,7 +17,7 @@ import sources
 
 from openpyxl import Workbook
 from datetime import datetime
-#from http3.exceptions import ReadTimeout
+# from http3.exceptions import ReadTimeout
 from compare_reports import Comparison
 from args import args
 from oauth2client.service_account import ServiceAccountCredentials
@@ -402,19 +402,17 @@ class Cascade:
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
 
-
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
-                                                        report_name=report_name,
-                                                        request_object=edw3_request_object),
+                                                         report_name=report_name,
+                                                         request_object=edw3_request_object),
                                     sources.PickerReport(picker_url=picker_url_2,
-                                                        report_name=report_name,
-                                                        request_object=edw2_request_object)
+                                                         report_name=report_name,
+                                                         request_object=edw2_request_object)
                                     )
 
             comparison.set_outputs(simple_report_name=self.report_name,
-                                simple_difference=simple_difference_options,
-                                dashboard_regression=dashboard_regression)
-             
+                                   simple_difference=simple_difference_options,
+                                   dashboard_regression=dashboard_regression)
             try:
                 await asyncio.wait_for(comparison.run_and_barf(), timeout=60)
             except asyncio.TimeoutError as e:
@@ -643,6 +641,7 @@ class Cascade:
         self.dashboard_regression_path = dashboard_regression_report_dir_path
         os.mkdir(dashboard_regression_report_dir_path)
         self.sem = asyncio.Semaphore(sem_count or self.semaphore_count)
+
         if merchant_name:
             merc_id = search_merchant(merchant_name=merchant_name)
         else:
@@ -664,10 +663,17 @@ class Cascade:
                 os.mkdir(dir_basepath)
             except FileExistsError:
                 pass
+            try:
+                source_name = source or 'default'
+                source_dir_path = os.path.join(dir_basepath, source_name)
+                # print(source_dir_path)
+                os.mkdir(source_dir_path)
+            except FileExistsError:
+                pass
 
             for widget in categories:
                 if categories[widget]:
-                    os.mkdir(os.path.join(dir_basepath, widget))
+                    os.mkdir(os.path.join(source_dir_path, widget))
                 if not categories[widget]:
                     continue
                 for category in categories[widget]:
@@ -675,7 +681,7 @@ class Cascade:
                         continue
                     try:
                         category_dir = category.replace(' ', '_')
-                        os.mkdir(os.path.join(dir_basepath, widget, category_dir))
+                        os.mkdir(os.path.join(source_dir_path, widget, category_dir))
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
@@ -742,10 +748,12 @@ class Cascade:
                                         )
 
             result = await asyncio.gather(*futures)
-            self.create_change_log(result, sim_name)
+            # print(dashboard_regression["path"])
             if dashboard_regression is not None:
                 self.simple_combine_summaries(dashboard_regression["path"])
             # print(self.change_logs)
+            # self.create_change_log(result, sim_name)
+
             return result
 
         if sim:
@@ -770,8 +778,8 @@ class Cascade:
         pass
 
     def upload_change_log(self):
-
-        print(self.change_logs)
+        pass
+        # print(self.change_logs)
 
     def create_change_log(self, comparisons, sim_name):
         if sim_name is None:
@@ -868,33 +876,37 @@ class Cascade:
             summary.swapaxes("index", "columns").to_excel(writer, sheet_name="Summary_inverted",
                                                           engine='openpyxl', encoding='utf-8')
 
-    def simple_combine_summaries(self, regression_dir_path):
+    @staticmethod
+    def simple_combine_summaries(regression_dir_path):
         summary_df = {
             "trending_widget": [],
             "top_affiliates_widget": []
         }
-        for root, dirs, files in os.walk(regression_dir_path):
-            for name in files:
-                fid = os.path.join(root, name)
-                if name.endswith('.xlsx'):
-                    report_dataframe = pd.read_excel(fid, engine="openpyxl")
-                    report_dataframe.drop(["Unnamed: 0"], axis=1, inplace=True)
-                    if report_dataframe['widget'][0] == "trending_widget":
-                        column_change_index_1 = 1
-                        column_change_index_2 = 2
-                    if report_dataframe['widget'][0] == "top_affiliates_widget":
-                        column_change_index_1 = 2
-                        column_change_index_2 = 3
-                    edw2_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_1])
-                    edw3_comparison_col_name = '{col_name}'.format(col_name=report_dataframe.columns[column_change_index_2])
-                    # print(edw2_comparison_col_name, edw3_comparison_col_name)
-                    report_dataframe.rename({
-                        edw2_comparison_col_name: "edw2_result",
-                        edw3_comparison_col_name: "edw3_result"
-                    }, axis=1, inplace=True)
+        for widget_name in summary_df:
+            for root, dirs, files in os.walk(os.path.join(regression_dir_path, widget_name)):
+                for name in files:
+                    fid = os.path.join(root, name)
+                    if name.endswith('.xlsx'):
+                        report_dataframe = pd.read_excel(fid, engine="openpyxl")
+                        report_dataframe.drop(["Unnamed: 0"], axis=1, inplace=True)
+                        if report_dataframe['widget'][0] == "trending_widget":
+                            column_change_index_1 = 1
+                            column_change_index_2 = 2
+                        if report_dataframe['widget'][0] == "top_affiliates_widget":
+                            column_change_index_1 = 2
+                            column_change_index_2 = 3
+                        edw2_comparison_col_name = '{col_name}'.format(
+                            col_name=report_dataframe.columns[column_change_index_1])
+                        edw3_comparison_col_name = '{col_name}'.format(
+                            col_name=report_dataframe.columns[column_change_index_2])
+                        # print(edw2_comparison_col_name, edw3_comparison_col_name)
+                        report_dataframe.rename({
+                            edw2_comparison_col_name: "edw2_result",
+                            edw3_comparison_col_name: "edw3_result"
+                        }, axis=1, inplace=True)
 
-                    report_dataframe.dropna(axis="columns", how="all", inplace=True)
-                    summary_df[report_dataframe['widget'][0]].append(report_dataframe)
+                        report_dataframe.dropna(axis="columns", how="all", inplace=True)
+                        summary_df[report_dataframe['widget'][0]].append(report_dataframe)
         for widget in summary_df:
             if widget == "trending_widget":
                 widget_prefix = "TW"
@@ -1234,7 +1246,6 @@ def main():
 
     # Instantiate the class
     cascade = Cascade()
-
     # If a timeout happened, raise the Timeout Exception
     # There's no specific convention for this, so use the exit code 1 (catch all generic error)
     if cascade.timeout is True:
@@ -1299,7 +1310,7 @@ def main():
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
         match_names(edw2_ro, edw3_ro)
-        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
+        lookup_name = search_merchant(merch_id=get_merchant_id(edw3_ro))
         verify_relative_dates(edw2_ro, edw3_ro)
         match_date_aggregates(edw2_ro, edw3_ro)
         timestamp = datetime.now().strftime("%x %X")
@@ -1342,12 +1353,12 @@ def main():
     else:
         print("Dashboard Regression - Automated - Request Objects: Hard Coded \n \n")
         categories = [
-                      "Sales",
-                      "Combined Commission",
-                      "Network Commission",
-                      "Clicks % Impressions",
-                      "Adjustments",
-                      "Affiliate Commission"
+            "Sales",
+            "Combined Commission",
+            "Network Commission",
+            "Clicks % Impressions",
+            "Adjustments",
+            "Affiliate Commission"
         ]
         run_categories = {
             "trending_widget": False,
