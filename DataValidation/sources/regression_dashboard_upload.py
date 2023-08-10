@@ -411,6 +411,7 @@ class UpdateDashboardLog:
         self.update_merchant_summaries()
         self.update_test_account_overviews()
         self.update_categorical_reports()
+        # self.insert_slack_hyperlinks("top_affiliates_widget", all_sources=True)
 
     def insert_blank_categorical_report_column(self, widget, all_sources=False):
         if not all_sources:
@@ -439,9 +440,38 @@ class UpdateDashboardLog:
             "requests": self.linked_categorical_report[widget]
         }
         # print(self.linked_categorical_report)
-        fake_body = [{'updateTextStyle': {'textStyle': {'link': {'url': 'https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513104649519'}}, 'range': {'startIndex': 1, 'endIndex': 2}, 'fields': 'link'}}]
-
-        result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=fake_body).execute()
+        fake_body = {
+            "requests": [{
+                "updateCells": {
+                    "rows": [
+                        {
+                            "values": [{
+                                "userEnteredValue": {
+                                    "formulaValue": "=HYPERLINK({},{})".format(
+                                        '"https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513081723139"',
+                                        '"FOckyea"')
+                                }
+                            }]
+                        }
+                    ],
+                    "fields": "userEnteredValue",
+                    "start": {
+                        "sheetId": 1278908903,
+                        "rowIndex": 1,
+                        "columnIndex": 5
+                    }
+                }
+            }
+            ]
+        }
+        try:
+            # result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
+            result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id,
+                                                             body=fake_body).execute()
+            pprint(result)
+        except:
+            pprint(body)
+            raise
 
     def update_all_sources_test_account_overview(self):
         tw_test_account_overview_body = {'values': [[
