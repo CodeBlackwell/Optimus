@@ -2871,7 +2871,7 @@ edw2_dashboard_objects = {
                             "aggregate": [
                                 {
                                     "func": "sum",
-                                    "distinct": true
+                                    "distinct": false
                                 }
                             ],
                             "invert_sort": true
