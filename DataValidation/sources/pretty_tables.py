@@ -344,10 +344,10 @@ class PrettyTableMaker:
     def run(self):
         self.build_internal_tables()
         self.generate_merchant_summary_update_literal()
-        self.build_slack_link_map()
         self.build_reverse_index_map()
         self.generate_categorical_reports()
         self.generate_test_account_overview_update()
+        self.build_slack_link_map()
         self.generate_slack_hyperlinks()
         return self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report
 
@@ -384,6 +384,36 @@ class PrettyTableMaker:
                                 "slack_link": None
                             }
         self.linked_categorical_report = result
+        # pprint(result)
+
+    def generate_slack_hyperlinks(self):
+        overview = copy.deepcopy(self.merchant_summary)
+        result = {
+            "top_affiliates_widget": [],
+            "trending_widget": []
+        }
+        for widget_key in overview:
+            if "widget" in widget_key:
+                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
+                    if cell not in self.reversed_report_index_map[widget_key]:
+                        # result[widget_key].append([])
+                        continue
+                    else:
+                        category_literal = self.reversed_report_index_map[widget_key][cell]
+                        category = list(category_literal.keys()).pop()
+                        report_name = category_literal[category]
+                        try:
+                            if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
+                                result[widget_key].append(
+                                    self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[
+                                        widget_key][category][report_name]["slack_link"])
+                                )
+                        except KeyError:
+                            pass
+        # pprint(result)
+        self.linked_categorical_report = result
+        # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
+        return result
 
     def build_internal_tables(self):
         sim_dir = os.listdir(self.dir_path)
@@ -486,10 +516,10 @@ class PrettyTableMaker:
                         try:
                             result[widget_key].append(
                                 [
-                                    f"{[self.merchant_summary[widget_key][category][report_name]].pop()} - {category_literal}"]
+                                    f"{[self.merchant_summary[widget_key][category][report_name]].pop()}"]
                             )
                         except KeyError:
-                            result[widget_key].append([f"N/A - {category_literal}"])
+                            result[widget_key].append([f"N/A"])
 
         # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         for widget_key in result:
@@ -500,44 +530,6 @@ class PrettyTableMaker:
             result[widget_key].insert(3, [self.get_merchant()])
         self.categorical_report = result
 
-    def generate_slack_hyperlinks(self):
-        overview = copy.deepcopy(self.merchant_summary)
-        result = {
-            "top_affiliates_widget": [],
-            "trending_widget": []
-        }
-        for widget_key in overview:
-            if "widget" in widget_key:
-                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
-                    if cell not in self.reversed_report_index_map[widget_key]:
-                        result[widget_key].append([])
-                    else:
-                        category_literal = self.reversed_report_index_map[widget_key][cell]
-                        category = list(category_literal.keys()).pop()
-                        report_name = category_literal[category]
-                        try:
-                            if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
-                                result[widget_key].append(
-                                    self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[
-                                        widget_key][category][report_name]["slack_link"])
-                                )
-                            else:
-                                result[widget_key].append([f"{widget_key} - {category} - {report_name} - had no link"])
-                        except KeyError:
-                            result[widget_key].append([f"{widget_key} - {category} - {report_name} - had no link"])
-
-        # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
-        for widget_key in result:
-            result[widget_key].pop(0)
-            result[widget_key].insert(0, [self.convert_run_time()])
-            result[widget_key].pop(1)
-            result[widget_key].insert(1, [self.get_sql_source()])
-            result[widget_key].insert(3, [self.get_merchant()])
-        final_requests_body = []
-        for widget in result:
-            for val in result[widget]:
-                if isinstance(val, dict):
-                    final_requests_body.append(val)
 
     @staticmethod
     def generate_single_slack_hyperlink_request(index, slack_message_link):
