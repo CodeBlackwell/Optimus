@@ -41,6 +41,10 @@ class PickerReport(SourceBase):
         self.order_number = None
         # TODO: add support for restricted pickers
 
+        # If no error, force the currency to USD
+        if self.args.no_error is True:
+            self.currency = 'USD'
+
     def reset(self):
         # Set all constants
         for constant in [attr for attr in dir(self.constants) if
