@@ -23,11 +23,12 @@ import glob
 import shutil
 import time
 import pandas as pd
+import requests
 
 from datetime import datetime, timedelta
 from slack_sdk import WebClient
 from slack_sdk.errors import SlackApiError
-import requests
+from pretty_tables import PrettyTableMaker
 from runtime_args import args
 from run_commands import NoErrorCommand, RunCommand, NoLoggingCommand
 from data_sources import DataSource, RedshiftDataSource
@@ -506,9 +507,9 @@ if __name__ == "__main__":
                                 if timeout is True:
                                     break
 
-            # TODO: Tirgger Le's script
-            print('Data to send to dashboard')
-            print(json.dumps(metadata_dict))
+            # Send to dashboard
+            PrettyTableMaker(metadata_dict)
+            print('Data sent to dashboard')
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
