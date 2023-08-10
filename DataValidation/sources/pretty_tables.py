@@ -352,7 +352,8 @@ class PrettyTableMaker:
         self.generate_test_account_overview_update()
         self.build_slack_link_map()
         self.generate_slack_hyperlinks()
-        return sources.UpdateDashboardlog(self.merchant_summary, self.categorical_report, self.test_account_overview_update, self.linked_categorical_report)
+        return sources.UpdateDashboardlog(self.merchant_summary, self.categorical_report,
+                                          self.test_account_overview_update, self.linked_categorical_report)
 
     def build_slack_link_map(self):
         subject = {}
@@ -405,7 +406,8 @@ class PrettyTableMaker:
                         category = list(category_literal.keys()).pop()
                         report_name = category_literal[category]
                         try:
-                            if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
+                            if self.linked_categorical_report[widget_key][category][report_name][
+                                "slack_link"] is not None:
                                 result[widget_key].append(
                                     self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[
                                         widget_key][category][report_name]["slack_link"])
@@ -532,9 +534,10 @@ class PrettyTableMaker:
             result[widget_key].insert(3, [self.get_merchant()])
         self.categorical_report = result
 
-
     @staticmethod
-    def generate_single_slack_hyperlink_request(index, slack_message_link, spreadsheet_id="1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk", pass_status="N/A"):
+    def generate_single_slack_hyperlink_request(index, slack_message_link,
+                                                spreadsheet_id="1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk",
+                                                pass_status="N/A"):
         result = {
             "updateTextStyle": {
                 "textStyle": {
@@ -609,135 +612,6 @@ class PrettyTableMaker:
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
         return f"{clean_date} @ {clean_runtime}\n{self.date_range}"
-
-    def provide_example(self):
-        true = True
-        false = False
-        return {
-            "REI.com": [
-                {"widget": "top_affiliates_widget", "category": "Network_Commission",
-                 "report": "TA_NetworkSaleCommission",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513081723139",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkSaleCommission.xlsx",
-                 "report_name": "Network Sale Commission"},
-                {"widget": "top_affiliates_widget", "category": "Network_Commission", "report": "TA_NetworkBonus",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513084270259",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkBonus.xlsx",
-                 "report_name": "Network Bonus"},
-                {"widget": "top_affiliates_widget", "category": "Network_Commission", "report": "TA_NetworkCPC",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513086786479",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Network_Commission/TA_NetworkCPC.xlsx",
-                 "report_name": "Network CPC"},
-                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission", "report": "TA_AffilCPC",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513089288769",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilCPC.xlsx",
-                 "report_name": "Affiliate CPC"},
-                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission", "report": "TA_AffilBonus",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513091817259",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilBonus.xlsx",
-                 "report_name": "Affiliate Bonus"},
-                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission",
-                 "report": "TA_AffilSaleCommission",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513094328079",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilSaleCommission.xlsx",
-                 "report_name": "Affiliate Sale Commission"},
-                {"widget": "top_affiliates_widget", "category": "Affiliate_Commission",
-                 "report": "TA_AffilIncentiveCommissi", "data_source": "olap",
-                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513096867209", "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Affiliate_Commission/TA_AffilIncentiveCommissi.xlsx",
-                 "report_name": "Affiliate Incentive Commission"},
-                {"widget": "top_affiliates_widget", "category": "Clicks % Impressions", "report": "TA_Impressions",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513099342479",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Clicks_%_Impressions/TA_Impressions.xlsx",
-                 "report_name": "Impressions"},
-                {"widget": "top_affiliates_widget", "category": "Clicks % Impressions", "report": "TA_Clicks",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513102053469",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Clicks_%_Impressions/TA_Clicks.xlsx",
-                 "report_name": "Clicks"},
-                {"widget": "top_affiliates_widget", "category": "Sales", "report": "TA_Orders", "data_source": "olap",
-                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513104649519", "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Sales/TA_Orders.xlsx",
-                 "report_name": "Orders"},
-                {"widget": "top_affiliates_widget", "category": "Sales", "report": "TA_GrossSales",
-                 "data_source": "olap",
-                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513107209679", "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/top_affiliates_widget/Sales/TA_GrossSales.xlsx",
-                 "report_name": "Gross Sales"},
-                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkBonus",
-                 "data_source": "olap",
-                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05LVQR727L/rei.com_tw_networkbonus.xlsx",
-                 "passed": false,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkBonus.xlsx",
-                 "report_name": "Network Bonus"},
-                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkCPC",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513112399169",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkCPC.xlsx",
-                 "report_name": "Network CPC"},
-                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkPaidPlacement",
-                 "data_source": "olap",
-                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05M8E38QP3/rei.com_tw_networkpaidplacement.xlsx",
-                 "passed": false,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkPaidPlacement.xlsx",
-                 "report_name": "Network Paid Placement"},
-                {"widget": "trending_widget", "category": "Network Commission", "report": "TW_NetworkSaleCommission",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513116936849",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Network_Commission/TW_NetworkSaleCommission.xlsx",
-                 "report_name": "Network Sale Commission"},
-                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilSaleCommission",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513119428069",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilSaleCommission.xlsx",
-                 "report_name": "Affiliate Sale Commission"},
-                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilCPC",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513122005639",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilCPC.xlsx",
-                 "report_name": "Affiliate CPC"},
-                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilIncentiveCommissi",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513124547339",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilIncentiveCommissi.xlsx",
-                 "report_name": "Affiliate Incentive Commission"},
-                {"widget": "trending_widget", "category": "Affiliate_Commission", "report": "TW_AffilBonus",
-                 "data_source": "olap",
-                 "link": "https://avantlink.slack.com/files/U04SFQLEZV5/F05LVQT4UTC/rei.com_tw_affilbonus.xlsx",
-                 "passed": false,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Affiliate_Commission/TW_AffilBonus.xlsx",
-                 "report_name": "Affiliate Bonus"},
-                {"widget": "trending_widget", "category": "Clicks % Impressions", "report": "TW_Clicks",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513129087389",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Clicks_%_Impressions/TW_Clicks.xlsx",
-                 "report_name": "Clicks"},
-                {"widget": "trending_widget", "category": "Clicks % Impressions", "report": "TW_Impressions",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513131638639",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Clicks_%_Impressions/TW_Impressions.xlsx",
-                 "report_name": "Impressions"},
-                {"widget": "trending_widget", "category": "Sales", "report": "TW_GrossSales", "data_source": "olap",
-                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513134208909", "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Sales/TW_GrossSales.xlsx",
-                 "report_name": "Gross Sales"},
-                {"widget": "trending_widget", "category": "Adjustments", "report": "TW_Adjustments",
-                 "data_source": "olap",
-                 "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513137758649", "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Adjustments/TW_Adjustments.xlsx",
-                 "report_name": "Adjustments"},
-                {"widget": "trending_widget", "category": "Adjustments", "report": "TW_AdjustedSales",
-                 "data_source": "olap", "link": "https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513140280649",
-                 "passed": true,
-                 "file": "DataValidation/validation_outputs/xlsx/08_08_23_10:44:39/EDW3_Production/trending_widget/Adjustments/TW_AdjustedSales.xlsx",
-                 "report_name": "Adjusted Sales"}]}
 
     @staticmethod
     def clean_input_category_names(deploy_output):
