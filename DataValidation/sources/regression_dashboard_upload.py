@@ -429,11 +429,8 @@ class UpdateDashboardLog:
     def insert_slack_hyperlinks(self, widget, all_sources=False):
         if not all_sources:
             avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
-            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget][self.sql_source][
-                self.merchant_name]
         if all_sources:
             avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids["all_sources"]
-            categorical_report_tab_id = self.categorical_report_spreadsheet_ids[widget]["all_sources"]
         body = {
             "requests": self.linked_categorical_report[widget]
         }
