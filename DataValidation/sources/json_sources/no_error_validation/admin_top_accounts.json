@@ -42,7 +42,7 @@
 			"alias": "dim_merchant-merchant_name"
 		}],
 		"offset": 0,
-		"currency": "NATIVE",
+		"currency": "USD",
 		"limit": 10,
 		"format": "json"
 	}

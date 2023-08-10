@@ -1,32 +1,38 @@
 {
-   "tz5XWHAiXhlV6eZ6":{
+   "R3bHSxoWQFjQyM5S":{
       "cols":[
          {
-            "prepared_id":"f8017c89-c326-48a9-a3cd-7362ab43eb95"
+            "prepared_id":"b42eab3e-cd74-4b0a-b70c-f6ca64c0ec72"
          },
          {
-            "prepared_id":"d6e33659-669e-432b-8727-7c4f871011cb"
+            "prepared_id":"bcc77427-29e9-4ce3-919a-87fe637f916a"
+         },
+         {
+            "prepared_id":"94a00cce-91d9-4d7c-9c9e-edc81fa96932"
+         },
+         {
+            "prepared_id":"e89be631-1111-44f6-b35e-73ee981b1c7a"
          },
          {
             "prepared_id":"5a1b9d70-1db3-4670-bb4e-6710dc6e736a"
          },
          {
-            "prepared_id":"5aab673b-e77d-4744-a743-25a3f0d079db"
+            "prepared_id":"404f842a-ecde-4f02-ad89-97b06e483480"
          },
          {
-            "prepared_id":"7b9f9d22-c9ea-4407-a3d6-957619421a15"
+            "prepared_id":"b96959cb-5878-4831-ad1d-bef913ea1ba0"
          },
          {
-            "prepared_id":"ef559898-c0d1-41d0-ad0b-25ae17040c14"
+            "prepared_id":"7cb608db-f4ae-4930-9424-690a1e934c58"
          },
          {
-            "prepared_id":"c045f0b3-2e56-428b-a552-d256b22855a7"
+            "prepared_id":"f45cf749-38f5-4acd-8990-043794f7a118"
          },
          {
-            "prepared_id":"5acc971d-1e20-4678-b8b8-e17aa808071a"
+            "prepared_id":"6a34cc65-8c73-47c1-a704-8d2f820996e5"
          }
       ],
-      "report_name":"Performance Summary By Day",
+      "report_name":"Analytics Overview By Week",
       "filters":[
          {
             "field":"dim_date-mm_dd_yyyy",
@@ -46,11 +52,11 @@
       ],
       "totals":true,
       "offset":0,
-      "currency":"USD",
-      "limit":30,
       "widths":true,
       "counts":true,
-      "partitionLimit":6,
+      "currency":"USD",
+      "limit":30,
+      "partitionLimit":42,
       "partitionOffset":0
    }
 }

@@ -27,7 +27,7 @@
 		}],
 		"totals": false,
 		"offset": 0,
-		"currency": "NATIVE",
+		"currency": "USD",
 		"limit": 500,
 		"format": "json"
 	}
