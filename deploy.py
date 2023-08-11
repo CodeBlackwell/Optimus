@@ -352,7 +352,7 @@ if __name__ == "__main__":
         if args.no_error:
             merchants = ['REI.com']
         else:
-            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,A_Life_Plus'.split(',')
+            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,A Life Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
@@ -413,7 +413,6 @@ if __name__ == "__main__":
 
         # Trigger script
         for merchant in merchants:
-
             metadata_dict[merchant] = []
             print(f'Running regression for merchant {merchant}')
             try:
@@ -467,7 +466,7 @@ if __name__ == "__main__":
 
                 # For Picker test suite, don't post files
                 # Instead, grab results from the log file on disk
-                if args.no_error:
+                if args.no_error is True:
                     json_dicts = []
                     test_file = 'DataValidation/test_suite_outputs.json'
                     try:
@@ -513,9 +512,10 @@ if __name__ == "__main__":
                                 if timeout is True:
                                     break
 
-            # Send to dashboard
-            PrettyTableMaker(metadata_dict)
-            print('Data sent to dashboard')
+            # Send to dashboard- but not for Test suite
+            if args.no_error is False:
+                PrettyTableMaker(metadata_dict)
+                print('Data sent to dashboard')
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
