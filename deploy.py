@@ -501,7 +501,10 @@ if __name__ == "__main__":
                                 result, errors, passed, report_name = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                                 if not errors:
                                     metadata_entry = build_metadata(result, fid, merchant, source.source, passed, report_name)
-                                    metadata_dict[merchant].append(metadata_entry)
+                                    try:
+                                        metadata_dict[merchant].append(metadata_entry)
+                                    except KeyError:
+                                        pass # Skip duplicates
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
