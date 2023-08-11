@@ -1269,9 +1269,8 @@ def main():
             sys.exit(0)
         except asyncio.TimeoutError as e:
             print(e)
-            sys.exit()
         finally:
-            sys.exit(0)
+            sys.exit()
 
     if args.manual:
         try:
