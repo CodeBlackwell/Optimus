@@ -7,7 +7,6 @@ class PickerConstants(object):
     user_id = "d60bc92a-b912-42d1-89cd-db14bce86c51"
     tz = "America/Denver"
     currency = "NATIVE"
-    test_suite_currency = "USD" # Use USD for test suite
     default_currency = "USD"
     fmonth = 'jan'
     module = 'AdminReport'

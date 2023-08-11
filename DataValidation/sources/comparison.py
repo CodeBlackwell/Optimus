@@ -213,6 +213,11 @@ class Cascade:
 
         if no_error_validation is True:
             dir_name = './sources/json_sources/no_error_validation'
+
+            # Before starting, ensure file is wiped
+            if os.path.exists(self.log_file):
+                 os.remove(self.log_file)
+
             for filename in os.listdir(dir_name):
                 try:
                     filepath = os.path.join(dir_name, filename)
@@ -1261,11 +1266,12 @@ def main():
             )
             print("Total runtime: ", datetime.now() - start)
         except KeyboardInterrupt:
-            sys.exit()
+            sys.exit(0)
         except asyncio.TimeoutError as e:
             print(e)
-        finally:
             sys.exit()
+        finally:
+            sys.exit(0)
 
     if args.manual:
         try:
