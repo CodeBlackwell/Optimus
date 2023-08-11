@@ -82,9 +82,12 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # Instead post a pass/fail
     if fid is None:
         # Unpack json results for Slack
-        title = js['test_name']
-        edw3_ro = js['edw3_request_object']
-        errors = js['errors']
+        try:
+            title = js['test_name']
+            edw3_ro = js['edw3_request_object']
+            errors = js['errors']
+        except:
+            raise FileNotFoundError(f'The request json file {js} is missing required content for the test suite')
 
         # Append sim name to test if valid
         if args.simulation != '':
@@ -471,7 +474,7 @@ if __name__ == "__main__":
                         with open(test_file) as f:
                             for line in f:
                                 json_dicts.append(json.loads(line))
-                    except:
+                    except Exception as e:
                         json_dicts = []
 
                     # Post results to Slack and cleanup if we get no results, post an API timesout
