@@ -35,7 +35,7 @@ from data_sources import DataSource, RedshiftDataSource
 
 # Get API key for file attachment
 config = configparser.ConfigParser()
-config.read('avantlinkpy2.conf')
+config.read('/home/ubuntu/ds-data_validation/avantlinkpy2.conf')
 slack_key = config.get('slack', 'api_key')
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
