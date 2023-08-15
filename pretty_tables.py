@@ -320,17 +320,10 @@ class PrettyTableMaker:
     linked_categorical_report = {}
     dir_path = None
 
-    def __init__(self, merchant_summary_from_deploy=None, dir_path=None):
-        if not merchant_summary_from_deploy and not dir_path:
-            print(
-                'this Library requires either a merchant summary input from deploy.py or a directory path containing reports')
-        if not merchant_summary_from_deploy:
-            print("No Deploy.py style merchant summary, or dir_path input was provided. providing example")
-            self.merchant_summary_from_deploy = self.clean_input_category_names(self.provide_example())
-        if merchant_summary_from_deploy:
-            for merchant_name in merchant_summary_from_deploy:
-                for val in merchant_summary_from_deploy[merchant_name]:
-                    self.dir_path = "/".join(val["file"].split("/")[:4])
+    def __init__(self, merchant_summary_from_deploy, dir_path=None):
+        for merchant_name in merchant_summary_from_deploy:
+            for val in merchant_summary_from_deploy[merchant_name]:
+                self.dir_path = "/".join(val["file"].split("/")[:4])
         if dir_path:
             self.dir_path = dir_path
 
