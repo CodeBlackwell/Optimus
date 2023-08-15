@@ -353,7 +353,7 @@ class PrettyTableMaker:
         self.build_slack_link_map()
         self.generate_slack_hyperlinks()
         return UpdateDashboardLog(self.merchant_summary, self.categorical_report,
-                                          self.test_account_overview_update, self.linked_categorical_report)
+                                          self.test_account_overview_update, self.linked_categorical_report, self.reversed_report_index_map)
 
     def build_slack_link_map(self):
         subject = {}
@@ -389,35 +389,6 @@ class PrettyTableMaker:
                             }
         self.linked_categorical_report = result
         # pprint(result)
-
-    def generate_slack_hyperlinks(self):
-        overview = copy.deepcopy(self.merchant_summary)
-        result = {
-            "top_affiliates_widget": [],
-            "trending_widget": []
-        }
-        for widget_key in overview:
-            if "widget" in widget_key:
-                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
-                    if cell not in self.reversed_report_index_map[widget_key]:
-                        continue
-                    else:
-                        category_literal = self.reversed_report_index_map[widget_key][cell]
-                        category = list(category_literal.keys()).pop()
-                        report_name = category_literal[category]
-                        try:
-                            if self.linked_categorical_report[widget_key][category][report_name][
-                                "slack_link"] is not None:
-                                result[widget_key].append(
-                                    self.generate_single_slack_hyperlink_request(cell, self.linked_categorical_report[
-                                        widget_key][category][report_name]["slack_link"])
-                                )
-                        except KeyError:
-                            pass
-        self.linked_categorical_report = result
-        # pprint(result)
-        # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
-        return result
 
     def build_internal_tables(self):
         sim_dir = os.listdir(self.dir_path)
@@ -498,7 +469,6 @@ class PrettyTableMaker:
         result["Currency"] = self.get_currency()
         result["SQL_source"] = self.get_sql_source()
         result["Date Range"] = self.date_range
-        # # @TODO: figure out how to know which network the test was run for - consult Zach.
         result["Network"] = None
         self.merchant_summary = result
 
@@ -533,45 +503,6 @@ class PrettyTableMaker:
             result[widget_key].insert(1, [self.get_sql_source()])
             result[widget_key].insert(3, [self.get_merchant()])
         self.categorical_report = result
-
-    @staticmethod
-    def generate_single_slack_hyperlink_request(index, slack_message_link,
-                                                spreadsheet_id="1ANxSTK3-QdFyTnt8PAknVpFQZXwNdYombcyw87gx7rk",
-                                                pass_status="N/A"):
-        result = {
-            "updateTextStyle": {
-                "textStyle": {
-                    "link": {
-                        "url": slack_message_link
-                    }
-                },
-                "range": {
-                    "startIndex": index,
-                    "endIndex": index + 1
-                },
-                "fields": "link"
-            }
-        }
-
-        alternative_result = {
-            "updateCells": {
-                "rows": [
-                    {
-                        "values": [{
-                            "userEnteredValue": {
-                                "formulaValue": "=HYPERLINK({},{})".format(slack_message_link, pass_status)
-                            }
-                        }]
-                    }
-                ],
-                "fields": "userEnteredValue",
-                "start": {
-                    "sheetId": spreadsheet_id,
-                    "rowIndex": index,
-                    "columnIndex": 5
-                }
-            }}
-        return alternative_result
 
     def simplify_merchant_summary(self):
         for widget_name in self.merchant_summary:

@@ -368,12 +368,21 @@ class UpdateDashboardLog:
             }
         }
     }
+    slack_links = {
+        "top_affiliates_widget": [],
+        "trending_widget": [],
+        "all_sources": {
+            "top_affiliates_widget": [],
+            "trending_widget": []
+        }
+    }
     categorical_report_slack_title_format_map = {
         "top_affiliates_widget": {},
         "trending_widget": {}
     }
 
-    def __init__(self, merchant_summary, categorical_report, test_account_overview, linked_categorical_report):
+    def __init__(self, merchant_summary, categorical_report, test_account_overview, linked_categorical_report,
+                 reversed_report_index_map):
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -397,7 +406,7 @@ class UpdateDashboardLog:
         self.sheet = service.spreadsheets().values()
         self.linked_categorical_report = linked_categorical_report
         self.categorical_report_values = categorical_report  # must be an Array of Arrays -[ [ each, col, value, per, cell ], [], [], [] ]
-
+        self.reversed_report_index_map = reversed_report_index_map
         self.merchant_summary = merchant_summary
         self.test_account_overview = test_account_overview
         self.sql_source = merchant_summary["SQL_source"]
@@ -411,7 +420,10 @@ class UpdateDashboardLog:
         self.update_merchant_summaries()
         self.update_test_account_overviews()
         self.update_categorical_reports()
-        # self.insert_slack_hyperlinks("top_affiliates_widget", all_sources=True)
+        self.insert_slack_hyperlinks("top_affiliates_widget", all_sources=True)
+        self.insert_slack_hyperlinks("top_affiliates_widget", all_sources=False)
+        self.insert_slack_hyperlinks("trending_widget", all_sources=True)
+        self.insert_slack_hyperlinks("trending_widget", all_sources=False)
 
     def insert_blank_categorical_report_column(self, widget, all_sources=False):
         if not all_sources:
@@ -430,48 +442,6 @@ class UpdateDashboardLog:
             ]
         }
         result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
-
-    def insert_slack_hyperlinks(self, widget, all_sources=False):
-        if not all_sources:
-            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
-        if all_sources:
-            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids["all_sources"]
-        body = {
-            "requests": self.linked_categorical_report[widget]
-        }
-        # print(self.linked_categorical_report)
-        fake_body = {
-            "requests": [{
-                "updateCells": {
-                    "rows": [
-                        {
-                            "values": [{
-                                "userEnteredValue": {
-                                    "formulaValue": "=HYPERLINK({},{})".format(
-                                        '"https://avantlink.slack.com/archives/C04HP5S5YNB/p1691513081723139"',
-                                        '"FOckyea"')
-                                }
-                            }]
-                        }
-                    ],
-                    "fields": "userEnteredValue",
-                    "start": {
-                        "sheetId": 1278908903,
-                        "rowIndex": 1,
-                        "columnIndex": 5
-                    }
-                }
-            }
-            ]
-        }
-        try:
-            # result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id, body=body).execute()
-            result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id,
-                                                             body=fake_body).execute()
-            pprint(result)
-        except:
-            pprint(body)
-            raise
 
     def update_all_sources_test_account_overview(self):
         tw_test_account_overview_body = {'values': [[
@@ -712,3 +682,104 @@ class UpdateDashboardLog:
                     sublist[0] = "PASS!"
         self.merchant_summary_report_values = new_summary_values
         return new_summary_values
+
+    def insert_slack_hyperlinks(self, widget, all_sources=False):
+        body = {}
+        avantlog_spreadsheet_id = ""
+        if not all_sources:
+            widget_body = self.slack_links[widget]
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids[widget][self.sql_source]
+            body = {
+                "requests": widget_body
+            }
+        if all_sources:
+            all_sources_body = self.slack_links["all_sources"][widget]
+            avantlog_spreadsheet_id = self.avantlog_spreadsheet_ids["all_sources"]
+            body = {
+                "requests": all_sources_body
+            }
+
+        try:
+            result = self.service.spreadsheets().batchUpdate(spreadsheetId=avantlog_spreadsheet_id,
+                                                             body=body).execute()
+        except HttpError as e:
+            print(e)
+            # pprint(body)
+            # raise e
+
+    def generate_slack_hyperlinks(self):
+        overview = copy.deepcopy(self.merchant_summary)
+        result = {
+            "top_affiliates_widget": [],
+            "trending_widget": [],
+            "all_sources": {
+                "top_affiliates_widget": [],
+                "trending_widget": []
+            }
+        }
+        for widget_key in overview:
+            if "trending_widget" in widget_key:
+                for cell in range(list(self.reversed_report_index_map[widget_key].keys()).pop() + 1):
+                    if cell not in self.reversed_report_index_map[widget_key]:
+                        continue
+                    else:
+                        category_literal = self.reversed_report_index_map[widget_key][cell]
+                        category = list(category_literal.keys()).pop()
+                        report_name = category_literal[category]
+                        try:
+                            if self.linked_categorical_report[widget_key][category][report_name]["slack_link"] is not None:
+                                result[widget_key].append(
+                                    self.generate_single_slack_hyperlink_request(
+                                        cell,
+                                        self.linked_categorical_report[widget_key][category][report_name][
+                                            "slack_link"],
+                                        self.categorical_report_spreadsheet_ids[widget_key][self.sql_source][
+                                            self.merchant_name],
+                                        self.linked_categorical_report[widget_key][category][report_name]["result"],
+                                        report_name
+                                    )
+                                )
+                                result["all_sources"][widget_key].append(
+                                    self.generate_single_slack_hyperlink_request(
+                                        cell,
+                                        self.linked_categorical_report[widget_key][category][report_name][
+                                            "slack_link"],
+                                        self.categorical_report_spreadsheet_ids[widget_key]["all_sources"],
+                                        self.linked_categorical_report[widget_key][category][report_name]["result"],
+                                        report_name
+                                    )
+                                )
+                        except KeyError:
+                            pass
+        self.slack_links = result
+        # print(self.slack_links)
+        return result
+
+    @staticmethod
+    def generate_single_slack_hyperlink_request(index, slack_message_link,
+                                                categorical_spreadsheet_id,
+                                                pass_status, report_name):
+
+        alternative_result = {
+            "updateCells": {
+                "rows": [
+                    {
+                        "values": [{
+                            "userEnteredValue": {
+                                "formulaValue": "=HYPERLINK({},{})".format(
+                                    f'"{slack_message_link}"',
+                                    f'"{pass_status}"')
+                            }
+                        }]
+                    }
+                ],
+                "fields": "userEnteredValue",
+                "start": {
+                    "sheetId": categorical_spreadsheet_id,
+                    "rowIndex": index + 1,
+                    "columnIndex": 4
+                }
+            }
+        }
+        # print(alternative_result, report_name)
+        return alternative_result
