@@ -514,8 +514,12 @@ if __name__ == "__main__":
 
             # Send to dashboard- but not for Test suite
             if args.no_error is False:
-                PrettyTableMaker(metadata_dict)
-                print('Data sent to dashboard')
+                try:
+                    test = PrettyTableMaker(merchant_summary_from_deploy=metadata_dict)
+                    test.run()
+                    print('Data sent to dashboard')
+                except: 
+                    print('Dashboard failed')
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')

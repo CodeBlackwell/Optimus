@@ -323,7 +323,7 @@ class PrettyTableMaker:
     def __init__(self, merchant_summary_from_deploy, dir_path=None):
         for merchant_name in merchant_summary_from_deploy:
             for val in merchant_summary_from_deploy[merchant_name]:
-                self.dir_path = "/".join(val["file"].split("/")[:4])
+                self.dir_path = "/".join(val["file"].split("/")[:3])
         if dir_path:
             self.dir_path = dir_path
 
@@ -490,11 +490,14 @@ class PrettyTableMaker:
 
         # Add in Run time, Data Source, And Merchant outputs to Categorical Report Values
         for widget_key in result:
-            result[widget_key].pop(0)
-            result[widget_key].insert(0, [self.convert_run_time()])
-            result[widget_key].pop(1)
-            result[widget_key].insert(1, [self.get_sql_source()])
-            result[widget_key].insert(3, [self.get_merchant()])
+            try:
+                result[widget_key].pop(0)
+                result[widget_key].insert(0, [self.convert_run_time()])
+                result[widget_key].pop(1)
+                result[widget_key].insert(1, [self.get_sql_source()])
+                result[widget_key].insert(3, [self.get_merchant()])
+            except IndexError:
+                continue # Empty directory go to next one
         self.categorical_report = result
 
     def simplify_merchant_summary(self):
