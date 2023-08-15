@@ -1,11 +1,11 @@
 {
-   "FrOPpQKBvuDu6eWt":{
+   "YZWezzklphnpVCP8":{
       "cols":[
          {
             "prepared_id":"b42eab3e-cd74-4b0a-b70c-f6ca64c0ec72"
          },
          {
-            "prepared_id":"5acc971d-1e20-4678-b8b8-e17aa808071a"
+            "prepared_id":"255eed96-6a38-41bc-8da1-81a254a2b640"
          },
          {
             "prepared_id":"94a00cce-91d9-4d7c-9c9e-edc81fa96932"
@@ -32,7 +32,7 @@
             "prepared_id":"6a34cc65-8c73-47c1-a704-8d2f820996e5"
          }
       ],
-      "report_name":"Analytics Overview By Day",
+      "report_name":"Analytics Overview By Month",
       "filters":[
          {
             "field":"dim_date-mm_dd_yyyy",
@@ -54,7 +54,7 @@
       "offset":0,
       "widths":true,
       "counts":true,
-      "currency":"NATIVE",
+      "currency":"USD",
       "limit":30,
       "partitionLimit":42,
       "partitionOffset":0

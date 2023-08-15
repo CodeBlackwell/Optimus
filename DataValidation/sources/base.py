@@ -1,6 +1,7 @@
 import re
 
 from sources.mixin_fetch import MixinFetch
+from args import args
 import pandas
 
 
@@ -22,7 +23,7 @@ class SourceBase(MixinFetch):
         self.columns = columns
         self.dimensions = dims
         self.report_name = report_name
-        pass
+        self.args = args
 
     def safe_name(self, dirty_name):
         g = re.search(r"([^/.]+)(\.[^/]+)", dirty_name)

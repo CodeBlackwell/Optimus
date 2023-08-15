@@ -35,7 +35,7 @@ from data_sources import DataSource, RedshiftDataSource
 
 # Get API key for file attachment
 config = configparser.ConfigParser()
-config.read('avantlinkpy2.conf')
+config.read('/home/ubuntu/ds-data_validation/avantlinkpy2.conf')
 slack_key = config.get('slack', 'api_key')
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
@@ -82,9 +82,12 @@ def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, f
     # Instead post a pass/fail
     if fid is None:
         # Unpack json results for Slack
-        title = js['test_name']
-        edw3_ro = js['edw3_request_object']
-        errors = js['errors']
+        try:
+            title = js['test_name']
+            edw3_ro = js['edw3_request_object']
+            errors = js['errors']
+        except:
+            raise FileNotFoundError(f'The request json file {js} is missing required content for the test suite')
 
         # Append sim name to test if valid
         if args.simulation != '':
@@ -349,7 +352,7 @@ if __name__ == "__main__":
         if args.no_error:
             merchants = ['REI.com']
         else:
-            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,A_Life_Plus'.split(',')
+            merchants = 'REI.com,Black Diamond Equipment,Carousel Checks,Palmetto State Armory,RTIC Outdoors,A Life Plus'.split(',')
     # For all merchants, read from merchant map and run them all
     elif args.merchants == 'all':
         with open('merchant_map.json', 'r+') as f:
@@ -410,7 +413,6 @@ if __name__ == "__main__":
 
         # Trigger script
         for merchant in merchants:
-
             metadata_dict[merchant] = []
             print(f'Running regression for merchant {merchant}')
             try:
@@ -464,14 +466,14 @@ if __name__ == "__main__":
 
                 # For Picker test suite, don't post files
                 # Instead, grab results from the log file on disk
-                if args.no_error:
+                if args.no_error is True:
                     json_dicts = []
                     test_file = 'DataValidation/test_suite_outputs.json'
                     try:
                         with open(test_file) as f:
                             for line in f:
                                 json_dicts.append(json.loads(line))
-                    except:
+                    except Exception as e:
                         json_dicts = []
 
                     # Post results to Slack and cleanup if we get no results, post an API timesout
@@ -501,15 +503,19 @@ if __name__ == "__main__":
                                 result, errors, passed, report_name = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
                                 if not errors:
                                     metadata_entry = build_metadata(result, fid, merchant, source.source, passed, report_name)
-                                    metadata_dict[merchant].append(metadata_entry)
+                                    try:
+                                        metadata_dict[merchant].append(metadata_entry)
+                                    except KeyError:
+                                        pass # Skip duplicates
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
 
-            # Send to dashboard
-            PrettyTableMaker(metadata_dict)
-            print('Data sent to dashboard')
+            # Send to dashboard- but not for Test suite
+            if args.no_error is False:
+                PrettyTableMaker(metadata_dict)
+                print('Data sent to dashboard')
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
