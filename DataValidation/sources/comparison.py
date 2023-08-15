@@ -407,21 +407,19 @@ class Cascade:
             if manual_path:
                 simple_difference_options["manual_path"] = manual_path
 
-
             comparison = Comparison(sources.PickerReport(picker_url=picker_url_1,
-                                                        report_name=report_name,
-                                                        request_object=edw3_request_object),
+                                                         report_name=report_name,
+                                                         request_object=edw3_request_object),
                                     sources.PickerReport(picker_url=picker_url_2,
-                                                        report_name=report_name,
-                                                        request_object=edw2_request_object)
+                                                         report_name=report_name,
+                                                         request_object=edw2_request_object)
                                     )
-
             comparison.set_outputs(simple_report_name=self.report_name,
-                                simple_difference=simple_difference_options,
-                                dashboard_regression=dashboard_regression)
-             
+                                   simple_difference=simple_difference_options,
+                                   dashboard_regression=dashboard_regression)
             try:
-                await asyncio.wait_for(comparison.run_and_barf(), timeout=60)
+                await asyncio.wait_for(comparison.run_and_barf(), timeout=3000000)
+
             except asyncio.TimeoutError as e:
                 self.errors.append({
                     "error": "timeout",
