@@ -381,8 +381,9 @@ class UpdateDashboardLog:
         "trending_widget": {}
     }
 
+    sim_name = ""
     def __init__(self, merchant_summary, categorical_report, test_account_overview, linked_categorical_report,
-                 reversed_report_index_map):
+                 reversed_report_index_map, sim_name):
         creds = None
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
@@ -402,6 +403,7 @@ class UpdateDashboardLog:
                 token.write(creds.to_json())
         # Call the Sheets API
         service = build('sheets', 'v4', credentials=creds)
+        self.sim_name = sim_name
         self.service = service
         self.sheet = service.spreadsheets().values()
         self.linked_categorical_report = linked_categorical_report
@@ -569,9 +571,10 @@ class UpdateDashboardLog:
             print(err)
 
     def update_merchant_summaries(self):
-        self.update_merchant_summary("trending_widget")
-        self.update_merchant_summary("top_affiliates_widget")
-        self.update_all_sources_merchant_summary()
+        if self.sim_name == "EDW3_Production":
+            self.update_merchant_summary("trending_widget")
+            self.update_merchant_summary("top_affiliates_widget")
+            self.update_all_sources_merchant_summary()
 
     def update_categorical_reports(self):
         self.update_merchant_categorical_report("trending_widget")
@@ -579,9 +582,10 @@ class UpdateDashboardLog:
         self.update_all_sources_categorical_report()
 
     def update_test_account_overviews(self):
-        self.update_test_account_overview("trending_widget")
-        self.update_test_account_overview("top_affiliates_widget")
-        self.update_all_sources_test_account_overview()
+        if self.sim_name == "EDW3_Production":
+            self.update_test_account_overview("trending_widget")
+            self.update_test_account_overview("top_affiliates_widget")
+            self.update_all_sources_test_account_overview()
 
     def update_test_account_overview(self, widget):
         test_account_overview_body = {'values': [[
