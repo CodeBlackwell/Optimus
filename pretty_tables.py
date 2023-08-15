@@ -351,7 +351,6 @@ class PrettyTableMaker:
         self.generate_categorical_reports()
         self.generate_test_account_overview_update()
         self.build_slack_link_map()
-        self.generate_slack_hyperlinks()
         return UpdateDashboardLog(self.merchant_summary, self.categorical_report,
                                           self.test_account_overview_update, self.linked_categorical_report, self.reversed_report_index_map)
 
