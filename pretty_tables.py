@@ -323,7 +323,7 @@ class PrettyTableMaker:
     def __init__(self, merchant_summary_from_deploy, dir_path=None):
         for merchant_name in merchant_summary_from_deploy:
             for val in merchant_summary_from_deploy[merchant_name]:
-                self.dir_path = "/".join(val["file"].split("/")[:3])
+                self.dir_path = "/".join(val["file"].split("/")[-6:])
         if dir_path:
             self.dir_path = dir_path
 
@@ -384,9 +384,11 @@ class PrettyTableMaker:
         # pprint(result)
 
     def build_internal_tables(self):
-        sim_dir = os.listdir(self.dir_path)
+        timestamp = self.dir_path.split('/')[0]
+        parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
+        sim_dir = os.listdir(parent_directory)
         self.sim_name = sim_dir[0]
-        sim_path = os.path.join(self.dir_path, sim_dir[0])
+        sim_path = os.path.join(parent_directory, sim_dir[0])
         source_name = os.listdir(sim_path)[0]
         source_path = os.path.join(sim_path, source_name)
 
