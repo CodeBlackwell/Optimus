@@ -17,5 +17,6 @@ parser.add_argument("--tag", type=str, help="Gives the tag label for the deploym
 parser.add_argument("--simulation", type=str, help="Switches the simulation (e.g. kiran_dev). Default is empty", default="")
 parser.add_argument("--timeout", type=int, help="Sets the timeout for running the rgeression test before failing. Default is 5 minutes", default=3000)
 parser.add_argument("--source", type=str, help="Tells the picker to use a particular data source. Default is empty, which will use typical fallback system.", default="")
-parser.add_argument("-ne", "--no-error", action="store_true")
+parser.add_argument("--dev", action="store_true", help="Run in dev mode with functions for debugging")
+parser.add_argument("-ne", "--no-error", action="store_true", help="Run the Picker Test suite iteartion of this library (see README)")
 args = parser.parse_args()

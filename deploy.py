@@ -35,7 +35,11 @@ from data_sources import DataSource, RedshiftDataSource
 
 # Get API key for file attachment
 config = configparser.ConfigParser()
-config.read('/home/ubuntu/ds-data_validation/avantlinkpy2.conf')
+if args.dev is True:
+    config_file = 'avantlinkpy2.conf' # Relative path- assumes config in current dir
+else:
+    config_file = '/home/ubuntu/ds-data_validation/avantlinkpy2.conf' # Cron needs whole path
+config.read(config_file)
 slack_key = config.get('slack', 'api_key')
 
 def post_to_slack(channel, msg, fid, merchant, source, timeout=False, js=None, fail_channel=None):
@@ -406,8 +410,9 @@ if __name__ == "__main__":
             logging.warning(f'End time given {end} is in the future! Resetting to now')
             end = now
 
-        # Move to working directory (for cron)
-        os.chdir('/home/ubuntu/ds-data_validation/')
+        # Move to working directory (for cron only)
+        if not args.dev:
+            os.chdir('/home/ubuntu/ds-data_validation/')
 
         metadata_dict = {}
 
@@ -518,7 +523,7 @@ if __name__ == "__main__":
                     test = PrettyTableMaker(merchant_summary_from_deploy=metadata_dict)
                     test.run()
                     print('Data sent to dashboard')
-                except Exception as e: 
+                except Exception as e:
                     print(f'Dashboard failed: {e}')
 
             # Cleanup files stored on server
