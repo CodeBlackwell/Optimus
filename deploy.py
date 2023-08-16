@@ -518,8 +518,8 @@ if __name__ == "__main__":
                     test = PrettyTableMaker(merchant_summary_from_deploy=metadata_dict)
                     test.run()
                     print('Data sent to dashboard')
-                except: 
-                    print('Dashboard failed')
+                except Exception as e: 
+                    print(f'Dashboard failed: {e}')
 
             # Cleanup files stored on server
             files = glob.glob('DataValidation/validation_outputs/xlsx/*')
