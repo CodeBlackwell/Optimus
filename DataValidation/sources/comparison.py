@@ -667,10 +667,16 @@ class Cascade:
                 os.mkdir(dir_basepath)
             except FileExistsError:
                 pass
-
+            try:
+                source_name = source or 'default'
+                source_dir_path = os.path.join(dir_basepath, source_name)
+                # print(source_dir_path)
+                os.mkdir(source_dir_path)
+            except FileExistsError:
+                pass
             for widget in categories:
                 if categories[widget]:
-                    os.mkdir(os.path.join(dir_basepath, widget))
+                    os.mkdir(os.path.join(source_dir_path, widget))
                 if not categories[widget]:
                     continue
                 for category in categories[widget]:
@@ -678,7 +684,7 @@ class Cascade:
                         continue
                     try:
                         category_dir = category.replace(' ', '_')
-                        os.mkdir(os.path.join(dir_basepath, widget, category_dir))
+                        os.mkdir(os.path.join(source_dir_path, widget, category_dir))
                     except FileExistsError:
                         pass
                     for request_object_name in sources.dashboard_objects["edw2_dashboard_objects"][widget][category]:
@@ -721,7 +727,7 @@ class Cascade:
                                         comparison_col_name = col["name"]
                                         merch_id = get_merchant_id(edw3_request_object)
                                         lookup_merchant_name = search_merchant(merch_id=merch_id)
-                                        dashboard_regression = {"path": dir_basepath,
+                                        dashboard_regression = {"path": source_dir_path,
                                                                 "category": category,
                                                                 "dashboard report name": request_object_name,
                                                                 "merchant": lookup_merchant_name,
@@ -747,6 +753,7 @@ class Cascade:
             result = await asyncio.gather(*futures)
             self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
+                print("combining summaries")
                 self.simple_combine_summaries(dashboard_regression["path"])
             # print(self.change_logs)
             return result
@@ -1305,7 +1312,7 @@ def main():
         #     drop_columns(args.drop, edw2_ro)
         #     drop_columns(args.drop, edw3_ro)
         match_names(edw2_ro, edw3_ro)
-        lookup_name = search_merchant(id=get_merchant_id(edw3_ro))
+        lookup_name = search_merchant(merch_id=get_merchant_id(edw3_ro))
         verify_relative_dates(edw2_ro, edw3_ro)
         match_date_aggregates(edw2_ro, edw3_ro)
         timestamp = datetime.now().strftime("%x %X")
