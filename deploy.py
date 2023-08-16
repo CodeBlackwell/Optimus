@@ -516,6 +516,9 @@ if __name__ == "__main__":
                                 # Only post 1 timeout message
                                 if timeout is True:
                                     break
+                                # For dev mode, run just once for testing purposes
+                                if args.dev is True:
+                                    break
 
             # Send to dashboard- but not for Test suite
             if args.no_error is False:
