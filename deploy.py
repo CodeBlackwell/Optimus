@@ -335,7 +335,7 @@ def build_metadata(result, fid, merchant, source, passed, report_name, channel='
     metadata_string = fid.split('/')
     report = metadata_string[-1].replace('.xlsx', '')
     category = metadata_string[-2]
-    widget = metadata_string[-3]
+    widget = metadata_string[-3] #if 'summary' not in fid else None
     metadata = {
         "widget": widget,
         "category": category,

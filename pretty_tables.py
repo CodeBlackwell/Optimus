@@ -321,6 +321,7 @@ class PrettyTableMaker:
     dir_path = None
 
     def __init__(self, merchant_summary_from_deploy, dir_path=None):
+        self.merchant_summary_from_deploy = merchant_summary_from_deploy
         for merchant_name in merchant_summary_from_deploy:
             for val in merchant_summary_from_deploy[merchant_name]:
                 self.dir_path = "/".join(val["file"].split("/")[-6:])
@@ -365,6 +366,8 @@ class PrettyTableMaker:
                         {"slack_link": report_literal['link']}
 
         for widget in copy.deepcopy(self.merchant_summary):
+            if widget not in result:
+                result[widget] = {}
             if "widget" in widget:
                 for category in self.merchant_summary[widget]:
                     if category not in result[widget]:
@@ -384,9 +387,17 @@ class PrettyTableMaker:
         # pprint(result)
 
     def build_internal_tables(self):
-        timestamp = self.dir_path.split('/')[0]
-        parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
-        sim_dir = os.listdir(parent_directory)
+        try:
+            # Dev Mode
+            timestamp = self.dir_path.split('/')[2]
+            parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
+            sim_dir = os.listdir(parent_directory)
+        except:
+            # Prod mode
+            timestamp = self.dir_path.split('/')[0]
+            parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
+            sim_dir = os.listdir(parent_directory)
+
         self.sim_name = sim_dir[0]
         sim_path = os.path.join(parent_directory, sim_dir[0])
         source_name = os.listdir(sim_path)[0]
