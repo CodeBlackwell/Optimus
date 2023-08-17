@@ -548,7 +548,10 @@ class PrettyTableMaker:
         return self.tables_list[0]["merchant"][0]
 
     def convert_run_time(self):
-        ugly_runtime = self.dir_path.split("/").pop()
+        ugly_runtime = self.dir_path.split("/")[0]
+        # Catch for dev mode
+        if ':' not in ugly_runtime:
+            ugly_runtime = self.dir_path.split("/")[-4] 
         clean_runtime = ugly_runtime.split("_").pop()
         clean_date = "/".join(ugly_runtime.split("_")[:-1])
         return f"{clean_date} @ {clean_runtime}\n{self.date_range}"
