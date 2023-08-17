@@ -47,7 +47,7 @@ class UpdateDashboardLog:
     }
     merchant_summary_RANGE = {
         "part_1": {
-            "rei.com": "Merchant Summary!C2:C3",
+            "REI.com": "Merchant Summary!C2:C3",
             "Black Diamond": "Merchant Summary!B2:B3",
             "Carousel Checks": "Merchant Summary!D2:D3",
             "Palmetto State Armory": "Merchant Summary!E2:E3",
@@ -55,7 +55,7 @@ class UpdateDashboardLog:
             "A Life Plus": "Merchant Summary!G2:G3"
         },
         "part_2": {
-            "rei.com": "Merchant Summary!C5:C12",
+            "REI.com": "Merchant Summary!C5:C12",
             "Black Diamond": "Merchant Summary!B5:B12",
             "Carousel Checks": "Merchant Summary!D5:D12",
             "Palmetto State Armory": "Merchant Summary!E5:E12",
@@ -138,7 +138,7 @@ class UpdateDashboardLog:
                 "A Life Plus": 1693042867
             },
             "fact_redshift": {
-                "rei.com": 1114619640,
+                "REI.com": 1114619640,
                 "Black Diamond": 1032630095,
                 "Carousel Checks": 1039748189,
                 "Palmetto State Armory": 1858213088,
@@ -388,8 +388,8 @@ class UpdateDashboardLog:
         # The file token.json stores the user's access and refresh tokens, and is
         # created automatically when the authorization flow completes for the first
         # time.
-        if os.path.exists('token.json'):
-            creds = Credentials.from_authorized_user_file('token.json', SCOPES)
+        if os.path.exists('DataValidation/token.json'):
+            creds = Credentials.from_authorized_user_file('DataValidation/token.json', SCOPES)
         # If there are no (valid) credentials available, let the user log in.
         if not creds or not creds.valid:
             if creds and creds.expired and creds.refresh_token:
@@ -399,7 +399,7 @@ class UpdateDashboardLog:
                     'DataValidation/credentials.json', SCOPES)
                 creds = flow.run_local_server(port=0)
             # Save the credentials for the next run
-            with open('token.json', 'w') as token:
+            with open('DataValidation/token.json', 'w') as token:
                 token.write(creds.to_json())
         # Call the Sheets API
         service = build('sheets', 'v4', credentials=creds)
@@ -602,6 +602,7 @@ class UpdateDashboardLog:
             print(err, f'{widget} - Test Account Overview')
 
     def update_merchant_summary(self, widget):
+        print(self.merchant_summary_report_values)
         merchant_summary_body_part_1 = {'values': self.merchant_summary_report_values[widget][:2]}
         merchant_summary_body_part_2 = {'values': self.merchant_summary_report_values[widget][3:]}
 
@@ -659,9 +660,12 @@ class UpdateDashboardLog:
         ta_result = copy.deepcopy(merchant_summary_values)
         tw_result = copy.deepcopy(merchant_summary_values)
         for category in category_order:
-            ta_result.append([subject["top_affiliates_widget"][category]])
-        for category in category_order:
-            tw_result.append([subject["trending_widget"][category]])
+            try:
+                ta_result.append([subject["top_affiliates_widget"][category]])
+                #for category in category_order:
+                tw_result.append([subject["trending_widget"][category]])
+            except (KeyError, IndexError):
+                continue # Entry not in metadata dict
         for sublist in ta_result:
             for val in sublist:
                 new_val = str(val).replace("{", "").replace("}", "").replace(",", "\n").replace("]", "")
