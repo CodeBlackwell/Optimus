@@ -751,7 +751,7 @@ class Cascade:
                                         )
 
             result = await asyncio.gather(*futures)
-            self.create_change_log(result, sim_name)
+            # self.create_change_log(result, sim_name)
             if dashboard_regression is not None:
                 print("combining summaries")
                 self.simple_combine_summaries(dashboard_regression["path"])
