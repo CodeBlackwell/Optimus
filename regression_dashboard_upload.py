@@ -48,7 +48,7 @@ class UpdateDashboardLog:
     merchant_summary_RANGE = {
         "part_1": {
             "REI.com": "Merchant Summary!C2:C3",
-            "Black Diamond": "Merchant Summary!B2:B3",
+            "Black Diamond Equipment": "Merchant Summary!B2:B3",
             "Carousel Checks": "Merchant Summary!D2:D3",
             "Palmetto State Armory": "Merchant Summary!E2:E3",
             "RTIC Outdoors": "Merchant Summary!F2:F3",
@@ -56,7 +56,7 @@ class UpdateDashboardLog:
         },
         "part_2": {
             "REI.com": "Merchant Summary!C5:C12",
-            "Black Diamond": "Merchant Summary!B5:B12",
+            "Black Diamond Equipment": "Merchant Summary!B5:B12",
             "Carousel Checks": "Merchant Summary!D5:D12",
             "Palmetto State Armory": "Merchant Summary!E5:E12",
             "RTIC Outdoors": "Merchant Summary!F5:F12",
@@ -69,7 +69,7 @@ class UpdateDashboardLog:
             "top_affiliates_widget": "Top Affiliates Widget Categorical Report Log!E1:E50"
         },
         "REI.com": "REI.com!E1:E50",
-        "Black Diamond": "Black Diamond!E1:E50",
+        "Black Diamond Equipment": "Black Diamond Equipment!E1:E50",
         "Carousel Checks": "Carousel Checks!E1:E50",
         "RTIC Outdoors": "RTIC Outdoors!E1:E50",
         "Palmetto State Armory": "Palmetto State Armory!E1:E50",
@@ -80,7 +80,7 @@ class UpdateDashboardLog:
         "trending_widget": {
             "cube_olap": {
                 "REI.com": 703945982,
-                "Black Diamond": 216714549,
+                "Black Diamond Equipment": 216714549,
                 "Carousel Checks": 338170075,
                 "Palmetto State Armory": 748327824,
                 "RTIC Outdoors": 11214453,
@@ -89,14 +89,14 @@ class UpdateDashboardLog:
             "cube_postgres": {
                 "RTIC Outdoors": 483196132,
                 "REI.com": 1654910639,
-                "Black Diamond": 50980162,
+                "Black Diamond Equipment": 50980162,
                 "Carousel Checks": 2116400324,
                 "Palmetto State Armory": 583081350,
                 "A Life Plus": 893464757
             },
             "fact_postgres": {
                 "REI.com": 1674335050,
-                "Black Diamond": 713675991,
+                "Black Diamond Equipment": 713675991,
                 "Carousel Checks": 1977279573,
                 "Palmetto State Armory": 593436964,
                 "RTIC Outdoors": 1974675983,
@@ -104,7 +104,7 @@ class UpdateDashboardLog:
             },
             "fact_redshift": {
                 "REI.com": 1091042768,
-                "Black Diamond": 1028869454,
+                "Black Diamond Equipment": 1028869454,
                 "Carousel Checks": 1683149162,
                 "Palmetto State Armory": 549061267,
                 "RTIC Outdoors": 523928566,
@@ -115,7 +115,7 @@ class UpdateDashboardLog:
         "top_affiliates_widget": {
             "cube_olap": {
                 "REI.com": 564315687,
-                "Black Diamond": 1931016559,
+                "Black Diamond Equipment": 1931016559,
                 "Carousel Checks": 969222130,
                 "Palmetto State Armory": 653692908,
                 "RTIC Outdoors": 130979600,
@@ -123,7 +123,7 @@ class UpdateDashboardLog:
             },
             "cube_postgres": {
                 "REI.com": 1018886555,
-                "Black Diamond": 318135753,
+                "Black Diamond Equipment": 318135753,
                 "Carousel Checks": 318037317,
                 "Palmetto State Armory": 873660368,
                 "RTIC Outdoors": 1188930327,
@@ -131,7 +131,7 @@ class UpdateDashboardLog:
             },
             "fact_postgres": {
                 "REI.com": 687597798,
-                "Black Diamond": 657468600,
+                "Black Diamond Equipment": 657468600,
                 "Carousel Checks": 1960841405,
                 "Palmetto State Armory": 998588654,
                 "RTIC Outdoors": 52608501,
@@ -139,7 +139,7 @@ class UpdateDashboardLog:
             },
             "fact_redshift": {
                 "REI.com": 1114619640,
-                "Black Diamond": 1032630095,
+                "Black Diamond Equipment": 1032630095,
                 "Carousel Checks": 1039748189,
                 "Palmetto State Armory": 1858213088,
                 "RTIC Outdoors": 1260101347,
@@ -150,7 +150,7 @@ class UpdateDashboardLog:
     }
     test_account_overview_range = {
         "REI.com": "Test Accounts Overview!A2",
-        "Black Diamond": "Test Accounts Overview!A3",
+        "Black Diamond Equipment": "Test Accounts Overview!A3",
         "Carousel Checks": "Test Accounts Overview!A4",
         "Palmetto State Armory": "Test Accounts Overview!A5",
         "RTIC Outdoors": "Test Accounts Overview!A6",
@@ -160,7 +160,7 @@ class UpdateDashboardLog:
         "part_1": {
             "trending_widget": {
                 "cube_postgres": {
-                    "Black Diamond": "Merchant Summary!B2:B3",
+                    "Black Diamond Equipment": "Merchant Summary!B2:B3",
                     "REI.com": "Merchant Summary!C2:C3",
                     "Carousel Checks": "Merchant Summary!D2:D3",
                     "Palmetto State Armory": "Merchant Summary!E2:E3",
@@ -168,7 +168,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G2:G3"
                 },
                 "fact_postgres": {
-                    "Black Diamond": "Merchant Summary!B15:B16",
+                    "Black Diamond Equipment": "Merchant Summary!B15:B16",
                     "REI.com": "Merchant Summary!C15:C16",
                     "Carousel Checks": "Merchant Summary!D15:D16",
                     "Palmetto State Armory": "Merchant Summary!E15:E16",
@@ -176,7 +176,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G15:G16"
                 },
                 "fact_redshift": {
-                    "Black Diamond": "Merchant Summary!B28:B29",
+                    "Black Diamond Equipment": "Merchant Summary!B28:B29",
                     "REI.com": "Merchant Summary!C28:C29",
                     "Carousel Checks": "Merchant Summary!D28:D29",
                     "Palmetto State Armory": "Merchant Summary!E28:E29",
@@ -184,7 +184,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G28:G29"
                 },
                 "cube_olap": {
-                    "Black Diamond": "Merchant Summary!B41:B42",
+                    "Black Diamond Equipment": "Merchant Summary!B41:B42",
                     "REI.com": "Merchant Summary!C41:C42",
                     "Carousel Checks": "Merchant Summary!D41:D42",
                     "Palmetto State Armory": "Merchant Summary!E41:E42",
@@ -194,7 +194,7 @@ class UpdateDashboardLog:
             },
             "top_affiliates_widget": {
                 "cube_postgres": {
-                    "Black Diamond": "Merchant Summary!I2:I3",
+                    "Black Diamond Equipment": "Merchant Summary!I2:I3",
                     "REI.com": "Merchant Summary!J2:J3",
                     "Carousel Checks": "Merchant Summary!K2:K3",
                     "Palmetto State Armory": "Merchant Summary!L2:L3",
@@ -202,7 +202,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N2:N3"
                 },
                 "fact_postgres": {
-                    "Black Diamond": "Merchant Summary!I15:I16",
+                    "Black Diamond Equipment": "Merchant Summary!I15:I16",
                     "REI.com": "Merchant Summary!J15:J16",
                     "Carousel Checks": "Merchant Summary!K15:K16",
                     "Palmetto State Armory": "Merchant Summary!L15:L16",
@@ -210,7 +210,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N15:N16"
                 },
                 "fact_redshift": {
-                    "Black Diamond": "Merchant Summary!I28:I29",
+                    "Black Diamond Equipment": "Merchant Summary!I28:I29",
                     "REI.com": "Merchant Summary!J28:J29",
                     "Carousel Checks": "Merchant Summary!K28:K29",
                     "Palmetto State Armory": "Merchant Summary!L28:L29",
@@ -218,7 +218,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N28:N29"
                 },
                 "cube_olap": {
-                    "Black Diamond": "Merchant Summary!I41:I42",
+                    "Black Diamond Equipment": "Merchant Summary!I41:I42",
                     "REI.com": "Merchant Summary!J41:J42",
                     "Carousel Checks": "Merchant Summary!K41:K42",
                     "Palmetto State Armory": "Merchant Summary!L41:L42",
@@ -230,7 +230,7 @@ class UpdateDashboardLog:
         "part_2": {
             "trending_widget": {
                 "cube_postgres": {
-                    "Black Diamond": "Merchant Summary!B5:B12",
+                    "Black Diamond Equipment": "Merchant Summary!B5:B12",
                     "REI.com": "Merchant Summary!C5:C12",
                     "Carousel Checks": "Merchant Summary!D5:D12",
                     "Palmetto State Armory": "Merchant Summary!E5:E12",
@@ -238,7 +238,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G5:G12"
                 },
                 "fact_postgres": {
-                    "Black Diamond": "Merchant Summary!B18:B25",
+                    "Black Diamond Equipment": "Merchant Summary!B18:B25",
                     "REI.com": "Merchant Summary!C18:C25",
                     "Carousel Checks": "Merchant Summary!D18:D25",
                     "Palmetto State Armory": "Merchant Summary!E18:E25",
@@ -246,7 +246,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G18:G25"
                 },
                 "fact_redshift": {
-                    "Black Diamond": "Merchant Summary!B31:B38",
+                    "Black Diamond Equipment": "Merchant Summary!B31:B38",
                     "REI.com": "Merchant Summary!C31:C38",
                     "Carousel Checks": "Merchant Summary!D31:D38",
                     "Palmetto State Armory": "Merchant Summary!E31:E38",
@@ -254,7 +254,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!G31:G38"
                 },
                 "cube_olap": {
-                    "Black Diamond": "Merchant Summary!B44:B51",
+                    "Black Diamond Equipment": "Merchant Summary!B44:B51",
                     "REI.com": "Merchant Summary!C44:C51",
                     "Carousel Checks": "Merchant Summary!D44:D51",
                     "Palmetto State Armory": "Merchant Summary!E44:E51",
@@ -264,7 +264,7 @@ class UpdateDashboardLog:
             },
             "top_affiliates_widget": {
                 "cube_postgres": {
-                    "Black Diamond": "Merchant Summary!I5:I12",
+                    "Black Diamond Equipment": "Merchant Summary!I5:I12",
                     "REI.com": "Merchant Summary!J5:J12",
                     "Carousel Checks": "Merchant Summary!K5:K12",
                     "Palmetto State Armory": "Merchant Summary!L5:L12",
@@ -272,7 +272,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N5:N12"
                 },
                 "fact_postgres": {
-                    "Black Diamond": "Merchant Summary!I18:I25",
+                    "Black Diamond Equipment": "Merchant Summary!I18:I25",
                     "REI.com": "Merchant Summary!J18:J25",
                     "Carousel Checks": "Merchant Summary!K18:K25",
                     "Palmetto State Armory": "Merchant Summary!L18:L25",
@@ -280,7 +280,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N18:N25"
                 },
                 "fact_redshift": {
-                    "Black Diamond": "Merchant Summary!I31:I38",
+                    "Black Diamond Equipment": "Merchant Summary!I31:I38",
                     "REI.com": "Merchant Summary!J31:J38",
                     "Carousel Checks": "Merchant Summary!K31:K38",
                     "Palmetto State Armory": "Merchant Summary!L31:L38",
@@ -288,7 +288,7 @@ class UpdateDashboardLog:
                     "A Life Plus": "Merchant Summary!N31:N38"
                 },
                 "cube_olap": {
-                    "Black Diamond": "Merchant Summary!I44:I51",
+                    "Black Diamond Equipment": "Merchant Summary!I44:I51",
                     "REI.com": "Merchant Summary!J44:J51",
                     "Carousel Checks": "Merchant Summary!K44:K51",
                     "Palmetto State Armory": "Merchant Summary!L44:L51",
@@ -302,7 +302,7 @@ class UpdateDashboardLog:
         "trending_widget": {
             "cube_postgres": {
                 "REI.com": "Test Accounts Overview!A3",
-                "Black Diamond": "Test Accounts Overview!A4",
+                "Black Diamond Equipment": "Test Accounts Overview!A4",
                 "Carousel Checks": "Test Accounts Overview!A5",
                 "Palmetto State Armory": "Test Accounts Overview!A6",
                 "RTIC Outdoors": "Test Accounts Overview!A7",
@@ -310,7 +310,7 @@ class UpdateDashboardLog:
             },
             "fact_postgres": {
                 "REI.com": "Test Accounts Overview!A13",
-                "Black Diamond": "Test Accounts Overview!A14",
+                "Black Diamond Equipment": "Test Accounts Overview!A14",
                 "Carousel Checks": "Test Accounts Overview!A15",
                 "Palmetto State Armory": "Test Accounts Overview!A16",
                 "RTIC Outdoors": "Test Accounts Overview!A17",
@@ -318,7 +318,7 @@ class UpdateDashboardLog:
             },
             "fact_redshift": {
                 "REI.com": "Test Accounts Overview!A22",
-                "Black Diamond": "Test Accounts Overview!A23",
+                "Black Diamond Equipment": "Test Accounts Overview!A23",
                 "Carousel Checks": "Test Accounts Overview!A24",
                 "Palmetto State Armory": "Test Accounts Overview!A25",
                 "RTIC Outdoors": "Test Accounts Overview!A26",
@@ -326,7 +326,7 @@ class UpdateDashboardLog:
             },
             "cube_olap": {
                 "REI.com": "Test Accounts Overview!A31",
-                "Black Diamond": "Test Accounts Overview!A32",
+                "Black Diamond Equipment": "Test Accounts Overview!A32",
                 "Carousel Checks": "Test Accounts Overview!A33",
                 "Palmetto State Armory": "Test Accounts Overview!A34",
                 "RTIC Outdoors": "Test Accounts Overview!A35",
@@ -336,7 +336,7 @@ class UpdateDashboardLog:
         "top_affiliates_widget": {
             "cube_postgres": {
                 "REI.com": "Test Accounts Overview!M3",
-                "Black Diamond": "Test Accounts Overview!M4",
+                "Black Diamond Equipment": "Test Accounts Overview!M4",
                 "Carousel Checks": "Test Accounts Overview!M5",
                 "Palmetto State Armory": "Test Accounts Overview!M6",
                 "RTIC Outdoors": "Test Accounts Overview!M7",
@@ -344,7 +344,7 @@ class UpdateDashboardLog:
             },
             "fact_postgres": {
                 "REI.com": "Test Accounts Overview!M13",
-                "Black Diamond": "Test Accounts Overview!M14",
+                "Black Diamond Equipment": "Test Accounts Overview!M14",
                 "Carousel Checks": "Test Accounts Overview!M15",
                 "Palmetto State Armory": "Test Accounts Overview!M16",
                 "RTIC Outdoors": "Test Accounts Overview!M17",
@@ -352,7 +352,7 @@ class UpdateDashboardLog:
             },
             "fact_redshift": {
                 "REI.com": "Test Accounts Overview!M22",
-                "Black Diamond": "Test Accounts Overview!M23",
+                "Black Diamond Equipment": "Test Accounts Overview!M23",
                 "Carousel Checks": "Test Accounts Overview!M24",
                 "Palmetto State Armory": "Test Accounts Overview!M25",
                 "RTIC Outdoors": "Test Accounts Overview!M26",
@@ -360,7 +360,7 @@ class UpdateDashboardLog:
             },
             "cube_olap": {
                 "REI.com": "Test Accounts Overview!M31",
-                "Black Diamond": "Test Accounts Overview!M32",
+                "Black Diamond Equipment": "Test Accounts Overview!M32",
                 "Carousel Checks": "Test Accounts Overview!M33",
                 "Palmetto State Armory": "Test Accounts Overview!M34",
                 "RTIC Outdoors": "Test Accounts Overview!M35",
