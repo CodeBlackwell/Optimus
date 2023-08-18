@@ -551,7 +551,7 @@ class PrettyTableMaker:
         Returns:
            string - Merchant listed for the comparison
         """
-        return self.tables_list[0]["merchant"][0]
+        return list(self.merchant_summary_from_deploy.keys())[0].replace('_', ' ')
 
     def convert_run_time(self):
         ugly_runtime = self.dir_path.split("/")[0]
