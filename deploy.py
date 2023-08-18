@@ -414,11 +414,11 @@ if __name__ == "__main__":
         if not args.dev:
             os.chdir('/home/ubuntu/ds-data_validation/')
 
-        metadata_dict = {}
-
         # Trigger script
         for merchant in merchants:
+            metadata_dict = {} # By merchant
             metadata_dict[merchant] = []
+            og_merchant = merchant
             print(f'Running regression for merchant {merchant}')
             try:
                 os.chdir('DataValidation')
@@ -506,10 +506,11 @@ if __name__ == "__main__":
                                     skipped = True
                             if skipped is False:
                                 result, errors, passed, report_name = post_to_slack(channel, msg, fid, merchant, source.source, timeout=timeout, fail_channel=fail_channel)
-                                if not errors:
+                                #if not errors:
+                                if 1 == 1:
                                     metadata_entry = build_metadata(result, fid, merchant, source.source, passed, report_name)
                                     try:
-                                        metadata_dict[merchant].append(metadata_entry)
+                                        metadata_dict[og_merchant].append(metadata_entry)
                                     except KeyError:
                                         pass # Skip duplicates
                                 time.sleep(1) # Because there's so many messages coming through at once otherwise
@@ -523,8 +524,8 @@ if __name__ == "__main__":
             # Send to dashboard- but not for Test suite
             if args.no_error is False:
                 try:
-                    test = PrettyTableMaker(merchant_summary_from_deploy=metadata_dict)
-                    test.run()
+                    dashboard = PrettyTableMaker(merchant_summary_from_deploy=metadata_dict)
+                    dashboard.run()
                     print('Data sent to dashboard')
                 except Exception as e:
                     print(f'Dashboard failed: {e}')

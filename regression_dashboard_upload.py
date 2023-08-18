@@ -662,7 +662,6 @@ class UpdateDashboardLog:
         for category in category_order:
             try:
                 ta_result.append([subject["top_affiliates_widget"][category]])
-                #for category in category_order:
                 tw_result.append([subject["trending_widget"][category]])
             except (KeyError, IndexError):
                 continue # Entry not in metadata dict

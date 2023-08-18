@@ -394,9 +394,15 @@ class PrettyTableMaker:
             sim_dir = os.listdir(parent_directory)
         except:
             # Prod mode
-            timestamp = self.dir_path.split('/')[0]
-            parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
-            sim_dir = os.listdir(parent_directory)
+            try:
+                timestamp = self.dir_path.split('/')[0]
+                parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
+                sim_dir = os.listdir(parent_directory)
+            except:
+                # Something wrong with the file tree given
+                timestamp = os.listdir('DataValidation/validation_outputs/xlsx')[0]
+                parent_directory = f'DataValidation/validation_outputs/xlsx/{timestamp}'
+                sim_dir = os.listdir(parent_directory)
 
         self.sim_name = sim_dir[0]
         sim_path = os.path.join(parent_directory, sim_dir[0])
